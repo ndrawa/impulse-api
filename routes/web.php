@@ -36,12 +36,17 @@ $router->group(['prefix' => 'auth'], function () use ($router) {
 
     $router->post('/registerStudents', 'AuthController@registerStudents');
     $router->post('/registerStaffs', 'AuthController@registerStaffs');
+    $router->get('/findUser/{id}', 'AuthController@findUser');
+    $router->get('/findStudent/{id}', 'AuthController@findStudent');
+    $router->get('/findStaff/{id}', 'AuthController@findStaff');
+    $router->put('/updateStudent/{id}', 'AuthController@updateStudent');
+    $router->put('/updateStaff/{id}', 'AuthController@updateStaff');
 });
 
-$router->group(['prefix' => 'order', 'middleware' => 'auth'], function () use ($router) {
-    $router->get('/getOrders', 'OrdersController@getOrders');
-});
+// $router->group(['prefix' => 'order', 'middleware' => 'auth'], function () use ($router) {
+//     $router->get('/getOrders', 'OrdersController@getOrders');
+// });
 
-$router->group(['prefix' => 'products', 'middleware' => 'auth'], function () use ($router) {
-    $router->get('/getProducts', 'ProductsController@getProducts');
-});
+// $router->group(['prefix' => 'products', 'middleware' => 'auth'], function () use ($router) {
+//     $router->get('/getProducts', 'ProductsController@getProducts');
+// });
