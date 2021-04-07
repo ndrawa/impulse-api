@@ -140,13 +140,8 @@ class AuthController extends Controller
     {
         $users = DB::table('users')->get();
         return response()->json([
-<<<<<<< HEAD
-            'status' => 'success',
-            'data' => $user
-=======
             'status' => 'success', 
             'data' => $users
->>>>>>> c5f1234cc7781333aec440e3820f82f1486c7979
         ]);
     }
 
@@ -242,13 +237,8 @@ class AuthController extends Controller
             'username'  => $request->nip,
             'password'  => $request->password,
         ]);
-<<<<<<< HEAD
-
-        $student = Students::where('user_id',$id) -> first();
-=======
         
         $student = Staffs::where('user_id',$id) -> first();
->>>>>>> c5f1234cc7781333aec440e3820f82f1486c7979
         $student->update([
             'nip'           => $request->nip,
             'name'          => $request->name,
