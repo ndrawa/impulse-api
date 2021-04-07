@@ -138,16 +138,16 @@ class AuthController extends Controller
 
     public function showUsers()
     {
-        $user = DB::select("SELECT * FROM users");
+        $users = DB::table('users')->get();
         return response()->json([
             'status' => 'success', 
-            'data' => $user
+            'data' => $users
         ]);
     }
 
     public function showStudents()
     {
-        $students = DB::select("SELECT * FROM students");
+        $students = DB::table('students')->get();
         return response()->json([
             'status' => 'success', 
             'data' => $students
@@ -156,7 +156,7 @@ class AuthController extends Controller
 
     public function showStaffs()
     {
-        $staffs = DB::select("SELECT * FROM staffs");
+        $staffs = DB::table('staffs')->get();
         return response()->json([
             'status' => 'success', 
             'data' => $staffs
