@@ -116,7 +116,7 @@ class AuthController extends Controller
             'id'   => $uuid,
         ];
         $user = User::create($newUser);
-    
+
         $id = Staffs::max('id') + 1;
         $newStaff = [
             'nip'           => $request->nip,
@@ -140,7 +140,7 @@ class AuthController extends Controller
     {
         $user = DB::select("SELECT * FROM users");
         return response()->json([
-            'status' => 'success', 
+            'status' => 'success',
             'data' => $user
         ]);
     }
@@ -149,7 +149,7 @@ class AuthController extends Controller
     {
         $students = DB::select("SELECT * FROM students");
         return response()->json([
-            'status' => 'success', 
+            'status' => 'success',
             'data' => $students
         ]);
     }
@@ -158,7 +158,7 @@ class AuthController extends Controller
     {
         $staffs = DB::select("SELECT * FROM staffs");
         return response()->json([
-            'status' => 'success', 
+            'status' => 'success',
             'data' => $staffs
         ]);
     }
@@ -167,7 +167,7 @@ class AuthController extends Controller
     {
         $user = User::find($id);
         return response()->json([
-            'status' => 'success', 
+            'status' => 'success',
             'data' => $user
         ]);
     }
@@ -176,7 +176,7 @@ class AuthController extends Controller
     {
         $student = Students::where('user_id',$id) -> first();
         return response()->json([
-            'status' => 'success', 
+            'status' => 'success',
             'data' => $student
         ]);
     }
@@ -185,7 +185,7 @@ class AuthController extends Controller
     {
         $staff = Staffs::where('user_id',$id) -> first();
         return response()->json([
-            'status' => 'success', 
+            'status' => 'success',
             'data' => $staff
         ]);
     }
@@ -197,7 +197,7 @@ class AuthController extends Controller
             'name'      => 'required|max:255',
             'gender'    => 'required',
             'religion'  => 'required',
-            'password'  => 'required',    
+            'password'  => 'required',
         ]);
 
         $user = User::find($id);
@@ -205,7 +205,7 @@ class AuthController extends Controller
             'username'  => $request->nim,
             'password'  => $request->password,
         ]);
-        
+
         $student = Students::where('user_id',$id) -> first();
         $student->update([
             'nim'           => $request->nim,
@@ -229,7 +229,7 @@ class AuthController extends Controller
             'nip'   => 'required|max:16',
             'name'  => 'required|max:255',
             'code'  => 'required',
-            'password'  => 'required',    
+            'password'  => 'required',
         ]);
 
         $user = User::find($id);
@@ -237,7 +237,7 @@ class AuthController extends Controller
             'username'  => $request->nip,
             'password'  => $request->password,
         ]);
-        
+
         $student = Students::where('user_id',$id) -> first();
         $student->update([
             'nip'           => $request->nip,

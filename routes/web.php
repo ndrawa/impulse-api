@@ -32,7 +32,7 @@ $router->group(['prefix' => 'auth'], function () use ($router) {
             // $router->post('/registerStudents', 'AuthController@registerStudents');
             // $router->post('/registerStaffs', 'AuthController@registerStaffs');
         });
-        
+
     });
 
     $router->post('students/register', 'AuthController@registerStudents');
@@ -45,7 +45,7 @@ $router->group(['prefix' => 'auth'], function () use ($router) {
     $router->put('student/update/{id}', 'AuthController@updateStudent');
     $router->put('staff/update/{id}', 'AuthController@updateStaff');
 
-    
+
 });
 
 // $router->group(['prefix' => 'order', 'middleware' => 'auth'], function () use ($router) {

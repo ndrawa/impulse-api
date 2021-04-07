@@ -78,9 +78,9 @@ $app->configure('jwt');
 // ]);
 
 $app->routeMiddleware([
-    'auth' => App\Http\Middleware\Authenticate::class,
-    'permission' => Spatie\Permission\Middlewares\PermissionMiddleware::class,
-    'role'       => Spatie\Permission\Middlewares\RoleMiddleware::class,
+    'auth'         => App\Http\Middleware\Authenticate::class,
+    'permission'   => Spatie\Permission\Middlewares\PermissionMiddleware::class,
+    'role'         => Spatie\Permission\Middlewares\RoleMiddleware::class,
 ]);
 
 /*
@@ -94,7 +94,7 @@ $app->routeMiddleware([
 |
 */
 
-// $app->register(App\Providers\AppServiceProvider::class);
+$app->register(App\Providers\AppServiceProvider::class);
 $app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
 $app->configure('permission');
