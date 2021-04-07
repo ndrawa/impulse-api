@@ -55,7 +55,7 @@ class StaffsSeeder extends Seeder
             $uuid = Str::orderedUuid();
             DB::table('users')->insert([
                 'id' => $uuid,
-                'username' => $data_staff_code[$n],
+                'username' => $data_nip[$n],
                 'password' => Hash::make('password')
             ]);
 

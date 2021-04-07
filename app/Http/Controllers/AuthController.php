@@ -113,17 +113,18 @@ class AuthController extends Controller
 
         $uuid = Str::orderedUuid();
         $newUser = [
-            'username'  => $request->code,
+            'username'  => $request->nip,
             'password'  => Hash::make('password'),
             'id'   => $uuid,
         ];
         $user = User::create($newUser);
-
+    
         $id = Staffs::max('id') + 1;
         $newStaff = [
             'nip'           => $request->nip,
             'name'          => $request->name,
             'user_id'       => $uuid,
+            'code'          => $request->code,
             'created_at'    => Carbon::now(),
             'updated_at'    => Carbon::now(),
         ];
