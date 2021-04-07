@@ -32,15 +32,18 @@ $router->group(['prefix' => 'auth'], function () use ($router) {
             // $router->post('/registerStudents', 'AuthController@registerStudents');
             // $router->post('/registerStaffs', 'AuthController@registerStaffs');
         });
+        
     });
 
-    $router->post('/registerStudents', 'AuthController@registerStudents');
-    $router->post('/registerStaffs', 'AuthController@registerStaffs');
-    $router->get('/findUser/{id}', 'AuthController@findUser');
-    $router->get('/findStudent/{id}', 'AuthController@findStudent');
-    $router->get('/findStaff/{id}', 'AuthController@findStaff');
-    $router->put('/updateStudent/{id}', 'AuthController@updateStudent');
-    $router->put('/updateStaff/{id}', 'AuthController@updateStaff');
+    $router->post('students/register', 'AuthController@registerStudents');
+    $router->post('staff/register', 'AuthController@registerStaffs');
+    $router->get('user/find/{id}', 'AuthController@findUser');
+    $router->get('student/find/{id}', 'AuthController@findStudent');
+    $router->get('staff/find/{id}', 'AuthController@findStaff');
+    $router->put('student/update/{id}', 'AuthController@updateStudent');
+    $router->put('staff/update/{id}', 'AuthController@updateStaff');
+
+    
 });
 
 // $router->group(['prefix' => 'order', 'middleware' => 'auth'], function () use ($router) {

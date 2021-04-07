@@ -122,6 +122,7 @@ class AuthController extends Controller
             'nip'           => $request->nip,
             'name'          => $request->name,
             'user_id'       => $uuid,
+            'code'          => $request->code,
             'created_at'    => Carbon::now(),
             'updated_at'    => Carbon::now(),
         ];
@@ -169,7 +170,7 @@ class AuthController extends Controller
             'name'      => 'required|max:255',
             'gender'    => 'required',
             'religion'  => 'required',
-            'password'  => 'required',
+            'password'  => 'required',    
         ]);
 
         $user = User::find($id);
@@ -177,8 +178,8 @@ class AuthController extends Controller
             'username'  => $request->nim,
             'password'  => $request->password,
         ]);
-        $student_id = Students::where('user_id',$user->id) -> first();
-        $student = Students::find(student_id);
+        
+        $student = Students::where('user_id',$id) -> first();
         $student->update([
             'nim'           => $request->nim,
             'name'          => $request->name,
@@ -193,7 +194,36 @@ class AuthController extends Controller
                 'message'   => 'student updated successfully',
                 'status'    => 202],
             ], 202);
+    }
 
+    public function updateStaff(Request $request, $id)
+    {
+        $this->validate($request, [
+            'nip'   => 'required|max:16',
+            'name'  => 'required|max:255',
+            'code'  => 'required',
+            'password'  => 'required',    
+        ]);
+
+        $user = User::find($id);
+        $user->update([
+            'username'  => $request->nip,
+            'password'  => $request->password,
+        ]);
+        
+        $student = Students::where('user_id',$id) -> first();
+        $student->update([
+            'nip'           => $request->nip,
+            'name'          => $request->name,
+            'created_at'    => Carbon::now(),
+            'updated_at'    => Carbon::now(),
+        ]);
+
+        return response()->json([
+            'data' => [
+                'message'   => 'staff updated successfully',
+                'status'    => 202],
+            ], 202);
     }
 
     public function me(Request $request)
