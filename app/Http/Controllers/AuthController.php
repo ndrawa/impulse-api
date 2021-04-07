@@ -138,16 +138,21 @@ class AuthController extends Controller
 
     public function showUsers()
     {
-        $user = DB::select("SELECT * FROM users");
+        $users = DB::table('users')->get();
         return response()->json([
+<<<<<<< HEAD
             'status' => 'success',
             'data' => $user
+=======
+            'status' => 'success', 
+            'data' => $users
+>>>>>>> c5f1234cc7781333aec440e3820f82f1486c7979
         ]);
     }
 
     public function showStudents()
     {
-        $students = DB::select("SELECT * FROM students");
+        $students = DB::table('students')->get();
         return response()->json([
             'status' => 'success',
             'data' => $students
@@ -156,7 +161,7 @@ class AuthController extends Controller
 
     public function showStaffs()
     {
-        $staffs = DB::select("SELECT * FROM staffs");
+        $staffs = DB::table('staffs')->get();
         return response()->json([
             'status' => 'success',
             'data' => $staffs
@@ -237,8 +242,13 @@ class AuthController extends Controller
             'username'  => $request->nip,
             'password'  => $request->password,
         ]);
+<<<<<<< HEAD
 
         $student = Students::where('user_id',$id) -> first();
+=======
+        
+        $student = Staffs::where('user_id',$id) -> first();
+>>>>>>> c5f1234cc7781333aec440e3820f82f1486c7979
         $student->update([
             'nip'           => $request->nip,
             'name'          => $request->name,
