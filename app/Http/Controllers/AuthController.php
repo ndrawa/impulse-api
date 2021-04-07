@@ -92,8 +92,6 @@ class AuthController extends Controller
         ];
         $student = Students::create($newStudent);
 
-
-
         // $user->assignRole('registered');
 
         return response()->json([
@@ -138,6 +136,96 @@ class AuthController extends Controller
             ], 201);
     }
 
+    public function findUser($id)
+    {
+        $user = User::find($id);
+        return response()->json([
+            'status' => 'success', 
+            'data' => $user
+        ]);
+    }
+
+    public function findStudent($id)
+    {
+        $student = Students::where('user_id',$id) -> first();
+        return response()->json([
+            'status' => 'success', 
+            'data' => $student
+        ]);
+    }
+
+    public function findStaff($id)
+    {
+        $staff = Staffs::where('user_id',$id) -> first();
+        return response()->json([
+            'status' => 'success', 
+            'data' => $staff
+        ]);
+    }
+
+    public function updateStudent(Request $request, $id)
+    {
+        $this->validate($request, [
+            'nim'       => 'required|max:16',
+            'name'      => 'required|max:255',
+            'gender'    => 'required',
+            'religion'  => 'required',
+            'password'  => 'required',    
+        ]);
+
+        $user = User::find($id);
+        $user->update([
+            'username'  => $request->nim,
+            'password'  => $request->password,
+        ]);
+        
+        $student = Students::where('user_id',$id) -> first();
+        $student->update([
+            'nim'           => $request->nim,
+            'name'          => $request->name,
+            'gender'        => $request->gender,
+            'religion'      => $request->religion,
+            'created_at'    => Carbon::now(),
+            'updated_at'    => Carbon::now(),
+        ]);
+
+        return response()->json([
+            'data' => [
+                'message'   => 'student updated successfully',
+                'status'    => 202],
+            ], 202);
+    }
+
+    public function updateStaff(Request $request, $id)
+    {
+        $this->validate($request, [
+            'nip'   => 'required|max:16',
+            'name'  => 'required|max:255',
+            'code'  => 'required',
+            'password'  => 'required',    
+        ]);
+
+        $user = User::find($id);
+        $user->update([
+            'username'  => $request->nip,
+            'password'  => $request->password,
+        ]);
+        
+        $student = Students::where('user_id',$id) -> first();
+        $student->update([
+            'nip'           => $request->nip,
+            'name'          => $request->name,
+            'created_at'    => Carbon::now(),
+            'updated_at'    => Carbon::now(),
+        ]);
+
+        return response()->json([
+            'data' => [
+                'message'   => 'staff updated successfully',
+                'status'    => 202],
+            ], 202);
+    }
+
     public function me(Request $request)
     {
         return response()->json([auth()->user()]);
@@ -154,4 +242,5 @@ class AuthController extends Controller
         return response()->json([$users
         ]);
     }
+
 }
