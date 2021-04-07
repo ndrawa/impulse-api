@@ -238,7 +238,7 @@ class AuthController extends Controller
             'password'  => $request->password,
         ]);
         
-        $student = Students::where('user_id',$id) -> first();
+        $student = Staffs::where('user_id',$id) -> first();
         $student->update([
             'nip'           => $request->nip,
             'name'          => $request->name,
