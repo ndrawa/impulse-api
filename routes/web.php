@@ -37,7 +37,9 @@ $router->group(['prefix' => 'auth'], function () use ($router) {
 
     $router->post('students/register', 'AuthController@registerStudents');
     $router->post('staff/register', 'AuthController@registerStaffs');
-    $router->get('user/find/{id}', 'AuthController@findUser');
+    $router->get('users/show', 'AuthController@showUser');
+    $router->get('students/show', 'AuthController@showStudents');
+    $router->get('staffs/show', 'AuthController@showStaffs');
     $router->get('student/find/{id}', 'AuthController@findStudent');
     $router->get('staff/find/{id}', 'AuthController@findStaff');
     $router->put('student/update/{id}', 'AuthController@updateStudent');
