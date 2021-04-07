@@ -136,6 +136,33 @@ class AuthController extends Controller
             ], 201);
     }
 
+    public function showUsers()
+    {
+        $user = DB::select("SELECT * FROM users");
+        return response()->json([
+            'status' => 'success', 
+            'data' => $user
+        ]);
+    }
+
+    public function showStudents()
+    {
+        $students = DB::select("SELECT * FROM students");
+        return response()->json([
+            'status' => 'success', 
+            'data' => $students
+        ]);
+    }
+
+    public function showStaffs()
+    {
+        $staffs = DB::select("SELECT * FROM staffs");
+        return response()->json([
+            'status' => 'success', 
+            'data' => $staffs
+        ]);
+    }
+
     public function findUser($id)
     {
         $user = User::find($id);
