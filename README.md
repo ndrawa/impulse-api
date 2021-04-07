@@ -13,3 +13,6 @@ Laravel Lumen is a stunningly fast PHP micro-framework for building web applicat
 3. php artisan migrate:fresh --seed
 4. php -S localhost:8000 -t public
 
+## Commit Rules
+1. create new brach
+2. commit message to master: vYY.MM.DD.X [X = date's version]
