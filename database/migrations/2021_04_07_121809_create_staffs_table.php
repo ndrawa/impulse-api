@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateStaffs extends Migration
+class CreateStaffsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,13 +14,16 @@ class CreateStaffs extends Migration
     public function up()
     {
         Schema::create('staffs', function (Blueprint $table) {
-            $table->id();
-            $table->string('nip',32);
+            $table->char('id', 26)->primary();
+            $table->char('user_id', 26);
+            $table->string('nip')->unique();
             $table->string('name');
-            $table->uuid('user_id');
-            $table->string('code');
-
+            $table->string('code')->unique();
             $table->timestamps();
+            $table->foreign('user_id')
+                ->references('id')
+                ->on('users')
+                ->onDelete('cascade');
         });
     }
 

@@ -8,6 +8,9 @@ use Illuminate\Support\ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
 {
+
+    protected $policies = [];
+
     /**
      * Register any application services.
      *
@@ -30,10 +33,24 @@ class AuthServiceProvider extends ServiceProvider
         // should return either a User instance or null. You're free to obtain
         // the User instance via an API token or any other method necessary.
 
+        $this->registerPolicies();
+
         $this->app['auth']->viaRequest('api', function ($request) {
             if ($request->input('api_token')) {
                 return User::where('api_token', $request->input('api_token'))->first();
             }
         });
+
+        // define super admin role
+        // Gate::before(function($user, $ability) {
+        //     return $user->isAdmin() ? true : null;
+        // });
+    }
+
+    private function registerPolicies()
+    {
+        foreach($this->policies as $model => $policy) {
+            Gate::policy($model, $policy);
+        }
     }
 }

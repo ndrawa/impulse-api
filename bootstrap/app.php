@@ -23,6 +23,9 @@ $app = new Laravel\Lumen\Application(
     dirname(__DIR__)
 );
 
+$app->instance('path.config', app()->basePath() . DIRECTORY_SEPARATOR . 'config');
+$app->instance('path.storage', app()->basePath() . DIRECTORY_SEPARATOR . 'storage');
+
 $app->withFacades();
 
 $app->withEloquent();
@@ -60,8 +63,9 @@ $app->singleton(
 */
 
 $app->configure('app');
-// $app->configure('auth');
 $app->configure('jwt');
+$app->configure('permission');
+$app->configure('api');
 
 /*
 |--------------------------------------------------------------------------
@@ -79,9 +83,9 @@ $app->configure('jwt');
 // ]);
 
 $app->routeMiddleware([
-    'auth'         => App\Http\Middleware\Authenticate::class,
-    'permission'   => Spatie\Permission\Middlewares\PermissionMiddleware::class,
-    'role'         => Spatie\Permission\Middlewares\RoleMiddleware::class,
+    'auth'       => App\Http\Middleware\Authenticate::class,
+    'permission' => Spatie\Permission\Middlewares\PermissionMiddleware::class,
+    'role'       => Spatie\Permission\Middlewares\RoleMiddleware::class,
 ]);
 
 /*
@@ -95,15 +99,16 @@ $app->routeMiddleware([
 |
 */
 
-$app->register(App\Providers\AppServiceProvider::class);
+// $app->register(App\Providers\AppServiceProvider::class);
 $app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
-$app->configure('permission');
-$app->alias('cache', \Illuminate\Cache\CacheManager::class);  // if you don't have this already
-$app->register(Spatie\Permission\PermissionServiceProvider::class);
 $app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
-$app->register(Flipbox\LumenGenerator\LumenGeneratorServiceProvider::class);
+$app->register(Spatie\Permission\PermissionServiceProvider::class);
+$app->register(Rorecek\Ulid\UlidServiceProvider::class);
+$app->register(Dingo\Api\Provider\LumenServiceProvider::class);
 
+$app->alias('cache', \Illuminate\Cache\CacheManager::class);
+$app->alias('Ulid', Rorecek\Ulid\Facades\Ulid::class);
 /*
 |--------------------------------------------------------------------------
 | Load The Application Routes
@@ -116,9 +121,18 @@ $app->register(Flipbox\LumenGenerator\LumenGeneratorServiceProvider::class);
 */
 
 $app->router->group([
-    'namespace' => 'App\Http\Controllers',
+    'namespace' => 'App\Http\Controllers\Web',
 ], function ($router) {
     require __DIR__.'/../routes/web.php';
+});
+
+$app->router->group([
+    'namespace' => 'App\Http\Controllers\Api\V1',
+], function ($router) {
+    require __DIR__.'/../routes/api/v1/api.php';
+    require __DIR__.'/../routes/api/v1/staff.php';
+    require __DIR__.'/../routes/api/v1/asprak.php';
+    require __DIR__.'/../routes/api/v1/student.php';
 });
 
 return $app;
