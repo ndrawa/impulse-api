@@ -17,6 +17,6 @@ Laravel Lumen is a stunningly fast PHP micro-framework for building web applicat
 
 ## Commit Rules
 1. create new brach
-2. commit message to master: vYY.MM.DD.X [X = date's version]
+2. commit message to master: vYY.MM.DD.XX [XX = date's version start from 00]
 
 Time GMT+7
