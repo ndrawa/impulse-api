@@ -6,14 +6,23 @@ use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Laravel\Lumen\Auth\Authorizable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Support\Facades\Hash;
 
-class User extends Model implements AuthenticatableContract, AuthorizableContract, JWTSubject
+class User extends BaseModel implements AuthenticatableContract, AuthorizableContract, JWTSubject
 {
-    use Authenticatable, Authorizable, HasRoles;
+    use Authenticatable, Authorizable, HasFactory, HasRoles;
+
+    public static function boot() 
+    {
+        parent::boot();
+
+        static::creating(function($user) {
+            $user->password = Hash::make($user->password);
+        });
+    }
 
     /**
      * The attributes that are mass assignable.
@@ -21,7 +30,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * @var array
      */
     protected $fillable = [
-        'username', 'password', 'id'
+        'username', 'password',
     ];
 
     /**
@@ -33,13 +42,62 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'password',
     ];
 
+    /**
+     * Get the identifier that will be stored in the subject claim of the JWT.
+     *
+     * @return mixed
+     */
     public function getJWTIdentifier()
     {
         return $this->getKey();
     }
 
+    /**
+     * Return a key value array, containing any custom claims to be added to the JWT.
+     *
+     * @return array
+     */
     public function getJWTCustomClaims()
     {
         return [];
+    }
+
+    public function staff()
+    {
+        return $this->hasOne(Staff::class);
+    }
+
+    public function student()
+    {
+        return $this->hasOne(Student::class);
+    }
+
+    public function isAdmin()
+    {
+        return $this->hasRole(Role::ROLE_ADMIN);
+    }
+
+    public function isStaff()
+    {
+        return $this->hasRole(Role::ROLE_STAFF);
+    }
+
+    public function isStudent()
+    {
+        return $this->hasRole(Role::ROLE_STUDENT);
+    }
+
+    public function isAsprak()
+    {
+        return $this->hasRole(Role::ROLE_ASPRAK);
+    }
+
+    public function user()
+    {
+        if($this->isStaff()) {
+            return $this->staff;
+        } else {
+            return $this->student;
+        }
     }
 }

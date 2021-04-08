@@ -21,28 +21,28 @@ class CreatePermissionTables extends Migration
         }
 
         Schema::create($tableNames['permissions'], function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->string('name');
-            $table->string('guard_name');
+            $table->char('id', 26)->primary();
+            $table->string('name');       // For MySQL 8.0 use string('name', 125);
+            $table->string('guard_name'); // For MySQL 8.0 use string('guard_name', 125);
             $table->timestamps();
 
             $table->unique(['name', 'guard_name']);
         });
 
         Schema::create($tableNames['roles'], function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->string('name');
-            $table->string('guard_name');
+            $table->char('id', 26)->primary();
+            $table->string('name');       // For MySQL 8.0 use string('name', 125);
+            $table->string('guard_name'); // For MySQL 8.0 use string('guard_name', 125);
             $table->timestamps();
 
             $table->unique(['name', 'guard_name']);
         });
 
         Schema::create($tableNames['model_has_permissions'], function (Blueprint $table) use ($tableNames, $columnNames) {
-            $table->unsignedBigInteger('permission_id');
+            $table->char('permission_id', 26);
 
             $table->string('model_type');
-            $table->unsignedBigInteger($columnNames['model_morph_key']);
+            $table->char($columnNames['model_morph_key'], 26);
             $table->index([$columnNames['model_morph_key'], 'model_type'], 'model_has_permissions_model_id_model_type_index');
 
             $table->foreign('permission_id')
@@ -55,10 +55,10 @@ class CreatePermissionTables extends Migration
         });
 
         Schema::create($tableNames['model_has_roles'], function (Blueprint $table) use ($tableNames, $columnNames) {
-            $table->unsignedBigInteger('role_id');
+            $table->char('role_id', 26);
 
             $table->string('model_type');
-            $table->unsignedBigInteger($columnNames['model_morph_key']);
+            $table->char($columnNames['model_morph_key'], 26);
             $table->index([$columnNames['model_morph_key'], 'model_type'], 'model_has_roles_model_id_model_type_index');
 
             $table->foreign('role_id')
@@ -71,8 +71,8 @@ class CreatePermissionTables extends Migration
         });
 
         Schema::create($tableNames['role_has_permissions'], function (Blueprint $table) use ($tableNames) {
-            $table->unsignedBigInteger('permission_id');
-            $table->unsignedBigInteger('role_id');
+            $table->char('permission_id', 26);
+            $table->char('role_id', 26);
 
             $table->foreign('permission_id')
                 ->references('id')
