@@ -44,7 +44,7 @@ class StudentTableSeeder extends Seeder
 
         $student = Student::create([
             'nim' => '1301184346',
-            'name' => 'Dani Andhika P',
+            'name' => 'Putri Esther S',
             'gender' => 'female',
             'religion' => 'protestan'
         ]);
