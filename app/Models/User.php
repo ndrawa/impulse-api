@@ -15,7 +15,7 @@ class User extends BaseModel implements AuthenticatableContract, AuthorizableCon
 {
     use Authenticatable, Authorizable, HasFactory, HasRoles;
 
-    public static function boot() 
+    public static function boot()
     {
         parent::boot();
 
@@ -72,9 +72,9 @@ class User extends BaseModel implements AuthenticatableContract, AuthorizableCon
         return $this->hasOne(Student::class);
     }
 
-    public function isAdmin()
+    public function isLaboran()
     {
-        return $this->hasRole(Role::ROLE_ADMIN);
+        return $this->hasRole(Role::ROLE_LABORAN);
     }
 
     public function isStaff()
@@ -90,6 +90,11 @@ class User extends BaseModel implements AuthenticatableContract, AuthorizableCon
     public function isAsprak()
     {
         return $this->hasRole(Role::ROLE_ASPRAK);
+    }
+
+    public function isAslab()
+    {
+        return $this->hasRole(Role::ROLE_ASLAB);
     }
 
     public function user()

@@ -12,12 +12,12 @@ class Staff extends BaseModel implements IUser
      * @var array
      */
     protected $fillable = [
-        'name', 
+        'name',
         'nip',
         'code'
     ];
 
-    public static function boot() 
+    public static function boot()
     {
         parent::boot();
 
@@ -55,12 +55,12 @@ class Staff extends BaseModel implements IUser
 
     public function assignAdmin()
     {
-        $this->assignRole(Role::ROLE_ADMIN);
+        $this->assignRole(Role::ROLE_LABORAN);
     }
 
     public function removeAdmin()
     {
-        $this->removeRole(Role::ROLE_ADMIN);
+        $this->removeRole(Role::ROLE_LABORAN);
     }
 }
 
