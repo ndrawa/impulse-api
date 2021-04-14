@@ -51,5 +51,6 @@ class StudentTableSeeder extends Seeder
         $student->save();
         $user->assignRole(Role::ROLE_ASPRAK);
         $user->assignRole(Role::ROLE_ASLAB);
+
     }
 }

@@ -6,11 +6,12 @@
     "type": "project",
     "require": {
         "php": "^7.3|^8.0",
+        "dingo/api": "^3.0.0",
+        "flipbox/lumen-generator": "^8.2",
         "laravel/lumen-framework": "^8.0",
         "rorecek/laravel-ulid": "^2.0",
         "spatie/laravel-permission": "^4.0",
-        "tymon/jwt-auth": "^1.0",
-        "dingo/api": "^3.0.0"
+        "tymon/jwt-auth": "^1.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
