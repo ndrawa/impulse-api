@@ -29,7 +29,7 @@ class StudentTableSeeder extends Seeder
         $student = Student::create([
             'nim' => '1301184366',
             'name' => 'Indra W',
-            'gender' => 'female',
+            'gender' => 'male',
             'religion' => 'hindu'
         ]);
         $student->save();
@@ -44,7 +44,7 @@ class StudentTableSeeder extends Seeder
 
         $student = Student::create([
             'nim' => '1301184346',
-            'name' => 'Putri Esther S',
+            'name' => 'Putri Ester Sumolang',
             'gender' => 'female',
             'religion' => 'protestan'
         ]);
