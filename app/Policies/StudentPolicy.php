@@ -2,8 +2,8 @@
 
 namespace App\Policies;
 
-use App\Student;
-use App\User;
+use App\Models\Student;
+use App\Models\User;
 
 class StudentPolicy extends BasePolicy
 {
