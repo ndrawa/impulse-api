@@ -12,13 +12,13 @@ class Student extends BaseModel implements IUser
      * @var array
      */
     protected $fillable = [
-        'name', 
+        'name',
         'nim',
         'gender',
         'religion'
     ];
 
-    public static function boot() 
+    public static function boot()
     {
         parent::boot();
 
@@ -62,5 +62,15 @@ class Student extends BaseModel implements IUser
     public function removeAsprak()
     {
         $this->removeRole(Role::ROLE_ASPRAK);
+    }
+
+    public function assignAslab()
+    {
+        $this->assignRole(Role::ROLE_ASLAB);
+    }
+
+    public function removeAslab()
+    {
+        $this->removeRole(Role::ROLE_ASLAB);
     }
 }
