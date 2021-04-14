@@ -41,7 +41,7 @@ class StudentController extends BaseController
             'name' => 'required',
             'nim' => [
                 'required',
-                Rule::unique('student')
+                Rule::unique('students')
             ],
             'gender' => [
                 'required'
