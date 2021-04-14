@@ -106,6 +106,7 @@ $app->register(Tymon\JWTAuth\Providers\LumenServiceProvider::class);
 $app->register(Spatie\Permission\PermissionServiceProvider::class);
 $app->register(Rorecek\Ulid\UlidServiceProvider::class);
 $app->register(Dingo\Api\Provider\LumenServiceProvider::class);
+$app->register(Flipbox\LumenGenerator\LumenGeneratorServiceProvider::class);
 
 $app->alias('cache', \Illuminate\Cache\CacheManager::class);
 $app->alias('Ulid', Rorecek\Ulid\Facades\Ulid::class);
