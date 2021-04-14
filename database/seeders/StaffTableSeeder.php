@@ -16,13 +16,13 @@ class StaffTableSeeder extends Seeder
     public function run()
     {
         $admin = Staff::create([
-            'nip' => 'admin',
-            'name' => 'Super Admin',
-            'code' => 'admin'
+            'nip' => 'laboran',
+            'name' => 'Laboran (Super admin)',
+            'code' => 'laboran'
         ]);
         $admin->save();
         // assign role
         $user = $admin->user;
-        $user->assignRole(Role::ROLE_ADMIN);
+        $user->assignRole(Role::ROLE_LABORAN);
     }
 }

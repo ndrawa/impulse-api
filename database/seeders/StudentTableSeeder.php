@@ -49,5 +49,8 @@ class StudentTableSeeder extends Seeder
             'religion' => 'protestan'
         ]);
         $student->save();
+        $user->assignRole(Role::ROLE_ASPRAK);
+        $user->assignRole(Role::ROLE_ASLAB);
+
     }
 }

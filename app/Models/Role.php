@@ -9,8 +9,10 @@ class Role extends SpatieRole
 {
     use HasULID;
 
-    const ROLE_ADMIN = "admin";
+    const ROLE_LABORAN = "laboran";
     const ROLE_STUDENT = "student";
     const ROLE_ASPRAK = "asprak";
     const ROLE_STAFF = "staff";
+    const ROLE_ASLAB = "aslab";
+    const ROLE_DOSEN = "dosen";
 }
