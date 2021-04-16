@@ -66,6 +66,7 @@ $app->configure('app');
 $app->configure('jwt');
 $app->configure('permission');
 $app->configure('api');
+$app->configure('cors');
 
 /*
 |--------------------------------------------------------------------------
@@ -78,14 +79,16 @@ $app->configure('api');
 |
 */
 
-// $app->middleware([
-//     App\Http\Middleware\ExampleMiddleware::class
-// ]);
+$app->middleware([
+    // App\Http\Middleware\ExampleMiddleware::class,
+    Fruitcake\Cors\HandleCors::class,
+]);
 
 $app->routeMiddleware([
     'auth'       => App\Http\Middleware\Authenticate::class,
     'permission' => Spatie\Permission\Middlewares\PermissionMiddleware::class,
     'role'       => Spatie\Permission\Middlewares\RoleMiddleware::class,
+    // Fruitcake\Cors\HandleCors::class,
 ]);
 
 /*
@@ -107,6 +110,7 @@ $app->register(Spatie\Permission\PermissionServiceProvider::class);
 $app->register(Rorecek\Ulid\UlidServiceProvider::class);
 $app->register(Dingo\Api\Provider\LumenServiceProvider::class);
 $app->register(Flipbox\LumenGenerator\LumenGeneratorServiceProvider::class);
+$app->register(Fruitcake\Cors\CorsServiceProvider::class);
 
 $app->alias('cache', \Illuminate\Cache\CacheManager::class);
 $app->alias('Ulid', Rorecek\Ulid\Facades\Ulid::class);
