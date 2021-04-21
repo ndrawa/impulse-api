@@ -15,5 +15,6 @@ class Course extends BaseModel
      */
     protected $fillable = [
         'name',
+        'code'
     ];
 }
