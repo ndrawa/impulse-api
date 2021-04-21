@@ -24,5 +24,11 @@ class StaffTableSeeder extends Seeder
         // assign role
         $user = $admin->user;
         $user->assignRole(Role::ROLE_LABORAN);
+
+        $staff = Staff::create([
+            'nip' => '99120385',
+            'name' => 'ABDURRAHMAN JOKO SUSILO',
+            'code' => 'AJS'
+        ]);
     }
 }

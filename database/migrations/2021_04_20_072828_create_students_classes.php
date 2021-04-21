@@ -17,6 +17,7 @@ class CreateStudentsClasses extends Migration
             $table->char('id', 26)->primary();
             $table->char('student_id', 26);
             $table->char('class_id', 26);
+            $table->timestamps();
             $table->foreign('student_id')
                 ->references('id')
                 ->on('students')

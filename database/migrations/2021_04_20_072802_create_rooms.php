@@ -19,6 +19,7 @@ class CreateRooms extends Migration
             $table->string('desc');
             $table->string('msteam_code');
             $table->string('msteam_link');
+            $table->timestamps();
         });
     }
 

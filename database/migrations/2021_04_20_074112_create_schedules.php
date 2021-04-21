@@ -32,7 +32,7 @@ class CreateSchedules extends Migration
             $table->time('periode_end');
             $table->char('class_id', 26);
             $table->char('module_id', 26);
-
+            $table->timestamps();
             $table->foreign('room_id')
                 ->references('id')
                 ->on('rooms')

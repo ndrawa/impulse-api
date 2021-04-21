@@ -17,6 +17,7 @@ class CreateCourses extends Migration
             $table->char('id', 26)->primary();
             $table->string('code');
             $table->string('name');
+            $table->timestamps();
         });
     }
 

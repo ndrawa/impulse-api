@@ -20,6 +20,7 @@ class CreateClasses extends Migration
             $table->char('course_id', 26);
             $table->string('academic_year');
             $table->string('semester');
+            $table->timestamps();
             $table->foreign('staff_id')
                 ->references('id')
                 ->on('staffs')
