@@ -10,10 +10,12 @@ Laravel Lumen is a stunningly fast PHP micro-framework for building web applicat
 ## Installation
 1. terminal run "cp .env.example .env"
 2. set your .env settings
-3. composer install
-4. php artisan jwt:secret
-5. php artisan migrate:fresh --seed
-6. php -S localhost:8000 -t public
+    DB_CONNECTION = pgsql
+    DB_PORT = 5432
+4. composer install
+5. php artisan jwt:secret
+6. php artisan migrate:fresh --seed
+7. php -S localhost:8000 -t public
 
 ## Commit Rules
 1. create new brach
