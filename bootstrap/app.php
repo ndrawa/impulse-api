@@ -139,6 +139,8 @@ $app->router->group([
     require __DIR__.'/../routes/api/v1/asprak.php';
     require __DIR__.'/../routes/api/v1/student.php';
     require __DIR__.'/../routes/api/v1/schedule.php';
+    require __DIR__.'/../routes/api/v1/room.php';
+    require __DIR__.'/../routes/api/v1/classroom.php';
 });
 
 return $app;
