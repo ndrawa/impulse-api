@@ -12,6 +12,8 @@ use App\Transformers\LaboranTransformer;
 use App\Transformers\StudentTransformer;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
+use App\Imports\StudentClassImport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class LaboranController extends BaseController
 {
@@ -136,4 +138,45 @@ class LaboranController extends BaseController
 
         return $this->response->noContent();
     }
+
+    public function import(Request $request)
+    {
+        // $this->validate($request, [
+        //     'file' => 'require|mimes:xls,xlsx'
+        // ]);
+        Excel::import(new StudentClassImport, request()->file('file'));
+        return "import success";
+    }
+
+    // public function import(Request $request)
+    // {
+    //     $this->validate($request, [
+    //         'file'  => 'required|mimes:xls,xlsx'
+    //     ]);
+
+    //     $path = $request->file('file')->getRealPath();
+
+    //     $data = Excel::import($path)->get();
+
+    //     if($data->count() > 0)
+    //     {
+    //         foreach($data->toArray() as $key => $value)
+    //         {
+    //             foreach($value as $row)
+    //             {
+    //                 $insert_data[] = array(
+    //                     'name'  => $row['name'],
+    //                     'nim'   => $row['nim'],
+    //                     'gender'   => $row['gender'],
+    //                     'religion'    => $row['religion']
+    //                 );
+    //             }
+    //         }
+    //         if(!empty($insert_data))
+    //         {
+    //             $student = Student::create($insert_data);
+    //         }
+    //     }
+    //     return back()->with('success', 'Excel Data Imported successfully.');
+    // }
 }
