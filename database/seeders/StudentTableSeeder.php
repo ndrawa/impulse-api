@@ -15,6 +15,19 @@ class StudentTableSeeder extends Seeder
      */
     public function run()
     {
+        $admin = Student::create([
+            'nim' => 'admin2',
+            'name' => 'admin2',
+            'gender' => 'male',
+            'religion' => 'islam'
+        ]);
+        $admin->save();
+        // assign role
+        $user = $admin->user;
+        $user->assignRole(Role::ROLE_ASPRAK);
+        $user->assignRole(Role::ROLE_ASLAB);
+
+
         $student = Student::create([
             'nim' => '1301184327',
             'name' => 'Fariz M R',
