@@ -14,8 +14,10 @@ class StudentClass extends BaseModel
      * @var array
      */
 
-    // protected $fillable = [
-    // ];
+    protected $fillable = [
+        'student_id',
+        'class_id'
+    ];
 
     public function students()
     {
