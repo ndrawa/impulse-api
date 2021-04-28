@@ -25,11 +25,11 @@ class CreateSchedules extends Migration
                 'friday',
                 'saturday'
                 ]);
-            $table->time('time_start');
-            $table->time('time_end');
+            $table->datetime('time_start');
+            $table->datetime('time_end');
             $table->char('room_id', 26);
-            $table->time('periode_start');
-            $table->time('periode_end');
+            $table->datetime('periode_start');
+            $table->datetime('periode_end');
             $table->char('class_id', 26);
             $table->char('module_id', 26);
             $table->timestamps();
