@@ -41,5 +41,11 @@ class StaffTableSeeder extends Seeder
             'name' => 'ABDURRAHMAN JOKO SUSILO',
             'code' => 'AJS'
         ]);
+
+        $staff = Staff::create([
+            'nip' => '03790039',
+            'name' => 'Dr. VERA SURYANI, S.T., M.T.',
+            'code' => 'VRA'
+        ]);
     }
 }
