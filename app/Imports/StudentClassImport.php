@@ -2,24 +2,31 @@
 
 namespace App\Imports;
 
-use App\Models\Student;
-use Maatwebsite\Excel\Concerns\ToModel;
-use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use App\Models\StudentClass;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Collection;
+use Maatwebsite\Excel\Concerns\ToCollection;
 
-class StudentClassImport implements ToModel, WithHeadingRow
+class StudentClassImport implements ToCollection
 {
     /**
-    * @param array $row
-    *
-    * @return \Illuminate\Database\Eloquent\Model|null
+    * @param Collection $collection
     */
-    public function model(array $row)
+    public function collection(Collection $collection)
     {
-        return new Student([
-            'name' => $row['name'],
-            'nim' => $row['nim'],
-            'gender' => $row['gender'],
-            'religion' => $row['religion']
-        ]);
+        foreach ($collection as $row) 
+        {
+            // create Student classes
+            $student_id = DB::table('students')
+                ->where('nim', $row[0])
+                ->first();
+            $class_id = DB::table('classes')
+                ->where('name', $row[2])
+                ->first();
+            StudentClass::create([
+                'student_id' => $student_id->id,
+                'class_id' => $class_id->id,
+            ]);
+        }
     }
 }
