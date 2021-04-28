@@ -25,7 +25,8 @@ class CreateStudentsTable extends Migration
                 'katolik', 
                 'buddha', 
                 'hindu', 
-                'khonghucu'
+                'khonghucu',
+                'kristen'
                 ]);
             $table->timestamps();
             $table->foreign('user_id')
