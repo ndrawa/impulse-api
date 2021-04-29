@@ -42,8 +42,9 @@ class StudentImport implements ToCollection
             }
         }
 
-        foreach ($collection as $row) 
+        foreach ($collection as $key => $row) 
         {
+            if($key < 1 ) continue;
             Student::create([
                 'name' => $row[1],
                 'nim' => $row[0],

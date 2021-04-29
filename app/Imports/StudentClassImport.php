@@ -14,8 +14,9 @@ class StudentClassImport implements ToCollection
     */
     public function collection(Collection $collection)
     {
-        foreach ($collection as $row) 
+        foreach ($collection as $key => $row) 
         {
+            if($key < 1 ) continue;
             // create Student classes
             $student_id = DB::table('students')
                 ->where('nim', $row[0])

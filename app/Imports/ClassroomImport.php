@@ -14,8 +14,9 @@ class ClassroomImport implements ToCollection
     */
     public function collection(Collection $collection)
     {
-        foreach ($collection as $row) 
+        foreach ($collection as $key => $row) 
         {
+            if($key < 1 ) continue;
             if (Classroom::where('name', $row[2])->first() == null) {
                 $staff_id = DB::table('staffs')
                     ->where('code', $row[10])
