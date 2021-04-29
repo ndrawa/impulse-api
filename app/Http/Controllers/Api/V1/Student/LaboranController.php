@@ -92,7 +92,7 @@ class LaboranController extends BaseController
         ]);
 
         // create Course
-        if (Course::where('name', $request->course_name)->first() == null) {
+        if (Course::where('code', $request->course_code)->first() == null) {
             $course = Course::create([
                 'name' => $request->course_name,
                 'code' => $request->course_code
@@ -142,9 +142,9 @@ class LaboranController extends BaseController
 
     public function import(Request $request)
     {
+        Excel::import(new StudentImport, request()->file('file'));
         Excel::import(new CourseImport, request()->file('file'));
         Excel::import(new ClassroomImport, request()->file('file'));
-        Excel::import(new StudentImport, request()->file('file'));
         Excel::import(new StudentClassImport, request()->file('file'));
         return "import success";
     }
