@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1\Laboran;
+namespace App\Http\Controllers\Api\V1\Student;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Api\V1\BaseController;
@@ -12,6 +12,11 @@ use App\Transformers\LaboranTransformer;
 use App\Transformers\StudentTransformer;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
+use App\Imports\CourseImport;
+use App\Imports\ClassroomImport;
+use App\Imports\StudentImport;
+use App\Imports\StudentClassImport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class LaboranController extends BaseController
 {
@@ -23,22 +28,20 @@ class LaboranController extends BaseController
             ->join('courses', 'courses.id', '=', 'classes.course_id')
             ->join('staffs', 'staffs.id', '=', 'classes.staff_id')
             ->select('students.nim', 'students.name', 'classes.name as class_name', 'students.gender', 
-            'students.religion', 'courses.code as courses_code', 'courses.name as course_name',
-            'staffs.code as staff_code', 'classes.academic_year', 'classes.semester')
-            ->get();
-        // $per_page = env('PAGINATION_SIZE', 15);
-        // $request->whenHas('per_page', function($size) use (&$per_page) {
-        //     $per_page = $size;
-        // });
+            'students.religion', 'courses.code as course_code', 'courses.name as course_name',
+            'staffs.code as staff_code', 'classes.academic_year', 'classes.semester');
+        $per_page = env('PAGINATION_SIZE', 15);
+        $request->whenHas('per_page', function($size) use (&$per_page) {
+            $per_page = $size;
+        });
 
-        // $request->whenHas('search', function($search) use (&$users) {
-        //     $users = $users->where('name', 'LIKE', '%'.$search.'%');
-        // });
+        $request->whenHas('search', function($search) use (&$users) {
+            $users = $users->where('name', 'LIKE', '%'.$search.'%');
+        });
 
-        // $users = $users->paginate($per_page);
+        $users = $users->paginate($per_page);
 
-        // return $this->response->paginator($users, new LaboranTransformer);
-        return $this->response->item($users, new LaboranTransformer);
+        return $this->response->paginator($users, new LaboranTransformer);
     }
 
     public function show(Request $request, $id)
@@ -135,5 +138,14 @@ class LaboranController extends BaseController
         $student->delete();
 
         return $this->response->noContent();
+    }
+
+    public function import(Request $request)
+    {
+        Excel::import(new CourseImport, request()->file('file'));
+        Excel::import(new ClassroomImport, request()->file('file'));
+        Excel::import(new StudentImport, request()->file('file'));
+        Excel::import(new StudentClassImport, request()->file('file'));
+        return "import success";
     }
 }

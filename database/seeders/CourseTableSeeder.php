@@ -15,12 +15,12 @@ class CourseTableSeeder extends Seeder
     public function run()
     {
         $course = Course::create([
-            'code' => 'JRK',
+            'code' => 'CII2J4',
             'name' => 'JARINGAN KOMPUTER',
         ]);
         $course->save();
         $course = Course::create([
-            'code' => 'PBO',
+            'code' => 'CSG2H3',
             'name' => 'PEMROGRAMAN BERBASIS OBJEK',
         ]);
         $course->save();

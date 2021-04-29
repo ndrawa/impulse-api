@@ -111,9 +111,11 @@ $app->register(Rorecek\Ulid\UlidServiceProvider::class);
 $app->register(Dingo\Api\Provider\LumenServiceProvider::class);
 $app->register(Flipbox\LumenGenerator\LumenGeneratorServiceProvider::class);
 $app->register(Fruitcake\Cors\CorsServiceProvider::class);
+$app->register(Maatwebsite\Excel\ExcelServiceProvider::class);
 
 $app->alias('cache', \Illuminate\Cache\CacheManager::class);
 $app->alias('Ulid', Rorecek\Ulid\Facades\Ulid::class);
+// $app->alias('Excel', Maatwebsite\Excel\Facades\Excel::class);
 /*
 |--------------------------------------------------------------------------
 | Load The Application Routes

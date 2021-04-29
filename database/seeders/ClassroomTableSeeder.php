@@ -21,7 +21,7 @@ class ClassroomTableSeeder extends Seeder
                     ->first();
         $course_id = DB::table('courses')
                      ->select('id')
-                     ->where('code', 'JRK')
+                     ->where('code', 'CII2J4')
                      ->first();
 
         $classroom = Classroom::create([
