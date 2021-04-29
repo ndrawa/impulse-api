@@ -3,7 +3,7 @@
 $api = app('Dingo\Api\Routing\Router');
 
 $api->version('v1', [
-    'namespace' => 'App\Http\Controllers\Api\V1\Laboran',
+    'namespace' => 'App\Http\Controllers\Api\V1\Student',
     'middleware' => ['auth:api', 'role:admin|laboran'],
     'prefix' => 'v1/laboran'
 ], function($api) {

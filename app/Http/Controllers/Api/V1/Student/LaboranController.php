@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\V1\Laboran;
+namespace App\Http\Controllers\Api\V1\Student;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Api\V1\BaseController;
