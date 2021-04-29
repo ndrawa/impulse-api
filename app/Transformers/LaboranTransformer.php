@@ -3,28 +3,22 @@
 namespace App\Transformers;
 
 use League\Fractal\TransformerAbstract;
-use App\Models\Student;
-use App\Models\Classroom;
-use App\Models\Course;
-use App\Models\Staff;
 
 class LaboranTransformer extends TransformerAbstract
 {
-    public function transform(Student $student, Classroom $classroom, Course $course, Staff $staff)
+    public function transform($student)
     {
         return [
-            'id' => $student->id,
-            'name' => $student->name,
             'nim' => $student->nim,
+            'name' => $student->name,
+            'class_name' => $student->class_name,
             'gender' => $student->gender,
             'religion' => $student->religion,
-            'classname' => $classroom->name,
-            'academic_year' => $classroom->academic_year,
-            'semester' => $classroom->semester,
-            'coursename' => $course->name,
-            'staffname' => $staff->name,
-            'nip' => $staff->nip,
-            'code' => $staff->code,
+            'course_code' => $student->course_code,
+            'course_name' => $student->course_name,
+            'staff_code' => $student->staff_code,
+            'academic_year' => $student->academic_year,
+            'semester' => $student->semester,
         ];
     }
 }
