@@ -36,8 +36,27 @@ class LaboranController extends BaseController
         });
 
         $request->whenHas('search', function($search) use (&$users) {
-            $users = $users->where('name', 'LIKE', '%'.$search.'%');
+            $users = $users->where('students.name', 'ILIKE', '%'.$search.'%')
+                            ->orWhere('students.nim', 'ILIKE', '%'.$search.'%')
+                            ->orWhere('classes.name', 'ILIKE', '%'.$search.'%')
+                            ->orWhere('classes.gender', 'ILIKE', '%'.$search.'%')
+                            ->orWhere('students.religion', 'ILIKE', '%'.$search.'%')
+                            ->orWhere('courses.code', 'ILIKE', '%'.$search.'%')
+                            ->orWhere('courses.name', 'ILIKE', '%'.$search.'%')
+                            ->orWhere('staffs.code', 'ILIKE', '%'.$search.'%')
+                            ->orWhere('classes.academic_year', 'ILIKE', '%'.$search.'%')
+                            ->orWhere('classes.semester', 'ILIKE', '%'.$search.'%');
         });
+
+        if($request->has('orderBy') && $request->has('sortedBy')) {
+            $orderBy = $request->get('orderBy');
+            $sortedBy = $request->get('sortedBy');
+            $users->orderBy($orderBy, $sortedBy);
+        } 
+        else if($request->has('orderBy')) {
+            $orderBy = $request->get('orderBy');
+            $users->orderBy($orderBy);
+        }
 
         $users = $users->paginate($per_page);
 
