@@ -39,7 +39,7 @@ class LaboranController extends BaseController
             $users = $users->where('students.name', 'ILIKE', '%'.$search.'%')
                             ->orWhere('students.nim', 'ILIKE', '%'.$search.'%')
                             ->orWhere('classes.name', 'ILIKE', '%'.$search.'%')
-                            ->orWhere('classes.gender', 'ILIKE', '%'.$search.'%')
+                            ->orWhere('students.gender', 'ILIKE', '%'.$search.'%')
                             ->orWhere('students.religion', 'ILIKE', '%'.$search.'%')
                             ->orWhere('courses.code', 'ILIKE', '%'.$search.'%')
                             ->orWhere('courses.name', 'ILIKE', '%'.$search.'%')
