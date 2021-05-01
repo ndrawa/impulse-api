@@ -8,6 +8,7 @@ use App\Models\Student;
 use App\Models\StudentClass;
 use App\Models\Classroom;
 use App\Models\Course;
+use App\Models\User;
 use App\Transformers\LaboranTransformer;
 use App\Transformers\StudentTransformer;
 use Illuminate\Validation\Rule;
