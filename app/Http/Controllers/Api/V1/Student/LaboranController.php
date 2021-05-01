@@ -154,7 +154,8 @@ class LaboranController extends BaseController
     {
         $student = Student::findOrFail($id);
         $this->authorize('delete', $student);
-        $student->delete();
+        $user = User::findOrFail($student->user_id);
+        $user->delete();
 
         return $this->response->noContent();
     }
