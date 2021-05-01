@@ -9,6 +9,7 @@ class LaboranTransformer extends TransformerAbstract
     public function transform($student)
     {
         return [
+            'id' => $student->id,
             'nim' => $student->nim,
             'name' => $student->name,
             'class_name' => $student->class_name,
