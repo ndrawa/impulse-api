@@ -19,7 +19,8 @@ class ScheduleTransformer extends TransformerAbstract
             'periode_start' => $schedule->periode_start,
             'periode_end' => $schedule->periode_end,
             'class_id' => $schedule->class_id,
-            'module_id' => $schedule->module_id
+            'module_id' => $schedule->module_id,
+            'type' => $schedule->type
         ];
     }
 }

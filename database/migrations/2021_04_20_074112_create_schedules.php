@@ -25,13 +25,14 @@ class CreateSchedules extends Migration
                 'friday',
                 'saturday'
                 ]);
-            $table->time('time_start');
-            $table->time('time_end');
+            $table->time('time_start')->nullable();
+            $table->time('time_end')->nullable();
             $table->char('room_id', 26);
-            $table->time('periode_start');
-            $table->time('periode_end');
+            $table->time('periode_start')->nullable();
+            $table->time('periode_end')->nullable();
             $table->char('class_id', 26);
             $table->char('module_id', 26);
+            $table->string('type');
             $table->timestamps();
             $table->foreign('room_id')
                 ->references('id')

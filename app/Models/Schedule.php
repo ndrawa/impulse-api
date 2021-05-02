@@ -20,6 +20,10 @@ class Schedule extends BaseModel
         'time_end',
         'periode_start',
         'periode_end',
+        'type',
+        'room_id',
+        'class_id',
+        'module_id',
     ];
     // module_id belum dimasukkan, menunggu instruksi lebih lanjut karena
     // ada relasi ke tabel yg belum dibuat

@@ -5,8 +5,12 @@ namespace App\Http\Controllers\Api\V1\Schedule;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Api\V1\BaseController;
 use App\Models\Schedule;
+use App\Models\Classroom;
+use App\Models\Course;
 use App\Transformers\ScheduleTransformer;
 use Illuminate\Validation\Rule;
+use App\Imports\ScheduleImport;
+use Maatwebsite\Excel\Facades\Excel;
 
 
 class ScheduleController extends BaseController
@@ -28,21 +32,29 @@ class ScheduleController extends BaseController
         return $this->response->paginator($schedules, new ScheduleTransformer);
     }
 
-    // public function create(Request $request)
-    // {
-    //     $this->authorize('create', Schedule::class);
-    //     $this->validate($request, [
-    //         'name' => 'required',
-    //         'day' => 'required',
-    //         'time_start' => 'required',
-    //         'time_end' => 'required',
-    //         'room_id' => 'required',
-    //         'periode_start' => 'required',
-    //         'periode_end' => 'required',
-    //         'class_id' => 'required',
-    //     ]);
-    //     $schedule = Schedule::create($schedule->all());
+    public function import(Request $request) {
+        Excel::import(new ScheduleImport, request()->file('file'));
 
-    //     return $this->response->item($schedule, new ScheduleTransformer);
-    // }
+        return 'import success';
+    }
+
+    public function create(Request $request)
+    {
+        // $this->authorize('create', $this->user());
+        $this->validate($request, [
+            'name' => 'required',
+            'day' => 'required',
+            'time_start' => 'required',
+            'time_end' => 'required',
+            'room_id' => 'required',
+            // 'periode_start' => 'required',
+            // 'periode_end' => 'required',
+            'class_id' => 'required',
+            'module_id' => 'required',
+            'type' => 'required',
+        ]);
+        $schedule = Schedule::create($request->all());
+
+        return $this->response->item($schedule, new ScheduleTransformer);
+    }
 }

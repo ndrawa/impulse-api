@@ -34,6 +34,7 @@ class ScheduleTableSeeder extends Seeder
             'periode_end' => '10:30:00',
             'class_id' => $class_id->id,
             'module_id' => 'belum ada',
+            'type' => 'TETAP',
         ]);
         $schedule->save();
     }

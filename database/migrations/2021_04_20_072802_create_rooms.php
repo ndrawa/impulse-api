@@ -16,9 +16,9 @@ class CreateRooms extends Migration
         Schema::create('rooms', function (Blueprint $table) {
             $table->char('id', 26)->primary();
             $table->string('name');
-            $table->string('desc');
-            $table->string('msteam_code');
-            $table->string('msteam_link');
+            $table->string('desc')->nullable();
+            $table->string('msteam_code')->nullable();
+            $table->string('msteam_link')->nullable();
             $table->timestamps();
         });
     }
