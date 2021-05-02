@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Api\V1\Staff;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Api\V1\BaseController;
 use App\Models\Staff;
+use App\Models\User;
+use App\Imports\StaffImport;
 use App\Transformers\StaffTransformer;
 use Illuminate\Validation\Rule;
-
+use Maatwebsite\Excel\Facades\Excel;
 
 class StaffController extends BaseController
 {
@@ -77,9 +79,16 @@ class StaffController extends BaseController
     public function delete(Request $request, $id)
     {
         $staff = Staff::findOrFail($id);
+        $user = User::findOrFail($staff->user_id);
         $this->authorize('delete', $staff);
-        $staff->delete();
+        $user->delete();
 
         return $this->response->noContent();
+    }
+
+    public function import(Request $request)
+    {
+        Excel::import(new StaffImport, request()->file('file'));
+        return "import success";
     }
 }

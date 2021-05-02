@@ -3,7 +3,6 @@
 namespace App\Imports;
 
 use App\Models\Student;
-use App\Models\StudentClass;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToCollection;
 
@@ -42,14 +41,18 @@ class StudentImport implements ToCollection
             }
         }
 
-        foreach ($collection as $row) 
+        foreach ($collection as $key => $row) 
         {
-            Student::create([
-                'name' => $row[1],
-                'nim' => $row[0],
-                'gender' => replace_gender($row[4]),
-                'religion' => replace_religion($row[5]),
-            ]);
+            if($key < 1 ) continue;
+            if (Student::where('nim', $row[0])->first() == null) 
+            {
+                Student::create([
+                    'name' => $row[1],
+                    'nim' => $row[0],
+                    'gender' => replace_gender($row[4]),
+                    'religion' => replace_religion($row[5]),
+                ]);
+            }
         }
     }
 }

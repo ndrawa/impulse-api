@@ -12,4 +12,5 @@ $api->version('v1', [
     $api->put('/{id}', ['as' => 'staff.update', 'uses' => 'StaffController@update']);
     $api->post('/', ['as' => 'staff.create', 'uses' => 'StaffController@create']);
     $api->delete('/{id}', ['as' => 'staff.delete', 'uses' => 'StaffController@delete']);
+    $api->post('/import', ['as' => 'staff.import', 'uses' => 'StaffController@import']);
 });

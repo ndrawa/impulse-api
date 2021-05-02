@@ -8,6 +8,7 @@ use App\Models\Student;
 use App\Models\StudentClass;
 use App\Models\Classroom;
 use App\Models\Course;
+use App\Models\User;
 use App\Transformers\LaboranTransformer;
 use App\Transformers\StudentTransformer;
 use Illuminate\Validation\Rule;
@@ -27,7 +28,7 @@ class LaboranController extends BaseController
             ->join('classes', 'classes.id', '=', 'students_classes.class_id')
             ->join('courses', 'courses.id', '=', 'classes.course_id')
             ->join('staffs', 'staffs.id', '=', 'classes.staff_id')
-            ->select('students.nim', 'students.name', 'classes.name as class_name', 'students.gender', 
+            ->select('students.id', 'students.nim', 'students.name', 'classes.name as class_name', 'students.gender', 
             'students.religion', 'courses.code as course_code', 'courses.name as course_name',
             'staffs.code as staff_code', 'classes.academic_year', 'classes.semester');
         $per_page = env('PAGINATION_SIZE', 15);
@@ -36,8 +37,27 @@ class LaboranController extends BaseController
         });
 
         $request->whenHas('search', function($search) use (&$users) {
-            $users = $users->where('name', 'LIKE', '%'.$search.'%');
+            $users = $users->where('students.name', 'ILIKE', '%'.$search.'%')
+                            ->orWhere('students.nim', 'ILIKE', '%'.$search.'%')
+                            ->orWhere('classes.name', 'ILIKE', '%'.$search.'%')
+                            ->orWhere('students.gender', 'ILIKE', '%'.$search.'%')
+                            ->orWhere('students.religion', 'ILIKE', '%'.$search.'%')
+                            ->orWhere('courses.code', 'ILIKE', '%'.$search.'%')
+                            ->orWhere('courses.name', 'ILIKE', '%'.$search.'%')
+                            ->orWhere('staffs.code', 'ILIKE', '%'.$search.'%')
+                            ->orWhere('classes.academic_year', 'ILIKE', '%'.$search.'%')
+                            ->orWhere('classes.semester', 'ILIKE', '%'.$search.'%');
         });
+
+        if($request->has('orderBy') && $request->has('sortedBy')) {
+            $orderBy = $request->get('orderBy');
+            $sortedBy = $request->get('sortedBy');
+            $users->orderBy($orderBy, $sortedBy);
+        } 
+        else if($request->has('orderBy')) {
+            $orderBy = $request->get('orderBy');
+            $users->orderBy($orderBy);
+        }
 
         $users = $users->paginate($per_page);
 
@@ -51,7 +71,7 @@ class LaboranController extends BaseController
             ->join('classes', 'classes.id', '=', 'students_classes.class_id')
             ->join('courses', 'courses.id', '=', 'classes.course_id')
             ->join('staffs', 'staffs.id', '=', 'classes.staff_id')
-            ->select('students.nim', 'students.name', 'classes.name as class_name', 'students.gender', 
+            ->select('students.id', 'students.nim', 'students.name', 'classes.name as class_name', 'students.gender', 
             'students.religion', 'courses.code as courses_code', 'courses.name as course_name',
             'staffs.code as staff_code', 'classes.academic_year', 'classes.semester')
             ->where('students.id', '=', $id)
@@ -92,7 +112,7 @@ class LaboranController extends BaseController
         ]);
 
         // create Course
-        if (Course::where('name', $request->course_name)->first() == null) {
+        if (Course::where('code', $request->course_code)->first() == null) {
             $course = Course::create([
                 'name' => $request->course_name,
                 'code' => $request->course_code
@@ -135,16 +155,17 @@ class LaboranController extends BaseController
     {
         $student = Student::findOrFail($id);
         $this->authorize('delete', $student);
-        $student->delete();
+        $user = User::findOrFail($student->user_id);
+        $user->delete();
 
         return $this->response->noContent();
     }
 
     public function import(Request $request)
     {
+        Excel::import(new StudentImport, request()->file('file'));
         Excel::import(new CourseImport, request()->file('file'));
         Excel::import(new ClassroomImport, request()->file('file'));
-        Excel::import(new StudentImport, request()->file('file'));
         Excel::import(new StudentClassImport, request()->file('file'));
         return "import success";
     }
