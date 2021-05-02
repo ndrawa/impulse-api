@@ -22,8 +22,20 @@ class StaffController extends BaseController
         });
 
         $request->whenHas('search', function($search) use (&$staffs) {
-            $staffs = $staffs->where('name', 'LIKE', '%'.$search.'%');
+            $users = $users->where('name', 'ILIKE', '%'.$search.'%')
+                            ->orWhere('nip', 'ILIKE', '%'.$search.'%')
+                            ->orWhere('code', 'ILIKE', '%'.$search.'%');
         });
+
+        if($request->has('orderBy') && $request->has('sortedBy')) {
+            $orderBy = $request->get('orderBy');
+            $sortedBy = $request->get('sortedBy');
+            $staffs->orderBy($orderBy, $sortedBy);
+        } 
+        else if($request->has('orderBy')) {
+            $orderBy = $request->get('orderBy');
+            $staffs->orderBy($orderBy);
+        }
 
         $staffs = $staffs->paginate($per_page);
 
