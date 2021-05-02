@@ -164,9 +164,6 @@ class LaboranController extends BaseController
     public function import(Request $request)
     {
         Excel::import(new StudentImport, request()->file('file'));
-        Excel::import(new CourseImport, request()->file('file'));
-        Excel::import(new ClassroomImport, request()->file('file'));
-        Excel::import(new StudentClassImport, request()->file('file'));
         return "import success";
     }
 }
