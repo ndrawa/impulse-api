@@ -12,7 +12,7 @@ class ClassroomController extends BaseController
 {
     public function index(Request $request)
     {
-        $classrooms = Classroom::query()->get();
+        $classrooms = Classroom::query();
         $per_page = env('PAGINATION_SIZE', 15);
         $request->whenHas('per_page', function($size) use (&$per_page) {
             $per_page = $size;
@@ -36,7 +36,7 @@ class ClassroomController extends BaseController
 
         $classrooms = $classrooms->paginate($per_page);
 
-        return $this->response->item($classrooms, new ClassroomTransformer);
+        return $this->response->paginator($classrooms, new ClassroomTransformer);
     }
 
     public function dropdown(Request $request)
