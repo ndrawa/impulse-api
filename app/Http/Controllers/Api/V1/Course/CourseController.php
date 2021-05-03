@@ -19,8 +19,19 @@ class CourseController extends BaseController
         });
 
         $request->whenHas('search', function($search) use (&$staffs) {
-            $rooms = $rooms->where('name', 'LIKE', '%'.$search.'%');
+            $rooms = $rooms->where('name', 'ILIKE', '%'.$search.'%')
+                            ->orWhere('code', 'ILIKE', '%'.$search.'%');
         });
+
+        if($request->has('orderBy') && $request->has('sortedBy')) {
+            $orderBy = $request->get('orderBy');
+            $sortedBy = $request->get('sortedBy');
+            $rooms->orderBy($orderBy, $sortedBy);
+        } 
+        else if($request->has('orderBy')) {
+            $orderBy = $request->get('orderBy');
+            $rooms->orderBy($orderBy);
+        }
 
         $courses = $courses->paginate($per_page);
 

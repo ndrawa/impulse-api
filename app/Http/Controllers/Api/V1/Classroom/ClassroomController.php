@@ -13,17 +13,35 @@ class ClassroomController extends BaseController
     public function index(Request $request)
     {
         $classrooms = Classroom::query()->get();
-        // $per_page = env('PAGINATION_SIZE', 15);
-        // $request->whenHas('per_page', function($size) use (&$per_page) {
-        //     $per_page = $size;
-        // });
+        $per_page = env('PAGINATION_SIZE', 15);
+        $request->whenHas('per_page', function($size) use (&$per_page) {
+            $per_page = $size;
+        });
 
-        // $request->whenHas('search', function($search) use (&$staffs) {
-        //     $classrooms = $classrooms->where('name', 'LIKE', '%'.$search.'%');
-        // });
+        $request->whenHas('search', function($search) use (&$staffs) {
+            $classrooms = $classrooms->where('name', 'LIKE', '%'.$search.'%')
+                                        ->orWhere('academic_year', 'ILIKE', '%'.$search.'%')
+                                        ->orWhere('semester', 'ILIKE', '%'.$search.'%');
+        });
 
-        // $classrooms = $classrooms->paginate($per_page);
+        if($request->has('orderBy') && $request->has('sortedBy')) {
+            $orderBy = $request->get('orderBy');
+            $sortedBy = $request->get('sortedBy');
+            $classrooms->orderBy($orderBy, $sortedBy);
+        } 
+        else if($request->has('orderBy')) {
+            $orderBy = $request->get('orderBy');
+            $classrooms->orderBy($orderBy);
+        }
 
+        $classrooms = $classrooms->paginate($per_page);
+
+        return $this->response->item($classrooms, new ClassroomTransformer);
+    }
+
+    public function dropdown(Request $request)
+    {
+        $classrooms = Classroom::get();
         return $this->response->item($classrooms, new ClassroomTransformer);
     }
 
