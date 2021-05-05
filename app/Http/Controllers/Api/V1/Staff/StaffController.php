@@ -22,7 +22,7 @@ class StaffController extends BaseController
         });
 
         $request->whenHas('search', function($search) use (&$staffs) {
-            $users = $users->where('name', 'ILIKE', '%'.$search.'%')
+            $staffs = $staffs->where('name', 'ILIKE', '%'.$search.'%')
                             ->orWhere('nip', 'ILIKE', '%'.$search.'%')
                             ->orWhere('code', 'ILIKE', '%'.$search.'%');
         });
