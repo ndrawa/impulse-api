@@ -9,6 +9,7 @@ $api->version('v1', [
 ], function($api) {
     $api->get('/', ['as' => 'classroom.index', 'uses' => 'ClassroomController@index']);
     $api->get('/dropdown', ['as' => 'classroom.dropdown', 'uses' => 'ClassroomController@dropdown']);
+    $api->get('/byname', ['as' => 'classroom.byname', 'uses' => 'ClassroomController@byname']);
     $api->get('/{id}', ['as' => 'classroom.show', 'uses' => 'ClassroomController@show']);
     $api->put('/{id}', ['as' => 'classroom.update', 'uses' => 'ClassroomController@update']);
     $api->post('/', ['as' => 'classroom.create', 'uses' => 'ClassroomController@create']);

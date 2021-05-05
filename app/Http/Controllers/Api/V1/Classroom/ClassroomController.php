@@ -18,8 +18,8 @@ class ClassroomController extends BaseController
             $per_page = $size;
         });
 
-        $request->whenHas('search', function($search) use (&$staffs) {
-            $classrooms = $classrooms->where('name', 'LIKE', '%'.$search.'%')
+        $request->whenHas('search', function($search) use (&$classrooms) {
+            $classrooms = $classrooms->where('name', 'ILIKE', '%'.$search.'%')
                                         ->orWhere('academic_year', 'ILIKE', '%'.$search.'%')
                                         ->orWhere('semester', 'ILIKE', '%'.$search.'%');
         });
@@ -41,8 +41,23 @@ class ClassroomController extends BaseController
 
     public function dropdown(Request $request)
     {
-        $classrooms = Classroom::get();
+        $classrooms = Classroom::query();
+
+        if ($request->has('byname')) {
+            $request->whenHas('byname', function($search) use (&$classrooms) {
+                $classrooms = $classrooms->where('name', 'ILIKE', '%'.$search.'%')->get();
+            });
+        } else {
+            $classrooms = Classroom::get();
+        }
+        
         return $this->response->item($classrooms, new ClassroomTransformer);
+    }
+
+    public function byname(Request $request)
+    {
+        $classroom = Classroom::select('name')->distinct()->get();
+        return $this->response->item($classroom, new ClassroomTransformer);
     }
 
     public function show(Request $request, $id)
