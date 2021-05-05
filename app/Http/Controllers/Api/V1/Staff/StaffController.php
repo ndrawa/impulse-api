@@ -42,6 +42,21 @@ class StaffController extends BaseController
         return $this->response->paginator($staffs, new StaffTransformer);
     }
 
+    public function getall(Request $request)
+    {
+        $staff = Staff::query();
+
+        if ($request->has('search')) {
+            $request->whenHas('search', function($search) use (&$staff) {
+                $staff = $staff->where('id', 'LIKE', '%'.$search.'%')->get();
+            });
+        } else {
+            $staff = Staff::get();
+        }
+
+        return $this->response->item($staff, new StaffTransformer);
+    }
+
     public function show(Request $request, $id)
     {
         $staff = Staff::findOrFail($id);

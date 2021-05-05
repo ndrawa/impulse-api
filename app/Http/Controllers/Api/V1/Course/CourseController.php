@@ -38,9 +38,18 @@ class CourseController extends BaseController
         return $this->response->paginator($courses, new CourseTransformer);
     }
 
-    public function dropdown(Request $request)
+    public function getall(Request $request)
     {
-        $courses = Course::get();
+        $courses = Course::query();
+
+        if ($request->has('search')) {
+            $request->whenHas('search', function($search) use (&$courses) {
+                $courses = $courses->where('id', 'LIKE', '%'.$search.'%')->get();
+            });
+        } else {
+            $courses = Course::get();
+        }
+
         return $this->response->item($courses, new CourseTransformer);
     }
 

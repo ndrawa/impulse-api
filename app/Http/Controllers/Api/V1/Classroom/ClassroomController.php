@@ -39,12 +39,12 @@ class ClassroomController extends BaseController
         return $this->response->paginator($classrooms, new ClassroomTransformer);
     }
 
-    public function dropdown(Request $request)
+    public function getall(Request $request)
     {
         $classrooms = Classroom::query();
 
-        if ($request->has('byname')) {
-            $request->whenHas('byname', function($search) use (&$classrooms) {
+        if ($request->has('search')) {
+            $request->whenHas('search', function($search) use (&$classrooms) {
                 $classrooms = $classrooms->where('name', 'ILIKE', '%'.$search.'%')->get();
             });
         } else {
