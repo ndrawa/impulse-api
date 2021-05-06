@@ -26,11 +26,11 @@ class CourseController extends BaseController
         if($request->has('orderBy') && $request->has('sortedBy')) {
             $orderBy = $request->get('orderBy');
             $sortedBy = $request->get('sortedBy');
-            $rooms->orderBy($orderBy, $sortedBy);
+            $courses->orderBy($orderBy, $sortedBy);
         } 
         else if($request->has('orderBy')) {
             $orderBy = $request->get('orderBy');
-            $rooms->orderBy($orderBy);
+            $courses->orderBy($orderBy);
         }
 
         $courses = $courses->paginate($per_page);
