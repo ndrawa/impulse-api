@@ -22,12 +22,39 @@ class StaffController extends BaseController
         });
 
         $request->whenHas('search', function($search) use (&$staffs) {
-            $staffs = $staffs->where('name', 'LIKE', '%'.$search.'%');
+            $staffs = $staffs->where('name', 'ILIKE', '%'.$search.'%')
+                            ->orWhere('nip', 'ILIKE', '%'.$search.'%')
+                            ->orWhere('code', 'ILIKE', '%'.$search.'%');
         });
+
+        if($request->has('orderBy') && $request->has('sortedBy')) {
+            $orderBy = $request->get('orderBy');
+            $sortedBy = $request->get('sortedBy');
+            $staffs->orderBy($orderBy, $sortedBy);
+        } 
+        else if($request->has('orderBy')) {
+            $orderBy = $request->get('orderBy');
+            $staffs->orderBy($orderBy);
+        }
 
         $staffs = $staffs->paginate($per_page);
 
         return $this->response->paginator($staffs, new StaffTransformer);
+    }
+
+    public function getall(Request $request)
+    {
+        $staff = Staff::query();
+
+        if ($request->has('search')) {
+            $request->whenHas('search', function($search) use (&$staff) {
+                $staff = $staff->where('id', 'LIKE', '%'.$search.'%')->get();
+            });
+        } else {
+            $staff = Staff::get();
+        }
+
+        return $this->response->item($staff, new StaffTransformer);
     }
 
     public function show(Request $request, $id)
