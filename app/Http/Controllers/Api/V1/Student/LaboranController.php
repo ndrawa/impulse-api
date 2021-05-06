@@ -13,8 +13,6 @@ use App\Transformers\LaboranTransformer;
 use App\Transformers\StudentTransformer;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
-use App\Imports\CourseImport;
-use App\Imports\ClassroomImport;
 use App\Imports\StudentImport;
 use App\Imports\StudentClassImport;
 use Maatwebsite\Excel\Facades\Excel;
