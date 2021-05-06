@@ -18,8 +18,8 @@ class CourseController extends BaseController
             $per_page = $size;
         });
 
-        $request->whenHas('search', function($search) use (&$staffs) {
-            $rooms = $rooms->where('name', 'ILIKE', '%'.$search.'%')
+        $request->whenHas('search', function($search) use (&$courses) {
+            $courses = $courses->where('name', 'ILIKE', '%'.$search.'%')
                             ->orWhere('code', 'ILIKE', '%'.$search.'%');
         });
 
