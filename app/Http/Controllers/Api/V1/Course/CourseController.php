@@ -91,7 +91,7 @@ class CourseController extends BaseController
             $course->delete();
             return $this->response->noContent();
         } else {
-            return $this->response->error('Courses is in use.', 500);
+            return $this->response->error('This course is in use.', 500);
         }
     }   
 }
