@@ -237,7 +237,7 @@ class LaboranController extends BaseController
             $student = Student::where('nim', $no_induk)->first();
             $user = User::find($student->user_id);
             return $this->response->item($user, new UserTransformer);
-        } elseif (Staff::where('nip', $request->no_induk)->first() != null) {
+        } elseif (Staff::where('nip', $no_induk)->first() != null) {
             $staff = Staff::where('nip', $no_induk)->first();
             $user = User::find($staff->user_id);
             return $this->response->item($user, new UserTransformer);
