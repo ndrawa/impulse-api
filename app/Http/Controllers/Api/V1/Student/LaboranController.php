@@ -5,17 +5,20 @@ namespace App\Http\Controllers\Api\V1\Student;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Api\V1\BaseController;
 use App\Models\Student;
+use App\Models\Staff;
 use App\Models\StudentClass;
 use App\Models\Classroom;
 use App\Models\Course;
 use App\Models\User;
 use App\Transformers\LaboranTransformer;
 use App\Transformers\StudentTransformer;
+use App\Transformers\UserTransformer;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
 use App\Imports\StudentImport;
 use App\Imports\StudentClassImport;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Models\Role;
 
 class LaboranController extends BaseController
 {
@@ -179,13 +182,67 @@ class LaboranController extends BaseController
         ]);
     }
 
-    public function set_rules(Request $request)
+    public function set_role(Request $request)
     {
+        $this->validate($request, [
+            'no_induk' => 'required',
+            'student' => 'required',
+            'asprak' => 'required',
+            'aslab' => 'required',
+            'staff' => 'required',
+            'laboran' => 'required',
+            'dosen' => 'required'
+        ]);
 
+        if ($request->student == 1) {
+            $student = Student::where('nim', $request->no_induk)->first();
+            $user = User::find($student->user_id);
+
+            if ($request->asprak == 0) {
+                $user->removeRole(Role::ROLE_ASPRAK);
+            } else {
+                $user->assignRole(Role::ROLE_ASPRAK);
+            }
+
+            if ($request->aslab == 0) {
+                $user->removeRole(Role::ROLE_ASLAB);
+            } else {
+                $user->assignRole(Role::ROLE_ASLAB);
+            }
+        } else {
+            $staff = Staff::where('nip', $request->no_induk)->first();
+            $user = User::find($staff->user_id);
+
+            if ($request->laboran == 0) {
+                $user->removeRole(Role::ROLE_LABORAN);
+            } else {
+                $user->assignRole(Role::ROLE_LABORAN);
+            }
+
+            if ($request->dosen == 0) {
+                $user->removeRole(Role::ROLE_DOSEN);
+            } else {
+                $user->assignRole(Role::ROLE_DOSEN);
+            }
+        }
     }
 
-    public function get_rules(Request $request)
+    public function get_role($no_induk)
     {
-        
+        // $this->validate($request, [
+        //     'no_induk' => 'required'
+        // ]);
+
+        if (Student::where('nim', $no_induk)->first() != null) {
+            $student = Student::where('nim', $no_induk)->first();
+            $user = User::find($student->user_id);
+            return $this->response->item($user, new UserTransformer);
+        } elseif (Staff::where('nip', $request->no_induk)->first() != null) {
+            $staff = Staff::where('nip', $no_induk)->first();
+            $user = User::find($staff->user_id);
+            return $this->response->item($user, new UserTransformer);
+        } else {
+            return 'Nim/NIP tidak ditemukan!!!';
+        }
     }
 }
