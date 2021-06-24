@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1\Course;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Api\V1\BaseController;
 use App\Models\Course;
+use App\Models\Classroom;
 use App\Transformers\CourseTransformer;
 use Illuminate\Validation\Rule;
 
@@ -85,9 +86,12 @@ class CourseController extends BaseController
 
     public function delete(Request $request, $id)
     {
-        $course = Course::findOrFail($id);
-        $course->delete();
-
-        return $this->response->noContent();
-    }
+        if (Classroom::where('course_id', $id)->first() == null) {
+            $course = Course::findOrFail($id);
+            $course->delete();
+            return $this->response->noContent();
+        } else {
+            return $this->response->error('This course is in use.', 500);
+        }
+    }   
 }

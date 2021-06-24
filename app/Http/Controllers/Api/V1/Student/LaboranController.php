@@ -102,12 +102,14 @@ class LaboranController extends BaseController
         ]);
 
         // create Student
-        $student = Student::create([
-            'name' => $request->name,
-            'nim' => $request->nim,
-            'gender' => $request->gender,
-            'religion' => $request->religion
-        ]);
+        if (User::where('nim', $request->nim)->first() == null) {
+            $student = Student::create([
+                'name' => $request->name,
+                'nim' => $request->nim,
+                'gender' => $request->gender,
+                'religion' => $request->religion
+            ]);
+        }
 
         // create Course
         if (Course::where('code', $request->course_code)->first() == null) {
@@ -163,5 +165,27 @@ class LaboranController extends BaseController
     {
         Excel::import(new StudentImport, request()->file('file'));
         return "import success";
+    }
+
+    public function student_classes(Request $request)
+    {
+        $this->validate($request, [
+            'student_id' => 'required',
+            'class_id' => 'required'
+        ]);
+        StudentClass::create([
+            'student_id' => $student_id->id,
+            'class_id' => $class_id->id,
+        ]);
+    }
+
+    public function set_rules(Request $request)
+    {
+
+    }
+
+    public function get_rules(Request $request)
+    {
+        
     }
 }
