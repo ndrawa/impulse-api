@@ -229,10 +229,6 @@ class LaboranController extends BaseController
 
     public function get_role($no_induk)
     {
-        // $this->validate($request, [
-        //     'no_induk' => 'required'
-        // ]);
-
         if (Student::where('nim', $no_induk)->first() != null) {
             $student = Student::where('nim', $no_induk)->first();
             $user = User::find($student->user_id);
