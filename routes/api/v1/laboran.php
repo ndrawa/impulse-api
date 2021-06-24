@@ -13,4 +13,5 @@ $api->version('v1', [
     $api->post('/student', ['as' => 'laboran.create', 'uses' => 'LaboranController@create']);
     $api->delete('/student/{id}', ['as' => 'laboran.delete', 'uses' => 'LaboranController@delete']);
     $api->post('/student/import', ['as' => 'laboran.import', 'uses' => 'LaboranController@import']);
+    $api->post('/student/classes', ['as' => 'laboran.import', 'uses' => 'LaboranController@student_classes']);
 });

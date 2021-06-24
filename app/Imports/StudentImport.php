@@ -47,55 +47,51 @@ class StudentImport implements ToCollection
 
         foreach ($collection as $key => $row) 
         {
-            if($key < 1 ) continue;
-            if (Student::where('nim', $row[0])->first() == null) 
-            {
-                Student::create([
-                    'name' => $row[1],
-                    'nim' => $row[0],
-                    'gender' => replace_gender($row[4]),
-                    'religion' => replace_religion($row[5]),
-                ]);
-            }
-
-            if (Student::where('nim', $row[0])->first() != null) 
-            {
-                if (Course::where('code', $row[8])->first() == null) 
+            if ($row[0] != null) {
+                if($key < 1 ) continue;
+                if (Student::where('nim', $row[0])->first() == null) 
                 {
-                    $course = Course::create([
-                        'name' => $row[9],
-                        'code' => $row[8]
+                    Student::create([
+                        'name' => $row[1],
+                        'nim' => $row[0],
+                        'gender' => replace_gender($row[4]),
+                        'religion' => replace_religion($row[5]),
                     ]);
                 }
-            }
 
-            if (Student::where('nim', $row[0])->first() != null) 
-            {
-                if (Classroom::where('name', $row[2])->first() == null) 
+                if (Student::where('nim', $row[0])->first() != null) 
                 {
-                    $staff_id = Staff::where('code', $row[10])->first();
-                    $course_id = Course::where('code', $row[8])->first();
-                    $classroom = Classroom::create([
-                        'staff_id' => $staff_id->id,
-                        'name' => $row[2],
-                        'course_id' => $course_id->id,
-                        'academic_year' => $row[11],
-                        'semester' => $row[12],
-                    ]);
-                    $classroom->save();
-                }    
-            }
+                    if (Course::where('code', $row[8])->first() == null) 
+                    {
+                        $course = Course::create([
+                            'name' => $row[9],
+                            'code' => $row[8]
+                        ]);
+                    }
 
-            if (Student::where('nim', $row[0])->first() != null) 
-            {
-                $student_id = Student::where('nim', $row[0])->first();
-                $class_id = Classroom::where('name', $row[2])->first();
-                if (StudentClass::where(['student_id' => $student_id->id, 'class_id' => $class_id->id])->first() == null) 
-                {
-                    StudentClass::create([
-                        'student_id' => $student_id->id,
-                        'class_id' => $class_id->id,
-                    ]);
+                    if (Classroom::where('name', $row[2])->where('course_id', Course::where('code', $row[8])->first()->id)->first() == null) 
+                    {
+                        $staff_id = Staff::where('code', $row[10])->first();
+                        $course_id = Course::where('code', $row[8])->first();
+                        $classroom = Classroom::create([
+                            'staff_id' => $staff_id->id,
+                            'name' => $row[2],
+                            'course_id' => $course_id->id,
+                            'academic_year' => $row[11],
+                            'semester' => $row[12],
+                        ]);
+                        $classroom->save();
+                    }   
+                    
+                    $student_id = Student::where('nim', $row[0])->first();
+                    $class_id = Classroom::where('name', $row[2])->where('course_id', Course::where('code', $row[8])->first()->id)->first();
+                    if (StudentClass::where(['student_id' => $student_id->id, 'class_id' => $class_id->id])->first() == null) 
+                    {
+                        StudentClass::create([
+                            'student_id' => $student_id->id,
+                            'class_id' => $class_id->id,
+                        ]);
+                    }
                 }
             }
         }
