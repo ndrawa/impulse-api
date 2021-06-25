@@ -12,6 +12,7 @@ use App\Models\Course;
 use App\Models\User;
 use App\Transformers\LaboranTransformer;
 use App\Transformers\StudentTransformer;
+use App\Transformers\StudentClassesTransformer;
 use App\Transformers\UserTransformer;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
@@ -182,6 +183,11 @@ class LaboranController extends BaseController
         ]);
     }
 
+    public function get_student_classes(){
+        $student_class = StudentClass::query()->get();
+        return $this->response->item($student_class, new StudentClassesTransformer);
+    }
+
     public function set_role(Request $request)
     {
         $this->validate($request, [
@@ -238,7 +244,7 @@ class LaboranController extends BaseController
             $user = User::find($staff->user_id);
             return $this->response->item($user, new UserTransformer);
         } else {
-            return 'Nim/NIP tidak ditemukan!!!';
+            return $this->response->errorerrorNotFound('NIM/NIP not found.');
         }
     }
 }
