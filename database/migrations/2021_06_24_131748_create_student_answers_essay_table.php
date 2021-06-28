@@ -18,6 +18,8 @@ class CreateStudentAnswersEssayTable extends Migration
             $table->char('question_id', 26);
             $table->char('user_id', 26);
             $table->text('answers');
+            $table->timestamps();
+
             $table->foreign('question_id')
                 ->references('id')
                 ->on('questions')

@@ -15,8 +15,9 @@ class CreateTestsTable extends Migration
     {
         Schema::create('tests', function (Blueprint $table) {
             $table->char('id', 26)->primary();
-            $table->timestamp('time_start');
-            $table->timestamp('time_end');
+            $table->dateTime('time_start');
+            $table->dateTime('time_end');
+            $table->timestamps();
         });
     }
 

@@ -17,7 +17,8 @@ class CreateAnswersTable extends Migration
             $table->char('id', 26)->primary();
             $table->char('question_id', 26);
             $table->text('answer');
-            $table->boolean('is_answer');
+            $table->boolean('is_answer')->nullable();
+            $table->timestamps();
 
             $table->foreign('question_id')
                 ->references('id')

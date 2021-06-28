@@ -21,6 +21,7 @@ class CreateQuestionsTable extends Migration
                 'multiple_choice'
             ]);
             $table->text('question');
+            $table->timestamps();
 
             $table->foreign('test_id')
                 ->references('id')

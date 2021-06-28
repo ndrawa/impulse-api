@@ -18,6 +18,8 @@ class CreateStudentAnswersMultipleChoiceTable extends Migration
             $table->char('question_id', 26);
             $table->char('answer_id', 26);
             $table->char('user_id', 26);
+            $table->timestamps();
+
             $table->foreign('question_id')
                 ->references('id')
                 ->on('questions')

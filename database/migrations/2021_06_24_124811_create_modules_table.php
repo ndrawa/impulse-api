@@ -18,6 +18,7 @@ class CreateModulesTable extends Migration
             $table->char('pretest_id', 26);
             $table->char('posttest_id', 26);
             $table->char('journal_id', 26);
+            $table->timestamps();
 
             $table->foreign('pretest_id')
                 ->references('id')
