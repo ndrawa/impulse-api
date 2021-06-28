@@ -10,4 +10,6 @@ $api->version('v1', [
     $api->get('/', ['as' => 'schedule.index', 'uses' => 'ScheduleController@index']);
     $api->post('/', ['as' => 'schedule.create', 'uses' => 'ScheduleController@create']);
     $api->post('/import', ['as' => 'staff.import', 'uses' => 'ScheduleController@import']);
+    $api->post('/get-test', ['as' => 'schedule.tests', 'uses' => 'ScheduleController@getTest']);
+    $api->post('/create-test', ['as' => 'schedule.createtest', 'uses' => 'ScheduleController@create_test']);
 });
