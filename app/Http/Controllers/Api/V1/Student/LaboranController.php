@@ -38,18 +38,68 @@ class LaboranController extends BaseController
             $per_page = $size;
         });
 
-        $request->whenHas('search', function($search) use (&$users) {
-            $users = $users->where('students.name', 'ILIKE', '%'.$search.'%')
-                            ->orWhere('students.nim', 'ILIKE', '%'.$search.'%')
-                            ->orWhere('classes.name', 'ILIKE', '%'.$search.'%')
-                            ->orWhere('students.gender', 'ILIKE', '%'.$search.'%')
-                            ->orWhere('students.religion', 'ILIKE', '%'.$search.'%')
-                            ->orWhere('courses.code', 'ILIKE', '%'.$search.'%')
-                            ->orWhere('courses.name', 'ILIKE', '%'.$search.'%')
-                            ->orWhere('staffs.code', 'ILIKE', '%'.$search.'%')
-                            ->orWhere('classes.academic_year', 'ILIKE', '%'.$search.'%')
-                            ->orWhere('classes.semester', 'ILIKE', '%'.$search.'%');
-        });
+        if ($request->has('kelas') && $request->has('course')) {
+            $kelas = $request->get('kelas');
+            $course = $request->get('course');
+
+            if ($request->has('search')) {
+                $request->whenHas('search', function($search) use (&$users, &$kelas, &$course) {
+                    $users = $users->where('classes.name', 'ILIKE', '%'.$kelas.'%')
+                                    ->where('courses.name', 'ILIKE', '%'.$course.'%')
+                                    ->where(function ($query) use (&$search) {
+                                        $query->where('students.name', 'ILIKE', '%'.$search.'%')
+                                                ->orWhere('students.nim', 'ILIKE', '%'.$search.'%')
+                                                ->orWhere('courses.code', 'ILIKE', '%'.$search.'%')
+                                                ->orWhere('staffs.code', 'ILIKE', '%'.$search.'%',)
+                                                ->orWhere('classes.academic_year', 'ILIKE', '%'.$search.'%')
+                                                ->orWhere('classes.semester', 'ILIKE', '%'.$search.'%');
+                                        });
+                                    // ->orWhere('students.gender', 'ILIKE', '%'.$search.'%')
+                                    // ->orWhere('students.religion', 'ILIKE', '%'.$search.'%')
+                });
+            }
+            else {
+                $users = $users->where('classes.name', 'ILIKE', '%'.$kelas.'%')
+                                ->where('courses.name', 'ILIKE', '%'.$course.'%');
+            }
+        }
+        elseif ($request->has('kelas')) {
+            $kelas = $request->get('kelas');
+
+            if ($request->has('search')) {
+                $request->whenHas('search', function($search) use (&$users, &$kelas) {
+                    $users = $users->where('classes.name', 'ILIKE', '%'.$kelas.'%')
+                                    ->where(function ($query) use (&$search) {
+                                        $query->where('students.name', 'ILIKE', '%'.$search.'%')
+                                                ->orWhere('courses.name', 'ILIKE', '%'.$search.'%')
+                                                ->orWhere('students.nim', 'ILIKE', '%'.$search.'%')
+                                                ->orWhere('courses.code', 'ILIKE', '%'.$search.'%')
+                                                ->orWhere('staffs.code', 'ILIKE', '%'.$search.'%',)
+                                                ->orWhere('classes.academic_year', 'ILIKE', '%'.$search.'%')
+                                                ->orWhere('classes.semester', 'ILIKE', '%'.$search.'%');
+                                        });
+                                    // ->orWhere('students.gender', 'ILIKE', '%'.$search.'%')
+                                    // ->orWhere('students.religion', 'ILIKE', '%'.$search.'%')
+                });
+            }
+            else {
+                $users = $users->where('classes.name', 'ILIKE', '%'.$kelas.'%');
+            }
+        }
+        else {
+            $request->whenHas('search', function($search) use (&$users) {
+                $users = $users->where('students.name', 'ILIKE', '%'.$search.'%')
+                                ->orWhere('students.nim', 'ILIKE', '%'.$search.'%')
+                                ->orWhere('classes.name', 'ILIKE', '%'.$search.'%')
+                                ->orWhere('students.gender', 'ILIKE', '%'.$search.'%')
+                                ->orWhere('students.religion', 'ILIKE', '%'.$search.'%')
+                                ->orWhere('courses.code', 'ILIKE', '%'.$search.'%')
+                                ->orWhere('courses.name', 'ILIKE', '%'.$search.'%')
+                                ->orWhere('staffs.code', 'ILIKE', '%'.$search.'%')
+                                ->orWhere('classes.academic_year', 'ILIKE', '%'.$search.'%')
+                                ->orWhere('classes.semester', 'ILIKE', '%'.$search.'%');
+            });
+        }
 
         if($request->has('orderBy') && $request->has('sortedBy')) {
             $orderBy = $request->get('orderBy');
