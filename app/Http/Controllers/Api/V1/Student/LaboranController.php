@@ -106,7 +106,7 @@ class LaboranController extends BaseController
         ]);
 
         // create Student
-        if (User::where('nim', $request->nim)->first() == null) {
+        if (User::where('username', $request->nim)->first() == null) {
             $student = Student::create([
                 'name' => $request->name,
                 'nim' => $request->nim,
