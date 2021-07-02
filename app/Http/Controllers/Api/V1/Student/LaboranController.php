@@ -12,7 +12,7 @@ use App\Models\Course;
 use App\Models\User;
 use App\Transformers\LaboranTransformer;
 use App\Transformers\StudentTransformer;
-use App\Transformers\StudentClassesTransformer;
+use App\Transformers\StudentClassTransformer;
 use App\Transformers\UserTransformer;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
@@ -138,7 +138,6 @@ class LaboranController extends BaseController
         $this->validate($request, [
             'nim' => [
                 'required',
-                Rule::unique('students')
             ],
             'name' => 'required',
             'gender' => [
@@ -156,7 +155,7 @@ class LaboranController extends BaseController
         ]);
 
         // create Student
-        if (User::where('username', $request->nim)->first() == null) {
+        if (Student::where('nim', $request->nim)->first() == null) {
             $student = Student::create([
                 'name' => $request->name,
                 'nim' => $request->nim,
@@ -202,7 +201,7 @@ class LaboranController extends BaseController
             'student_id' => $student_id->id,
             'class_id' => $class_id->id,
         ]);
-        return $this->response->item($student, new StudentTransformer);
+        return $this->response->item($student_class, new StudentClassTransformer);
     }
 
     public function delete(Request $request, $id)
@@ -235,7 +234,7 @@ class LaboranController extends BaseController
 
     public function get_student_classes(){
         $student_class = StudentClass::query()->get();
-        return $this->response->item($student_class, new StudentClassesTransformer);
+        return $this->response->item($student_class, new StudentClassTransformer);
     }
 
     public function set_role(Request $request)
