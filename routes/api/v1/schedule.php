@@ -10,6 +10,9 @@ $api->version('v1', [
     $api->get('/', ['as' => 'schedule.index', 'uses' => 'ScheduleController@index']);
     $api->post('/', ['as' => 'schedule.create', 'uses' => 'ScheduleController@create']);
     $api->post('/import', ['as' => 'staff.import', 'uses' => 'ScheduleController@import']);
-    $api->post('/get-test', ['as' => 'schedule.tests', 'uses' => 'ScheduleController@getTest']);
+    //Test
+    $api->post('/get-test', ['as' => 'schedule.gettest', 'uses' => 'ScheduleController@getTest']);
     $api->post('/create-test', ['as' => 'schedule.createtest', 'uses' => 'ScheduleController@create_test']);
+    $api->delete('/delete-test/{id}', ['as' => 'schedule.deletetest', 'uses' => 'ScheduleController@delete_test']);
+    $api->put('/update-test/{id}', ['as' => 'schedule.updatetest', 'uses' => 'ScheduleController@update_test']);
 });
