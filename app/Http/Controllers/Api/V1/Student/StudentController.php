@@ -20,8 +20,21 @@ class StudentController extends BaseController
         });
 
         $request->whenHas('search', function($search) use (&$students) {
-            $students = $students->where('name', 'LIKE', '%'.$search.'%');
+            $students = $students->where('name', 'ILIKE', '%'.$search.'%')
+                            ->orWhere('nim', 'ILIKE', '%'.$search.'%')
+                            ->orWhere('gender', 'ILIKE', '%'.$search.'%')
+                            ->orWhere('religion', 'ILIKE', '%'.$search.'%');
         });
+
+        if($request->has('orderBy') && $request->has('sortedBy')) {
+            $orderBy = $request->get('orderBy');
+            $sortedBy = $request->get('sortedBy');
+            $students->orderBy($orderBy, $sortedBy);
+        } 
+        else if($request->has('orderBy')) {
+            $orderBy = $request->get('orderBy');
+            $students->orderBy($orderBy);
+        }
 
         $students = $students->paginate($per_page);
 
