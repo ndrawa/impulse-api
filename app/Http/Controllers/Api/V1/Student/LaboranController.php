@@ -227,8 +227,8 @@ class LaboranController extends BaseController
             'class_id' => 'required'
         ]);
         StudentClass::create([
-            'student_id' => $student_id->id,
-            'class_id' => $class_id->id,
+            'student_id' => $request->student_id,
+            'class_id' => $request->class_id,
         ]);
     }
 
