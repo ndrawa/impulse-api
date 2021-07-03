@@ -232,6 +232,26 @@ class LaboranController extends BaseController
         ]);
     }
 
+    public function edit_student_classes(Request $request, $id)
+    {
+        $studentclass = StudentClass::find($id);
+        print($id);
+        $this->validate($request, [
+            'student_id' => 'required',
+            'class_id' => 'required'
+        ]);
+        print('data'.$request->student_id);
+        $studentclass->fill($request->all());
+        $studentclass->save();
+    }
+
+    public function delete_student_classes($id)
+    {
+        $studentclass = StudentClass::find($id);
+        $studentclass->delete();
+        return $this->response->noContent();
+    }
+
     public function get_student_classes(){
         $student_class = StudentClass::query()->get();
         return $this->response->item($student_class, new StudentClassTransformer);
