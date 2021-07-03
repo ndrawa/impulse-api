@@ -296,4 +296,45 @@ class LaboranController extends BaseController
             return $this->response->errorerrorNotFound('NIM/NIP not found.');
         }
     }
+
+    public function deleteall($table)
+    {
+        if ($table == 'users') {
+            User::truncate();
+            $laboran = Staff::create([
+                'nip' => 'laboran',
+                'name' => 'Laboran (Super admin)',
+                'code' => 'laboran'
+            ]);
+            $laboran->save();
+            $user = $laboran->user;
+            $user->assignRole(Role::ROLE_LABORAN);
+            return 'Delete '.$table;
+        } elseif ($table == 'students' or $table == 'staffs') {
+            if ($table == 'students') {
+                $allStudent = Student::pluck('user_id');
+            } else {
+                $allStudent = Staff::pluck('user_id');
+            }
+            foreach ($allStudent as $key => $value) {
+                $user = User::findOrFail($value);
+                $user->delete();
+            }
+
+            if ($table == 'staffs') {
+                $laboran = Staff::create([
+                    'nip' => 'laboran',
+                    'name' => 'Laboran (Super admin)',
+                    'code' => 'laboran'
+                ]);
+                $laboran->save();
+                $user = $laboran->user;
+                $user->assignRole(Role::ROLE_LABORAN);
+            }
+            return 'Delete '.$table;
+        } else {
+            DB::table($table)->delete();
+            return 'Delete '.$table;
+        }   
+    }
 }
