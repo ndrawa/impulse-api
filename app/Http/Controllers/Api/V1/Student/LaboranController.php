@@ -30,7 +30,7 @@ class LaboranController extends BaseController
             ->join('classes', 'classes.id', '=', 'students_classes.class_id')
             ->join('courses', 'courses.id', '=', 'classes.course_id')
             ->join('staffs', 'staffs.id', '=', 'classes.staff_id')
-            ->select('students.id', 'students.nim', 'students.name', 'classes.name as class_name', 'students.gender', 
+            ->select('students.id as student_id', 'students.nim', 'students.name', 'classes.id as class_id', 'classes.name as class_name', 'students.gender', 
             'students.religion', 'courses.code as course_code', 'courses.name as course_name',
             'staffs.code as staff_code', 'classes.academic_year', 'classes.semester');
         $per_page = env('PAGINATION_SIZE', 15);
