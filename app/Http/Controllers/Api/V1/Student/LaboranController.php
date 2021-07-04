@@ -227,9 +227,29 @@ class LaboranController extends BaseController
             'class_id' => 'required'
         ]);
         StudentClass::create([
-            'student_id' => $student_id->id,
-            'class_id' => $class_id->id,
+            'student_id' => $request->student_id,
+            'class_id' => $request->class_id,
         ]);
+    }
+
+    public function edit_student_classes(Request $request, $id)
+    {
+        $studentclass = StudentClass::find($id);
+        print($id);
+        $this->validate($request, [
+            'student_id' => 'required',
+            'class_id' => 'required'
+        ]);
+        print('data'.$request->student_id);
+        $studentclass->fill($request->all());
+        $studentclass->save();
+    }
+
+    public function delete_student_classes($id)
+    {
+        $studentclass = StudentClass::find($id);
+        $studentclass->delete();
+        return $this->response->noContent();
     }
 
     public function get_student_classes(){
@@ -295,5 +315,46 @@ class LaboranController extends BaseController
         } else {
             return $this->response->errorerrorNotFound('NIM/NIP not found.');
         }
+    }
+
+    public function deleteall($table)
+    {
+        if ($table == 'users') {
+            User::truncate();
+            $laboran = Staff::create([
+                'nip' => 'laboran',
+                'name' => 'Laboran (Super admin)',
+                'code' => 'laboran'
+            ]);
+            $laboran->save();
+            $user = $laboran->user;
+            $user->assignRole(Role::ROLE_LABORAN);
+            return 'Delete '.$table;
+        } elseif ($table == 'students' or $table == 'staffs') {
+            if ($table == 'students') {
+                $allStudent = Student::pluck('user_id');
+            } else {
+                $allStudent = Staff::pluck('user_id');
+            }
+            foreach ($allStudent as $key => $value) {
+                $user = User::findOrFail($value);
+                $user->delete();
+            }
+
+            if ($table == 'staffs') {
+                $laboran = Staff::create([
+                    'nip' => 'laboran',
+                    'name' => 'Laboran (Super admin)',
+                    'code' => 'laboran'
+                ]);
+                $laboran->save();
+                $user = $laboran->user;
+                $user->assignRole(Role::ROLE_LABORAN);
+            }
+            return 'Delete '.$table;
+        } else {
+            DB::table($table)->delete();
+            return 'Delete '.$table;
+        }   
     }
 }
