@@ -226,10 +226,15 @@ class LaboranController extends BaseController
             'student_id' => 'required',
             'class_id' => 'required'
         ]);
-        StudentClass::create([
-            'student_id' => $request->student_id,
-            'class_id' => $request->class_id,
-        ]);
+        if (StudentClass::where('student_id', $request->student_id)->where('class_id', $request->class_id)->first() == null) {
+            $student_class = StudentClass::create([
+                'student_id' => $request->student_id,
+                'class_id' => $request->class_id,
+            ]);
+            return $this->response->item($student_class, new StudentClassTransformer);
+        } else {
+            return $this->response->errorNotFound('Duplicate data.');
+        }
     }
 
     public function edit_student_classes(Request $request, $id)
@@ -313,7 +318,7 @@ class LaboranController extends BaseController
             $user = User::find($staff->user_id);
             return $this->response->item($user, new UserTransformer);
         } else {
-            return $this->response->errorerrorNotFound('NIM/NIP not found.');
+            return $this->response->errorNotFound('NIM/NIP not found.');
         }
     }
 
