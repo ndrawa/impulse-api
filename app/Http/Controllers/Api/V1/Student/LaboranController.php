@@ -357,4 +357,23 @@ class LaboranController extends BaseController
             return 'Delete '.$table;
         }   
     }
+
+    public function report_roles($role)
+    {
+        $users = User::get();
+        $data = [];
+        $i = 0;
+        foreach ($users as $key => $user) {
+            if ($role == 'asprak') {
+                if($user->isAsprak()) {
+                    $data['asprak'][$i++] = $user->student;
+                }
+            } elseif ($role == 'aslab') {
+                if($user->isAslab()) {
+                    $data['aslab'][$i++] = $user->student;
+                }
+            }
+        }
+        return $data;
+    }
 }
