@@ -372,6 +372,22 @@ class LaboranController extends BaseController
                 if($user->isAslab()) {
                     $data['aslab'][$i++] = $user->student;
                 }
+            } elseif ($role == 'dosen') {
+                if($user->isDosen()) {
+                    $data['dosen'][$i++] = $user->staff;
+                }
+            } elseif ($role == 'staff') {
+                if($user->isStaff()) {
+                    $data['staff'][$i++] = $user->staff;
+                }
+            } elseif ($role == 'student') {
+                if($user->isStudent()) {
+                    $data['student'][$i++] = $user->student;
+                }
+            } elseif ($role == 'laboran') {
+                if($user->isLaboran()) {
+                    $data['laboran'][$i++] = $user->staff;
+                }
             }
         }
         return $data;
