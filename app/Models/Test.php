@@ -9,11 +9,15 @@ class Test extends BaseModel
     protected $table = "tests";
 
     protected $fillable = [
-        'time_start',
-        'time_end',
+        'type'
     ];
 
     public function questions() {
         return $this->hasMany(Question::class);
+    }
+
+    public function schedule_test()
+    {
+        return $this->hasMany(ScheduleTest::class);
     }
 }

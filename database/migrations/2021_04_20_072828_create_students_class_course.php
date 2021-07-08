@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSchedules extends Migration
+class CreateStudentsClassCourse extends Migration
 {
     /**
      * Run the migrations.
@@ -13,28 +13,18 @@ class CreateSchedules extends Migration
      */
     public function up()
     {
-        Schema::create('schedules', function (Blueprint $table) {
+        Schema::create('students_class_course', function (Blueprint $table) {
             $table->char('id', 26)->primary();
-            $table->string('name');
-            $table->time('time_start')->nullable();
-            $table->time('time_end')->nullable();
-            $table->char('room_id', 26);
+            $table->char('student_id', 26);
             $table->char('class_course_id', 26);
-            $table->char('module_id', 26);
-            $table->char('academic_year_id', 26);
-            $table->timestamp('date');
             $table->timestamps();
-            $table->foreign('room_id')
+            $table->foreign('student_id')
                 ->references('id')
-                ->on('rooms')
+                ->on('students')
                 ->onDelete('cascade');
             $table->foreign('class_course_id')
                 ->references('id')
                 ->on('class_course')
-                ->onDelete('cascade');
-            $table->foreign('academic_year_id')
-                ->references('id')
-                ->on('academic_years')
                 ->onDelete('cascade');
         });
     }
@@ -46,6 +36,6 @@ class CreateSchedules extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('schedules');
+        Schema::dropIfExists('students_classes');
     }
 }

@@ -107,6 +107,25 @@ class ScheduleController extends BaseController
         }
         // return $request;
         // END OF create_test
-        return 'success';
+        return $test;
+    }
+
+    public function delete_test(Request $request, $id) {
+        $test = Test::findOrFail($id);
+        $test->delete();
+
+        return $test;
+    }
+
+    public function update_test(Request $request,$id) {
+        $test = Test::findOrFail($id);
+        $this->validate($request, [
+            'time_start' => 'required',
+            'time_end' => 'required'
+        ]);
+        $test->fill($request->all());
+        $test->save();
+
+        return $this->response->item($test, new TestTransformer);
     }
 }

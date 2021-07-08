@@ -26,12 +26,9 @@ class ScheduleTableSeeder extends Seeder
 
         $schedule = Schedule::create([
             'name' => 'Praktikum 1',
-            'day' => 'tuesday',
             'time_start' => '07:30:00',
             'time_end' => '10:30:00',
             'room_id' => $room_id->id,
-            'periode_start' => '07:30:00',
-            'periode_end' => '10:30:00',
             'class_id' => $class_id->id,
             'module_id' => 'belum ada',
             'type' => 'TETAP',
