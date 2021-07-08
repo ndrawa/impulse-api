@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class StudentClass extends BaseModel
 {
-    protected $table = "students_classes";
+    protected $table = "students_class_course";
 
     /**
      * The attributes that are mass assignable.
@@ -16,7 +16,7 @@ class StudentClass extends BaseModel
 
     protected $fillable = [
         'student_id',
-        'class_id'
+        'class_course_id'
     ];
 
     public function students()
@@ -24,8 +24,8 @@ class StudentClass extends BaseModel
         return $this->belongsTo(Student::class);
     }
 
-    public function classes()
+    public function class_course()
     {
-        return $this->belongsTo(Classroom::class);
+        return $this->belongsTo(ClassCourse::class);
     }
 }
