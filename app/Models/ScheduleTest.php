@@ -24,4 +24,9 @@ class ScheduleTest extends BaseModel
     {
         return $this->belongsTo(Test::class);
     }
+
+    public function grades()
+    {
+        return $this->hasMany(Grade::class);
+    }
 }
