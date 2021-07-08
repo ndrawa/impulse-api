@@ -21,8 +21,7 @@ class CreateAcademicYears extends Migration
                 'even',
                 'between'
                 ]);
-            $table->char('class_id', 26);
-            $table->char('course_id', 26);
+            $table->timestamps();
         });
     }
 
