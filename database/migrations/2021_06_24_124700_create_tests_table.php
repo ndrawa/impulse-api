@@ -15,7 +15,7 @@ class CreateTestsTable extends Migration
     {
         Schema::create('tests', function (Blueprint $table) {
             $table->char('id', 26)->primary();
-            $table->enum('question_type', [
+            $table->enum('type', [
                 'multiple_choice',
                 'essay',
                 'file',
