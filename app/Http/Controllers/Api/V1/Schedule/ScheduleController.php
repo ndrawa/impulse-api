@@ -70,44 +70,17 @@ class ScheduleController extends BaseController
 
     public function create_test(Request $request) {
         $this->validate($request, [
-            'time_start' => 'required',
-            'time_end' => 'required',
+            'type' => 'required',
+            'questions' => 'required',
         ]);
 
         $test = Test::create([
-            'time_start' => $request->time_start,
-            'time_end' => $request->time_end,
+            'type' => $request->type,
         ]);
 
+        $questions = $this->add_question($request, $test->id);
 
-        foreach($request->questions as $key => $q) {
-
-            //insert question
-            $qstion = Question::create([
-                'test_id' => $test->id,
-                'type' => $q['type'],
-                'question' => $q['text'],
-            ]);
-
-            //insert answers based to question type
-            if($q['type'] == 'essay') {
-                $answer = Answer::create([
-                    'question_id' => $qstion->id,
-                    'answer' => $q['answers'],
-                ]);
-            } else {
-                for($i=0; $i < count($q['answers']['answer']); $i++) {
-                    $ans = Answer::create([
-                        'question_id' => $qstion->id,
-                        'answer' => $q['answers']['answer'][$i],
-                        'is_answer' => $q['answers']['is_answer'][$i],
-                    ]);
-                }
-            }
-        }
-        // return $request;
-        // END OF create_test
-        return $test;
+        return json_encode(['msg' => 'success']);
     }
 
     public function delete_test(Request $request, $id) {
@@ -117,15 +90,39 @@ class ScheduleController extends BaseController
         return $test;
     }
 
-    public function update_test(Request $request,$id) {
-        $test = Test::findOrFail($id);
-        $this->validate($request, [
-            'time_start' => 'required',
-            'time_end' => 'required'
-        ]);
-        $test->fill($request->all());
-        $test->save();
+    public function add_question(Request $request, $test_id) {
+        if($request->type == 'essay') {
+            foreach($request->questions as $key=>$q) {
+                $qstion = Question::create([
+                    'test_id' => $test_id,
+                    'question' => $q['text'],
+                ]);
+                $answer = Answer::create([
+                    'question_id' => $qstion['id'],
+                    'answer' => $q['answer'],
+                ]);
+            }
+        } elseif ($request->type == 'multiple_choice') {
+            foreach($request->questions as $key=>$q) {
+                $qstion = Question::create([
+                    'test_id' => $test_id,
+                    'question' => $q['text'],
+                ]);
 
-        return $this->response->item($test, new TestTransformer);
+                foreach($request->questions[$key]['options'] as $key=>$ans) {
+                    $answer = Answer::create([
+                        'question_id' => $qstion['id'],
+                        'answer' => $ans['text'],
+                        'is_answer' => $ans['is_answer'],
+                    ]);
+                }
+            }
+        } elseif ($request->type == 'file') {
+            //TBA
+        } elseif ($request->type == 'pdf') {
+            //TBA
+        } else {
+            return $this->response->noContent();
+        }
     }
 }

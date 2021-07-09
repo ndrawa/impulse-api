@@ -10,7 +10,6 @@ class Question extends BaseModel
 
     protected $fillable = [
         'test_id',
-        'type',
         'question',
     ];
 
