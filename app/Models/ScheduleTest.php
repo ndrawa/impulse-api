@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class ScheduleTest extends BaseModel
 {
+    protected $table = "schedule_tests";
+
     protected $fillable = [
         'schedule_id',
         'test_id',

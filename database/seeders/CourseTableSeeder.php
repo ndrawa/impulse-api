@@ -24,5 +24,15 @@ class CourseTableSeeder extends Seeder
             'name' => 'PEMROGRAMAN BERBASIS OBJEK',
         ]);
         $course->save();
+        $course = Course::create([
+            'code' => 'CII1F4',
+            'name' => 'ALGORITMA PEMROGRAMAN',
+        ]);
+        $course->save();
+        $course = Course::create([
+            'code' => 'CII2B4',
+            'name' => 'STRUKTUR DATA',
+        ]);
+        $course->save();
     }
 }
