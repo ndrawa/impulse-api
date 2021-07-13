@@ -16,13 +16,13 @@ class CreateSchedules extends Migration
         Schema::create('schedules', function (Blueprint $table) {
             $table->char('id', 26)->primary();
             $table->string('name');
-            $table->time('time_start')->nullable();
-            $table->time('time_end')->nullable();
+            $table->datetime('time_start')->nullable();
+            $table->datetime('time_end')->nullable();
             $table->char('room_id', 26);
             $table->char('class_course_id', 26);
             $table->char('module_id', 26);
             $table->char('academic_year_id', 26);
-            $table->timestamp('date');
+            $table->datetime('date');
             $table->timestamps();
             $table->foreign('room_id')
                 ->references('id')

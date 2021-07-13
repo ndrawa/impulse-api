@@ -13,15 +13,14 @@ class CreateScheduleTestTable extends Migration
      */
     public function up()
     {
-        Schema::create('schedule_test', function (Blueprint $table) {
+        Schema::create('schedule_tests', function (Blueprint $table) {
             $table->char('id', 26)->primary();
             $table->char('schedule_id', 26);
             $table->char('test_id', 26);
-            $table->timestamp('time_start');
-            $table->timestamp('time_end');
+            $table->datetime('time_start');
+            $table->datetime('time_end');
             $table->boolean('is_active');
             $table->string('auth');
-            $table->text('question');
             $table->timestamps();
 
             $table->foreign('test_id')
