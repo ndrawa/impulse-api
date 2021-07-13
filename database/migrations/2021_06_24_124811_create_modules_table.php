@@ -16,9 +16,9 @@ class CreateModulesTable extends Migration
         Schema::create('modules', function (Blueprint $table) {
             $table->char('id', 26)->primary();
             $table->char('course_id', 26);
-            $table->char('pretest_id', 26);
-            $table->char('posttest_id', 26);
-            $table->char('journal_id', 26);
+            $table->char('pretest_id', 26)->nullable();
+            $table->char('posttest_id', 26)->nullable();
+            $table->char('journal_id', 26)->nullable();
             $table->integer('index');
             $table->char('academic_year_id', 26);
             $table->timestamps();
@@ -26,18 +26,15 @@ class CreateModulesTable extends Migration
             $table->foreign('pretest_id')
                 ->references('id')
                 ->on('tests')
-                ->onDelete('cascade')
-                ->nullable();
+                ->onDelete('cascade');
             $table->foreign('posttest_id')
                 ->references('id')
                 ->on('tests')
-                ->onDelete('cascade')
-                ->nullable();
+                ->onDelete('cascade');
             $table->foreign('journal_id')
                 ->references('id')
                 ->on('tests')
-                ->onDelete('cascade')
-                ->nullable();
+                ->onDelete('cascade');
             $table->foreign('academic_year_id')
                 ->references('id')
                 ->on('academic_years')

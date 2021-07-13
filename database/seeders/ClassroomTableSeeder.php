@@ -27,5 +27,18 @@ class ClassroomTableSeeder extends Seeder
             'semester' => '5',
         ]);
         $classroom->save();
+
+        $staff_id = DB::table('staffs')
+                    ->select('id')
+                    ->where('code', 'VRA')
+                    ->first();
+
+        $classroom = Classroom::create([
+            'name' => 'IF-43-03',
+            'staff_id' => $staff_id->id,
+            'academic_year' => '2020/2021',
+            'semester' => '5',
+        ]);
+        $classroom->save();
     }
 }
