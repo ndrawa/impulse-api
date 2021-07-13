@@ -12,6 +12,7 @@ Laravel Lumen is a stunningly fast PHP micro-framework for building web applicat
 2. set your .env settings
     DB_CONNECTION = pgsql
     DB_PORT = 5432
+3. still in .env, change APP_TIMEZONE to Asia/Jakarta
 4. composer install
 5. php artisan jwt:secret
 6. php artisan migrate:fresh --seed
