@@ -24,4 +24,9 @@ class Classroom extends BaseModel
     {
         return $this->belongsTo(Staff::class);
     }
+
+    public function class_course()
+    {
+        return $this->hasMany(ClassCourse::class, 'class_id', 'id');
+    }
 }

@@ -33,7 +33,17 @@ class StudentsClassCourseSeeder extends Seeder
                         ->select('id')
                         ->where('nim', '1301180174')
                         ->first();
-        $student_class_course = StudentClassCourse::create([
+        $student_class_course_2 = StudentClassCourse::create([
+            'student_id' => $student_id->id,
+            'class_course_id' => $class_course_id->id,
+        ]);
+
+        $class_course_id =  DB::table('class_course')
+                            ->select('id')
+                            ->get()
+                            ->last();
+
+        $student_class_course_2 = StudentClassCourse::create([
             'student_id' => $student_id->id,
             'class_course_id' => $class_course_id->id,
         ]);

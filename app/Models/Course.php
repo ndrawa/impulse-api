@@ -17,4 +17,9 @@ class Course extends BaseModel
         'name',
         'code'
     ];
+
+    public function class_course()
+    {
+        return $this->hasMany(ClassCourse::class, 'course_id', 'id');
+    }
 }
