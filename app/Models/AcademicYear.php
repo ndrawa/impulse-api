@@ -18,4 +18,9 @@ class AcademicYear extends BaseModel
         'year',
         'semester'
     ];
+
+    public function class_course()
+    {
+        return $this->hasMany(ClassCourse::class, 'academic_year_id', 'id');
+    }
 }

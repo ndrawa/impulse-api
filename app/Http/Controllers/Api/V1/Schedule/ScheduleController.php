@@ -10,8 +10,12 @@ use App\Models\Course;
 use App\Models\Answer;
 use App\Models\Question;
 use App\Models\Test;
+use App\Models\StudentClassCourse;
+use App\Models\ClassCourse;
+use App\Models\AcademicYear;
 use App\Transformers\ScheduleTransformer;
 use App\Transformers\TestTransformer;
+use App\Transformers\ClassCourseTransformer;
 use Illuminate\Validation\Rule;
 use App\Imports\ScheduleImport;
 use Maatwebsite\Excel\Facades\Excel;
@@ -62,8 +66,9 @@ class ScheduleController extends BaseController
         return $this->response->item($schedule, new ScheduleTransformer);
     }
 
-    public function getTest(Request $request) {
-        $test = Test::firstWhere('id', $request->id);
+    public function getTest(Request $request, $id) {
+        // $id = test_id
+        $test = Test::firstWhere('id', $id);
 
         return $this->response->item($test, new TestTransformer);
     }
@@ -87,7 +92,7 @@ class ScheduleController extends BaseController
         $test = Test::findOrFail($id);
         $test->delete();
 
-        return $test;
+        return $this->response->noContent();
     }
 
     public function add_question(Request $request, $test_id) {
@@ -124,5 +129,33 @@ class ScheduleController extends BaseController
         } else {
             return $this->response->noContent();
         }
+    }
+
+    public function get_student_class_course(Request $request, $student_id) {
+        $class_course_in_scc = StudentClassCourse::where('student_id',$student_id)->get();
+        if($class_course_in_scc != NULL) {
+            $data = [];
+            foreach($class_course_in_scc as $key=>$cc_scc) {
+                $class_course = ClassCourse::find($cc_scc->class_course_id);
+                $course = $class_course->courses;
+                $class = $class_course->classes;
+                $academic_year = $class_course->academic_years;
+                $academic_year = AcademicYear::firstWhere('id', $class_course->academic_year_id);
+
+                $data['data'][$key]['id'] = $class_course->id;
+                $data['data'][$key]['name'] = $course->name.'/'.$class->name.' ('.$academic_year->year.')';
+            }
+            return $data;
+
+            $class_course = ClassCourse::find('id', $students_class_course->class_course_id);
+            $data = [];
+            $data['id'] = $class_course->id;
+            foreach($class_course as $key=>$cc) {
+
+            }
+            return $data;
+        }
+
+        return $this->response->error('student id not found', 404);
     }
 }
