@@ -145,6 +145,7 @@ $app->router->group([
     require __DIR__.'/../routes/api/v1/classroom.php';
     require __DIR__.'/../routes/api/v1/course.php';
     require __DIR__.'/../routes/api/v1/laboran.php';
+    require __DIR__.'/../routes/api/v1/module.php';
 });
 
 return $app;
