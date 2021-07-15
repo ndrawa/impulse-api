@@ -14,7 +14,6 @@ class Classroom extends BaseModel
      * @var array
      */
     protected $fillable = [
-        'staff_id',
         'name',
         'academic_year',
         'semester'

@@ -14,51 +14,121 @@ class ClassCourseSeeder extends Seeder
      */
     public function run()
     {
-        $staff_id = DB::table('staffs')
+        $staff = DB::table('staffs')
                     ->select('id')
                     ->where('code', 'AJS')
                     ->first();
-        $class_id = DB::table('classes')
+        $class = DB::table('classes')
                     ->select('id')
-                    ->where('name', 'IF-43-03')
-                    ->where('staff_id', $staff_id->id)
+                    ->where('name', 'IF-43-01')
                     ->first();
-        $academic_year_id = DB::table('academic_years')
-                            ->select('id')
-                            ->where('semester', 'even')
-                            ->first();
-        $course_id =    DB::table('courses')
-                        ->select('id')
-                        ->where('code', 'CII2J4')
-                        ->first();
-
-        $class_course = ClassCourse::create([
-            'class_id' => $class_id->id,
-            'course_id' => $course_id->id,
-            'academic_year_id' => $academic_year_id->id,
-        ]);
-
-        $staff_id = DB::table('staffs')
-                    ->select('id')
-                    ->where('code', 'VRA')
-                    ->first();
-        $class_id = DB::table('classes')
-                    ->select('id')
-                    ->where('name', 'IF-43-03')
-                    ->where('staff_id', $staff_id->id)
-                    ->first();
-        $academic_year_id = DB::table('academic_years')
+        $academic_year = DB::table('academic_years')
                             ->select('id')
                             ->where('semester', 'odd')
                             ->first();
-        $course_id =    DB::table('courses')
+        $course =    DB::table('courses')
                         ->select('id')
                         ->where('code', 'CSG2H3')
                         ->first();
+
         $class_course = ClassCourse::create([
-            'class_id' => $class_id->id,
-            'course_id' => $course_id->id,
-            'academic_year_id' => $academic_year_id->id,
+            'class_id' => $class->id,
+            'staff_id' => $staff->id,
+            'course_id' => $course->id,
+            'academic_year_id' => $academic_year->id,
+        ]);
+
+        $staff = DB::table('staffs')
+                    ->select('id')
+                    ->where('code', 'AJS')
+                    ->first();
+        $class = DB::table('classes')
+                    ->select('id')
+                    ->where('name', 'IF-43-02')
+                    ->first();
+        $academic_year = DB::table('academic_years')
+                            ->select('id')
+                            ->where('semester', 'odd')
+                            ->first();
+        $course =    DB::table('courses')
+                        ->select('id')
+                        ->where('code', 'CSG2H3')
+                        ->first();
+
+        $class_course = ClassCourse::create([
+            'class_id' => $class->id,
+            'staff_id' => $staff->id,
+            'course_id' => $course->id,
+            'academic_year_id' => $academic_year->id,
+        ]);
+
+        $staff = DB::table('staffs')
+                    ->select('id')
+                    ->where('code', 'VRA')
+                    ->first();
+        $class = DB::table('classes')
+                    ->select('id')
+                    ->where('name', 'IF-43-01')
+                    ->first();
+        $academic_year = DB::table('academic_years')
+                            ->select('id')
+                            ->where('semester', 'even')
+                            ->first();
+        $course =    DB::table('courses')
+                        ->select('id')
+                        ->where('code', 'CII2B4')
+                        ->first();
+        $class_course = ClassCourse::create([
+            'class_id' => $class->id,
+            'staff_id' => $staff->id,
+            'course_id' => $course->id,
+            'academic_year_id' => $academic_year->id,
+        ]);
+
+        $staff = DB::table('staffs')
+                    ->select('id')
+                    ->where('code', 'UIW')
+                    ->first();
+        $class = DB::table('classes')
+                    ->select('id')
+                    ->where('name', 'IF-43-01')
+                    ->first();
+        $academic_year = DB::table('academic_years')
+                            ->select('id')
+                            ->where('semester', 'even')
+                            ->first();
+        $course =    DB::table('courses')
+                        ->select('id')
+                        ->where('code', 'CII2J4')
+                        ->first();
+        $class_course = ClassCourse::create([
+            'class_id' => $class->id,
+            'staff_id' => $staff->id,
+            'course_id' => $course->id,
+            'academic_year_id' => $academic_year->id,
+        ]);
+
+        $staff = DB::table('staffs')
+                    ->select('id')
+                    ->where('code', 'UIW')
+                    ->first();
+        $class = DB::table('classes')
+                    ->select('id')
+                    ->where('name', 'IF-43-03')
+                    ->first();
+        $academic_year = DB::table('academic_years')
+                            ->select('id')
+                            ->where('semester', 'even')
+                            ->first();
+        $course =    DB::table('courses')
+                        ->select('id')
+                        ->where('code', 'CII2J4')
+                        ->first();
+        $class_course = ClassCourse::create([
+            'class_id' => $class->id,
+            'staff_id' => $staff->id,
+            'course_id' => $course->id,
+            'academic_year_id' => $academic_year->id,
         ]);
     }
 }

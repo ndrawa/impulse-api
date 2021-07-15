@@ -56,7 +56,7 @@ class ClassroomController extends BaseController
 
     public function byname(Request $request)
     {
-        $classroom = Classroom::select('name')->distinct()->get();
+        $classroom = Classroom::select('name')->get();
         return $this->response->item($classroom, new ClassroomTransformer);
     }
 
@@ -70,7 +70,6 @@ class ClassroomController extends BaseController
     {
         // $this->authorize('create', Classroom::class);
         $this->validate($request, [
-            'staff_id' => 'required',
             'name' => 'required',
             'academic_year' => 'required',
             'semester' => 'required'
@@ -85,7 +84,6 @@ class ClassroomController extends BaseController
         $classroom = Classroom::findOrFail($id);
         // $this->authorize('update', $classroom);
         $this->validate($request, [
-            'staff_id' => 'required',
             'name' => 'required',
             'academic_year' => 'required',
             'semester' => 'required'

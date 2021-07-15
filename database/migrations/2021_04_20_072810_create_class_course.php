@@ -17,6 +17,7 @@ class CreateClassCourse extends Migration
             $table->char('id', 26)->primary();
             $table->char('class_id', 26);
             $table->char('course_id', 26);
+            $table->char('staff_id', 26);
             $table->char('academic_year_id', 26);
             $table->timestamps();
             $table->foreign('class_id')
@@ -26,6 +27,14 @@ class CreateClassCourse extends Migration
             $table->foreign('academic_year_id')
                 ->references('id')
                 ->on('academic_years')
+                ->onDelete('cascade');
+            $table->foreign('course_id')
+                ->references('id')
+                ->on('courses')
+                ->onDelete('cascade');
+            $table->foreign('staff_id')
+                ->references('id')
+                ->on('staffs')
                 ->onDelete('cascade');
         });
     }
