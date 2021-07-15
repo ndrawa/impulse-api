@@ -28,7 +28,7 @@ class ClassroomController extends BaseController
             $orderBy = $request->get('orderBy');
             $sortedBy = $request->get('sortedBy');
             $classrooms->orderBy($orderBy, $sortedBy);
-        } 
+        }
         else if($request->has('orderBy')) {
             $orderBy = $request->get('orderBy');
             $classrooms->orderBy($orderBy);
@@ -50,7 +50,7 @@ class ClassroomController extends BaseController
         } else {
             $classrooms = Classroom::get();
         }
-        
+
         return $this->response->item($classrooms, new ClassroomTransformer);
     }
 
@@ -72,7 +72,6 @@ class ClassroomController extends BaseController
         $this->validate($request, [
             'staff_id' => 'required',
             'name' => 'required',
-            'course_id' => 'required',
             'academic_year' => 'required',
             'semester' => 'required'
         ]);
@@ -88,7 +87,6 @@ class ClassroomController extends BaseController
         $this->validate($request, [
             'staff_id' => 'required',
             'name' => 'required',
-            'course_id' => 'required',
             'academic_year' => 'required',
             'semester' => 'required'
         ]);
