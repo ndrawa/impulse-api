@@ -4,7 +4,7 @@ $api = app('Dingo\Api\Routing\Router');
 
 $api->version('v1', [
     'namespace' => 'App\Http\Controllers\Api\V1\Student',
-    'middleware' => ['auth:api', 'role:admin|laboran'],
+    'middleware' => ['auth:api', 'role:admin|laboran|asprak'],
     'prefix' => 'v1/laboran'
 ], function($api) {
     $api->get('/student', ['as' => 'laboran.index', 'uses' => 'LaboranController@index']);
@@ -21,4 +21,9 @@ $api->version('v1', [
     $api->delete('/deleteall/{table}', ['as' => 'laboran.deleteall', 'uses' => 'LaboranController@deleteall']);
     $api->get('/roles/{role}', ['as' => 'laboran.report_roles', 'uses' => 'LaboranController@report_roles']);
     // $api->put('/student/{id}', ['as' => 'laboran.update', 'uses' => 'LaboranController@update']);
+    $api->get('/dropdown/classcoursestaffyear', ['as' => 'laboran.get_class_course_staff_year', 'uses' => 'LaboranController@get_class_course_staff_year']);
+    $api->post('/class-course', ['as' => 'laboran.create_class_course', 'uses' => 'LaboranController@create_class_course']);
+    $api->get('/class-course', ['as' => 'laboran.get_class_course', 'uses' => 'LaboranController@get_class_course']);
+    $api->delete('/class-course/{class_course_id}', ['as' => 'laboran.delete_class_course_by_id', 'uses' => 'LaboranController@delete_class_course_by_id']);
 });
+

@@ -6,13 +6,15 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Api\V1\BaseController;
 use App\Models\Student;
 use App\Models\Staff;
-use App\Models\StudentClass;
 use App\Models\Classroom;
+use App\Models\ClassCourse;
 use App\Models\Course;
 use App\Models\User;
+use App\Models\AcademicYear;
 use App\Transformers\LaboranTransformer;
 use App\Transformers\StudentTransformer;
-use App\Transformers\StudentClassTransformer;
+use App\Transformers\ClassTransformer;
+use App\Transformers\ClassCourseTransformer;
 use App\Transformers\UserTransformer;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
@@ -30,7 +32,7 @@ class LaboranController extends BaseController
             ->join('classes', 'classes.id', '=', 'students_classes.class_id')
             ->join('courses', 'courses.id', '=', 'classes.course_id')
             ->join('staffs', 'staffs.id', '=', 'classes.staff_id')
-            ->select('students.id as student_id', 'students.nim', 'students.name', 'classes.id as class_id', 'classes.name as class_name', 'students.gender', 
+            ->select('students.id as student_id', 'students.nim', 'students.name', 'classes.id as class_id', 'classes.name as class_name', 'students.gender',
             'students.religion', 'courses.code as course_code', 'courses.name as course_name',
             'staffs.code as staff_code', 'classes.academic_year', 'classes.semester');
         $per_page = env('PAGINATION_SIZE', 15);
@@ -105,7 +107,7 @@ class LaboranController extends BaseController
             $orderBy = $request->get('orderBy');
             $sortedBy = $request->get('sortedBy');
             $users->orderBy($orderBy, $sortedBy);
-        } 
+        }
         else if($request->has('orderBy')) {
             $orderBy = $request->get('orderBy');
             $users->orderBy($orderBy);
@@ -123,7 +125,7 @@ class LaboranController extends BaseController
             ->join('classes', 'classes.id', '=', 'students_classes.class_id')
             ->join('courses', 'courses.id', '=', 'classes.course_id')
             ->join('staffs', 'staffs.id', '=', 'classes.staff_id')
-            ->select('students.id as student_id', 'students.nim', 'students.name', 'classes.id as classes_id', 'classes.name as class_name', 'students.gender', 
+            ->select('students.id as student_id', 'students.nim', 'students.name', 'classes.id as classes_id', 'classes.name as class_name', 'students.gender',
             'students.religion', 'courses.code as courses_code', 'courses.name as course_name',
             'staffs.code as staff_code', 'classes.academic_year', 'classes.semester')
             ->where('students.id', '=', $id)
@@ -360,7 +362,7 @@ class LaboranController extends BaseController
         } else {
             DB::table($table)->delete();
             return 'Delete '.$table;
-        }   
+        }
     }
 
     public function report_roles($role)
@@ -396,5 +398,67 @@ class LaboranController extends BaseController
             }
         }
         return $data;
+    }
+
+    public function create_class_course(Request $request) {
+        $this->validate($request, [
+            'class_id' => 'required',
+            'staff_id' => 'required',
+            'course_id' => 'required',
+            'academic_year_id' => 'required',
+        ]);
+
+        $classroom = Classroom::find($request->class_id);
+        $staff = Staff::find($request->staff_id);
+        $course = Course::find($request->course_id);
+        $academic_year = AcademicYear::find($request->academic_year_id);
+
+        if($classroom && $staff && $course && $academic_year) {
+            $class_course = ClassCourse::create($request->all());
+            $class_course->save();
+        } else {
+            return $this->response->errorNotFound('invalid id');
+        }
+    }
+
+    public function get_class_course(Request $request) {
+        $class_course = ClassCourse::all();
+
+        $arr = [];
+        foreach($class_course as $key=>$cc) {
+            $classroom = Classroom::select('name')->where('id', $cc['class_id'])->first();
+            $staff = Staff::select('name')->where('id', $cc['staff_id'])->first();
+            $course = Course::select('name')->where('id', $cc['course_id'])->first();
+            $academic_year = AcademicYear::where('id', $cc['academic_year_id'])->first();
+            $arr[$key]['id'] = $cc['id'];
+            $arr[$key]['class']['id'] = $cc['class_id'];
+            $arr[$key]['class']['name'] = $classroom->name;
+            $arr[$key]['staff']['id'] = $cc['staff_id'];
+            $arr[$key]['staff']['name'] = $staff->name;
+            $arr[$key]['course']['id'] = $cc['course_id'];
+            $arr[$key]['course']['name'] = $course->name;
+            $arr[$key]['academic_year']['id'] = $cc['academic_year_id'];
+            $arr[$key]['academic_year']['name'] = $academic_year->year;
+            $arr[$key]['academic_year']['semester'] = $academic_year->semester;
+        }
+
+        $data['data'] = $arr;
+
+        return $data;
+    }
+
+    public function get_class_course_staff_year(Request $request) {
+        $data['data']['classes'] = Classroom::select('id','name')->get();
+        $data['data']['courses'] = Course::select('id','code','name')->get();
+        $data['data']['staffs'] = Staff::select('id','code','name')->get();
+        $data['data']['academic_year'] = AcademicYear::select('id','year','semester')->get();
+
+        return $data;
+    }
+
+    public function delete_class_course_by_id(Request $request, $class_course_id) {
+        $class_course = ClassCourse::findOrFail($class_course_id);
+
+        return $this->response->noContent();
     }
 }
