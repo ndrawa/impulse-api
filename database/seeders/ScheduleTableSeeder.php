@@ -26,22 +26,22 @@ class ScheduleTableSeeder extends Seeder
                     ->first();
         $class_id = DB::table('classes')
                     ->select('id')
-                    ->where('name', 'IF-43-03')
-                    ->where('staff_id', $staff_id->id)
+                    ->where('name', 'IF-43-01')
                     ->first();
         $academic_year_id = DB::table('academic_years')
                             ->select('id')
-                            ->where('semester', 'even')
+                            ->where('semester', 'odd')
                             ->first();
         $course_id =    DB::table('courses')
                         ->select('id')
-                        ->where('code', 'CII2J4')
+                        ->where('code', 'CSG2H3')
                         ->first();
         $class_course_id =  DB::table('class_course')
                             ->select('id')
                             ->where('class_id', $class_id->id)
                             ->where('academic_year_id', $academic_year_id->id)
                             ->where('course_id', $course_id->id)
+                            ->where('staff_id', $staff_id->id)
                             ->first();
 
         $room_id =  DB::table('rooms')
@@ -138,9 +138,8 @@ class ScheduleTableSeeder extends Seeder
             'pretest_id' => $pretest_1->id,
             'posttest_id' => $posttest_1->id,
         ]);
-
         $schedule_1 = Schedule::create([
-            'name' => 'JARINGAN KOMPUTER PRAKTIKUM 1 (dummy)',
+            'name' => 'PBO PRAKTIKUM 1 (dummy)',
             'time_start' => '2021-01-12 07:30:00',
             'time_end' => '2021-01-12 10:30:00',
             'room_id' => $room_id->id,
@@ -150,7 +149,6 @@ class ScheduleTableSeeder extends Seeder
             'date' => '2021-01-12 07:30:00',
         ]);
         $schedule_1->save();
-
         //Create test for posttest modul 2
         $posttest_2 = Test::create([
             'type' => 'essay'
@@ -211,7 +209,7 @@ class ScheduleTableSeeder extends Seeder
             'posttest_id' => $posttest_2->id,
         ]);
         $schedule_2 = Schedule::create([
-            'name' => 'JARINGAN KOMPUTER PRAKTIKUM 2 (dummy)',
+            'name' => 'PBO PRAKTIKUM 2 (dummy)',
             'time_start' => '2021-01-19 07:30:00',
             'time_end' => '2021-01-19 10:30:00',
             'room_id' => $room_id->id,
@@ -228,7 +226,7 @@ class ScheduleTableSeeder extends Seeder
             'academic_year_id' => $academic_year_id->id,
         ]);
         $schedule_3 = Schedule::create([
-            'name' => 'JARINGAN KOMPUTER PRAKTIKUM 3 (dummy)',
+            'name' => 'PBO PRAKTIKUM 3 (dummy)',
             'time_start' => '2021-01-26 07:30:00',
             'time_end' => '2021-01-26 10:30:00',
             'room_id' => $room_id->id,

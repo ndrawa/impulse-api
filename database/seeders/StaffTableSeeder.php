@@ -42,10 +42,25 @@ class StaffTableSeeder extends Seeder
             'code' => 'AJS'
         ]);
 
+        $user = $staff->user;
+        $user->assignRole(Role::ROLE_DOSEN);
+
         $staff = Staff::create([
             'nip' => '03790039',
             'name' => 'Dr. VERA SURYANI, S.T., M.T.',
             'code' => 'VRA'
         ]);
+
+        $user = $staff->user;
+        $user->assignRole(Role::ROLE_DOSEN);
+
+        $staff = Staff::create([
+            'nip' => '03410341',
+            'name' => 'AULIA ARIFWARDANA, S.Kom., M.T.',
+            'code' => 'UIW'
+        ]);
+
+        $user = $staff->user;
+        $user->assignRole(Role::ROLE_DOSEN);
     }
 }
