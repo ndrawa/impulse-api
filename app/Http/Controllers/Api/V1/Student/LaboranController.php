@@ -457,8 +457,24 @@ class LaboranController extends BaseController
     }
 
     public function delete_class_course_by_id(Request $request, $class_course_id) {
-        $class_course = ClassCourse::findOrFail($class_course_id);
+        // Hapus menggunakan id:
+        // {{url}}/v1/laboran/class-course/{class_course_id}
+        // Hapus semua:
+        // {{url}}/v1/laboran/class-course/all
+        if($class_course_id != 'all') {
+            $class_course = ClassCourse::find($class_course_id);
+
+            if(!$class_course) {
+                return $this->response->errorNotFound('invalid id');
+            }
+
+            $class_course->delete();
+        }
+        if($class_course_id == 'all') {
+            $class_course = ClassCourse::truncate();
+        }
 
         return $this->response->noContent();
     }
+
 }
