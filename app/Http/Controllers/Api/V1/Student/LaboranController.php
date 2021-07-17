@@ -435,7 +435,13 @@ class LaboranController extends BaseController
             $staff = Staff::select('name')->where('id', $cc['staff_id'])->first();
             $course = Course::select('name')->where('id', $cc['course_id'])->first();
             $academic_year = AcademicYear::where('id', $cc['academic_year_id'])->first();
-            if ($kelas == null){
+
+            $isTrue = false;
+            if($kelas != null){
+                $isTrue = str_contains($classroom->name, $kelas);
+            }
+
+            if ($kelas == null || $isTrue){
                 $arr[$key]['id'] = $cc['id'];
                 $arr[$key]['class']['id'] = $cc['class_id'];
                 $arr[$key]['class']['name'] = $classroom->name;
@@ -446,20 +452,6 @@ class LaboranController extends BaseController
                 $arr[$key]['academic_year']['id'] = $cc['academic_year_id'];
                 $arr[$key]['academic_year']['name'] = $academic_year->year;
                 $arr[$key]['academic_year']['semester'] = $academic_year->semester;
-            }
-            else{
-                if(str_contains($classroom->name, $kelas)){
-                    $arr[$key]['id'] = $cc['id'];
-                    $arr[$key]['class']['id'] = $cc['class_id'];
-                    $arr[$key]['class']['name'] = $classroom->name;
-                    $arr[$key]['staff']['id'] = $cc['staff_id'];
-                    $arr[$key]['staff']['name'] = $staff->name;
-                    $arr[$key]['course']['id'] = $cc['course_id'];
-                    $arr[$key]['course']['name'] = $course->name;
-                    $arr[$key]['academic_year']['id'] = $cc['academic_year_id'];
-                    $arr[$key]['academic_year']['name'] = $academic_year->year;
-                    $arr[$key]['academic_year']['semester'] = $academic_year->semester;
-                }
             }
         }
 
