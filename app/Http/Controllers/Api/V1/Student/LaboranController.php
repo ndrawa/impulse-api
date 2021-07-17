@@ -294,7 +294,147 @@ class LaboranController extends BaseController
             $user = User::find($staff->user_id);
             return $this->response->item($user, new UserTransformer);
         } else {
-            return $this->response->errorerrorNotFound('NIM/NIP not found.');
+            return $this->response->errorNotFound('NIM/NIP not found.');
+        }
+    }
+
+    public function deleteall($table)
+    {
+        if ($table == 'users') {
+            User::truncate();
+            $laboran = Staff::create([
+                'nip' => 'laboran',
+                'name' => 'Laboran (Super admin)',
+                'code' => 'laboran'
+            ]);
+            $laboran->save();
+            $user = $laboran->user;
+            $user->assignRole(Role::ROLE_LABORAN);
+            return 'Delete '.$table;
+        } elseif ($table == 'students' or $table == 'staffs') {
+            if ($table == 'students') {
+                $allStudent = Student::pluck('user_id');
+            } else {
+                $allStudent = Staff::pluck('user_id');
+            }
+            foreach ($allStudent as $key => $value) {
+                $user = User::findOrFail($value);
+                $user->delete();
+            }
+
+            if ($table == 'staffs') {
+                $laboran = Staff::create([
+                    'nip' => 'laboran',
+                    'name' => 'Laboran (Super admin)',
+                    'code' => 'laboran'
+                ]);
+                $laboran->save();
+                $user = $laboran->user;
+                $user->assignRole(Role::ROLE_LABORAN);
+            }
+            return 'Delete '.$table;
+        } else {
+            DB::table($table)->delete();
+            return 'Delete '.$table;
+        }
+    }
+
+    public function report_roles($role)
+    {
+        $users = User::get();
+        $data = [];
+        $i = 0;
+        foreach ($users as $key => $user) {
+            if ($role == 'asprak') {
+                if($user->isAsprak()) {
+                    $data['asprak'][$i++] = $user->student;
+                }
+            } elseif ($role == 'aslab') {
+                if($user->isAslab()) {
+                    $data['aslab'][$i++] = $user->student;
+                }
+            } elseif ($role == 'dosen') {
+                if($user->isDosen()) {
+                    $data['dosen'][$i++] = $user->staff;
+                }
+            } elseif ($role == 'staff') {
+                if($user->isStaff()) {
+                    $data['staff'][$i++] = $user->staff;
+                }
+            } elseif ($role == 'student') {
+                if($user->isStudent()) {
+                    $data['student'][$i++] = $user->student;
+                }
+            } elseif ($role == 'laboran') {
+                if($user->isLaboran()) {
+                    $data['laboran'][$i++] = $user->staff;
+                }
+            }
+        }
+        return $data;
+    }
+
+    public function create_class_course(Request $request) {
+        $this->validate($request, [
+            'class_id' => 'required',
+            'staff_id' => 'required',
+            'course_id' => 'required',
+            'academic_year_id' => 'required',
+        ]);
+
+        $classroom = Classroom::find($request->class_id);
+        $staff = Staff::find($request->staff_id);
+        $course = Course::find($request->course_id);
+        $academic_year = AcademicYear::find($request->academic_year_id);
+
+        if($classroom && $staff && $course && $academic_year) {
+            $class_course = ClassCourse::create($request->all());
+            $class_course->save();
+        } else {
+            return $this->response->errorNotFound('invalid id');
+        }
+    }
+
+    public function get_class_course(Request $request) {
+        $class_course = ClassCourse::all();
+
+        $kelas = null;
+        if($request->has('kelas')) {
+            $kelas = strtoupper($request->get('kelas'));
+        }
+
+        $arr = [];
+        foreach($class_course as $key=>$cc) {
+            $classroom = Classroom::select('name')->where('id', $cc['class_id'])->first();
+            $staff = Staff::select('name')->where('id', $cc['staff_id'])->first();
+            $course = Course::select('name')->where('id', $cc['course_id'])->first();
+            $academic_year = AcademicYear::where('id', $cc['academic_year_id'])->first();
+            if ($kelas == null){
+                $arr[$key]['id'] = $cc['id'];
+                $arr[$key]['class']['id'] = $cc['class_id'];
+                $arr[$key]['class']['name'] = $classroom->name;
+                $arr[$key]['staff']['id'] = $cc['staff_id'];
+                $arr[$key]['staff']['name'] = $staff->name;
+                $arr[$key]['course']['id'] = $cc['course_id'];
+                $arr[$key]['course']['name'] = $course->name;
+                $arr[$key]['academic_year']['id'] = $cc['academic_year_id'];
+                $arr[$key]['academic_year']['name'] = $academic_year->year;
+                $arr[$key]['academic_year']['semester'] = $academic_year->semester;
+            }
+            else{
+                if(str_contains($classroom->name, $kelas)){
+                    $arr[$key]['id'] = $cc['id'];
+                    $arr[$key]['class']['id'] = $cc['class_id'];
+                    $arr[$key]['class']['name'] = $classroom->name;
+                    $arr[$key]['staff']['id'] = $cc['staff_id'];
+                    $arr[$key]['staff']['name'] = $staff->name;
+                    $arr[$key]['course']['id'] = $cc['course_id'];
+                    $arr[$key]['course']['name'] = $course->name;
+                    $arr[$key]['academic_year']['id'] = $cc['academic_year_id'];
+                    $arr[$key]['academic_year']['name'] = $academic_year->year;
+                    $arr[$key]['academic_year']['semester'] = $academic_year->semester;
+                }
+            }
         }
     }
 }
