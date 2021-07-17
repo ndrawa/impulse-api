@@ -97,6 +97,11 @@ class User extends BaseModel implements AuthenticatableContract, AuthorizableCon
         return $this->hasRole(Role::ROLE_ASLAB);
     }
 
+    public function isDosen()
+    {
+        return $this->hasRole(Role::ROLE_DOSEN);
+    }
+
     public function user()
     {
         if($this->isStaff()) {

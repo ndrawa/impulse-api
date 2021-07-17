@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateModulesTable extends Migration
+class CreateClassCourse extends Migration
 {
     /**
      * Run the migrations.
@@ -13,31 +13,28 @@ class CreateModulesTable extends Migration
      */
     public function up()
     {
-        Schema::create('modules', function (Blueprint $table) {
+        Schema::create('class_course', function (Blueprint $table) {
             $table->char('id', 26)->primary();
+            $table->char('class_id', 26);
             $table->char('course_id', 26);
-            $table->char('pretest_id', 26)->nullable();
-            $table->char('posttest_id', 26)->nullable();
-            $table->char('journal_id', 26)->nullable();
-            $table->integer('index');
+            $table->char('staff_id', 26);
             $table->char('academic_year_id', 26);
             $table->timestamps();
-
-            $table->foreign('pretest_id')
+            $table->foreign('class_id')
                 ->references('id')
-                ->on('tests')
-                ->onDelete('cascade');
-            $table->foreign('posttest_id')
-                ->references('id')
-                ->on('tests')
-                ->onDelete('cascade');
-            $table->foreign('journal_id')
-                ->references('id')
-                ->on('tests')
+                ->on('classes')
                 ->onDelete('cascade');
             $table->foreign('academic_year_id')
                 ->references('id')
                 ->on('academic_years')
+                ->onDelete('cascade');
+            $table->foreign('course_id')
+                ->references('id')
+                ->on('courses')
+                ->onDelete('cascade');
+            $table->foreign('staff_id')
+                ->references('id')
+                ->on('staffs')
                 ->onDelete('cascade');
         });
     }
@@ -49,6 +46,6 @@ class CreateModulesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('modules');
+        //
     }
 }

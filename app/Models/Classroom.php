@@ -14,9 +14,7 @@ class Classroom extends BaseModel
      * @var array
      */
     protected $fillable = [
-        'staff_id',
         'name',
-        'course_id',
         'academic_year',
         'semester'
     ];
@@ -26,8 +24,8 @@ class Classroom extends BaseModel
         return $this->belongsTo(Staff::class);
     }
 
-    public function courses()
+    public function class_course()
     {
-        return $this->belongsTo(Course::class);
+        return $this->hasMany(ClassCourse::class, 'class_id', 'id');
     }
 }

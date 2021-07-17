@@ -6,13 +6,15 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Api\V1\BaseController;
 use App\Models\Student;
 use App\Models\Staff;
-use App\Models\StudentClass;
 use App\Models\Classroom;
+use App\Models\ClassCourse;
 use App\Models\Course;
 use App\Models\User;
+use App\Models\AcademicYear;
 use App\Transformers\LaboranTransformer;
 use App\Transformers\StudentTransformer;
-use App\Transformers\StudentClassesTransformer;
+use App\Transformers\ClassTransformer;
+use App\Transformers\ClassCourseTransformer;
 use App\Transformers\UserTransformer;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
@@ -30,7 +32,7 @@ class LaboranController extends BaseController
             ->join('classes', 'classes.id', '=', 'students_classes.class_id')
             ->join('courses', 'courses.id', '=', 'classes.course_id')
             ->join('staffs', 'staffs.id', '=', 'classes.staff_id')
-            ->select('students.id as student_id', 'students.nim', 'students.name', 'classes.id as class_id', 'classes.name as class_name', 'students.gender', 
+            ->select('students.id as student_id', 'students.nim', 'students.name', 'classes.id as class_id', 'classes.name as class_name', 'students.gender',
             'students.religion', 'courses.code as course_code', 'courses.name as course_name',
             'staffs.code as staff_code', 'classes.academic_year', 'classes.semester');
         $per_page = env('PAGINATION_SIZE', 15);
@@ -105,7 +107,7 @@ class LaboranController extends BaseController
             $orderBy = $request->get('orderBy');
             $sortedBy = $request->get('sortedBy');
             $users->orderBy($orderBy, $sortedBy);
-        } 
+        }
         else if($request->has('orderBy')) {
             $orderBy = $request->get('orderBy');
             $users->orderBy($orderBy);
@@ -123,7 +125,7 @@ class LaboranController extends BaseController
             ->join('classes', 'classes.id', '=', 'students_classes.class_id')
             ->join('courses', 'courses.id', '=', 'classes.course_id')
             ->join('staffs', 'staffs.id', '=', 'classes.staff_id')
-            ->select('students.id as student_id', 'students.nim', 'students.name', 'classes.id as classes_id', 'classes.name as class_name', 'students.gender', 
+            ->select('students.id as student_id', 'students.nim', 'students.name', 'classes.id as classes_id', 'classes.name as class_name', 'students.gender',
             'students.religion', 'courses.code as courses_code', 'courses.name as course_name',
             'staffs.code as staff_code', 'classes.academic_year', 'classes.semester')
             ->where('students.id', '=', $id)
@@ -138,7 +140,6 @@ class LaboranController extends BaseController
         $this->validate($request, [
             'nim' => [
                 'required',
-                Rule::unique('students')
             ],
             'name' => 'required',
             'gender' => [
@@ -156,7 +157,7 @@ class LaboranController extends BaseController
         ]);
 
         // create Student
-        if (User::where('username', $request->nim)->first() == null) {
+        if (Student::where('nim', $request->nim)->first() == null) {
             $student = Student::create([
                 'name' => $request->name,
                 'nim' => $request->nim,
@@ -202,7 +203,7 @@ class LaboranController extends BaseController
             'student_id' => $student_id->id,
             'class_id' => $class_id->id,
         ]);
-        return $this->response->item($student, new StudentTransformer);
+        return $this->response->item($student_class, new StudentClassTransformer);
     }
 
     public function delete(Request $request, $id)
@@ -227,15 +228,40 @@ class LaboranController extends BaseController
             'student_id' => 'required',
             'class_id' => 'required'
         ]);
-        StudentClass::create([
-            'student_id' => $student_id->id,
-            'class_id' => $class_id->id,
+        if (StudentClass::where('student_id', $request->student_id)->where('class_id', $request->class_id)->first() == null) {
+            $student_class = StudentClass::create([
+                'student_id' => $request->student_id,
+                'class_id' => $request->class_id,
+            ]);
+            return $this->response->item($student_class, new StudentClassTransformer);
+        } else {
+            return $this->response->errorNotFound('Duplicate data.');
+        }
+    }
+
+    public function edit_student_classes(Request $request, $id)
+    {
+        $studentclass = StudentClass::find($id);
+        print($id);
+        $this->validate($request, [
+            'student_id' => 'required',
+            'class_id' => 'required'
         ]);
+        print('data'.$request->student_id);
+        $studentclass->fill($request->all());
+        $studentclass->save();
+    }
+
+    public function delete_student_classes($id)
+    {
+        $studentclass = StudentClass::find($id);
+        $studentclass->delete();
+        return $this->response->noContent();
     }
 
     public function get_student_classes(){
         $student_class = StudentClass::query()->get();
-        return $this->response->item($student_class, new StudentClassesTransformer);
+        return $this->response->item($student_class, new StudentClassTransformer);
     }
 
     public function set_role(Request $request)
@@ -436,5 +462,40 @@ class LaboranController extends BaseController
                 }
             }
         }
+
+        $data['data'] = $arr;
+
+        return $data;
     }
+
+    public function get_class_course_staff_year(Request $request) {
+        $data['data']['classes'] = Classroom::select('id','name')->get();
+        $data['data']['courses'] = Course::select('id','code','name')->get();
+        $data['data']['staffs'] = Staff::select('id','code','name')->get();
+        $data['data']['academic_year'] = AcademicYear::select('id','year','semester')->get();
+
+        return $data;
+    }
+
+    public function delete_class_course_by_id(Request $request, $class_course_id) {
+        // Hapus menggunakan id:
+        // {{url}}/v1/laboran/class-course/{class_course_id}
+        // Hapus semua:
+        // {{url}}/v1/laboran/class-course/all
+        if($class_course_id != 'all') {
+            $class_course = ClassCourse::find($class_course_id);
+
+            if(!$class_course) {
+                return $this->response->errorNotFound('invalid id');
+            }
+
+            $class_course->delete();
+        }
+        if($class_course_id == 'all') {
+            $class_course = ClassCourse::truncate();
+        }
+
+        return $this->response->noContent();
+    }
+
 }

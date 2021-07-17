@@ -4,22 +4,23 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Course extends BaseModel
+class AcademicYear extends BaseModel
 {
-    protected $table = "courses";
+    protected $table = "academic_years";
 
     /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
+
     protected $fillable = [
-        'name',
-        'code'
+        'year',
+        'semester'
     ];
 
     public function class_course()
     {
-        return $this->hasMany(ClassCourse::class, 'course_id', 'id');
+        return $this->hasMany(ClassCourse::class, 'academic_year_id', 'id');
     }
 }

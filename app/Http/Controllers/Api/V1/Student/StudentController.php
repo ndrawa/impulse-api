@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1\Student;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Api\V1\BaseController;
 use App\Models\Student;
+use App\Models\User;
 use App\Transformers\StudentTransformer;
 use Illuminate\Validation\Rule;
 
@@ -94,8 +95,9 @@ class StudentController extends BaseController
     public function delete(Request $request, $id)
     {
         $student = Student::findOrFail($id);
+        $user = User::findOrFail($student->user_id);
         $this->authorize('delete', $student);
-        $student->delete();
+        $user->delete();
 
         return $this->response->noContent();
     }

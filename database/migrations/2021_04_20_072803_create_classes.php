@@ -15,20 +15,15 @@ class CreateClasses extends Migration
     {
         Schema::create('classes', function (Blueprint $table) {
             $table->char('id', 26)->primary();
-            $table->char('staff_id', 26);
+            // $table->char('staff_id', 26);
             $table->string('name');
-            $table->char('course_id', 26);
             $table->string('academic_year');
             $table->string('semester');
             $table->timestamps();
-            $table->foreign('staff_id')
-                ->references('id')
-                ->on('staffs')
-                ->onDelete('cascade');
-            $table->foreign('course_id')
-                ->references('id')
-                ->on('courses')
-                ->onDelete('cascade');
+            // $table->foreign('staff_id')
+            //     ->references('id')
+            //     ->on('staffs')
+            //     ->onDelete('cascade');
         });
     }
 

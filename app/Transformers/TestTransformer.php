@@ -12,11 +12,9 @@ class TestTransformer extends TransformerAbstract
     public function transform(Test $test)
     {
         $data = [];
-        $data = [];
         $data['test'] = [
             'id' => $test->id,
-            'time_start' => $test->time_start,
-            'time_end' => $test->time_end,
+            'type' => $test->type,
             'created_at' => $test->created_at,
             'updated_at' => $test->updated_at,
         ];
