@@ -424,22 +424,43 @@ class LaboranController extends BaseController
     public function get_class_course(Request $request) {
         $class_course = ClassCourse::all();
 
+        $kelas = null;
+        if($request->has('kelas')) {
+            $kelas = strtoupper($request->get('kelas'));
+        }
+
         $arr = [];
         foreach($class_course as $key=>$cc) {
             $classroom = Classroom::select('name')->where('id', $cc['class_id'])->first();
             $staff = Staff::select('name')->where('id', $cc['staff_id'])->first();
             $course = Course::select('name')->where('id', $cc['course_id'])->first();
             $academic_year = AcademicYear::where('id', $cc['academic_year_id'])->first();
-            $arr[$key]['id'] = $cc['id'];
-            $arr[$key]['class']['id'] = $cc['class_id'];
-            $arr[$key]['class']['name'] = $classroom->name;
-            $arr[$key]['staff']['id'] = $cc['staff_id'];
-            $arr[$key]['staff']['name'] = $staff->name;
-            $arr[$key]['course']['id'] = $cc['course_id'];
-            $arr[$key]['course']['name'] = $course->name;
-            $arr[$key]['academic_year']['id'] = $cc['academic_year_id'];
-            $arr[$key]['academic_year']['name'] = $academic_year->year;
-            $arr[$key]['academic_year']['semester'] = $academic_year->semester;
+            if ($kelas == null){
+                $arr[$key]['id'] = $cc['id'];
+                $arr[$key]['class']['id'] = $cc['class_id'];
+                $arr[$key]['class']['name'] = $classroom->name;
+                $arr[$key]['staff']['id'] = $cc['staff_id'];
+                $arr[$key]['staff']['name'] = $staff->name;
+                $arr[$key]['course']['id'] = $cc['course_id'];
+                $arr[$key]['course']['name'] = $course->name;
+                $arr[$key]['academic_year']['id'] = $cc['academic_year_id'];
+                $arr[$key]['academic_year']['name'] = $academic_year->year;
+                $arr[$key]['academic_year']['semester'] = $academic_year->semester;
+            }
+            else{
+                if(str_contains($classroom->name, $kelas)){
+                    $arr[$key]['id'] = $cc['id'];
+                    $arr[$key]['class']['id'] = $cc['class_id'];
+                    $arr[$key]['class']['name'] = $classroom->name;
+                    $arr[$key]['staff']['id'] = $cc['staff_id'];
+                    $arr[$key]['staff']['name'] = $staff->name;
+                    $arr[$key]['course']['id'] = $cc['course_id'];
+                    $arr[$key]['course']['name'] = $course->name;
+                    $arr[$key]['academic_year']['id'] = $cc['academic_year_id'];
+                    $arr[$key]['academic_year']['name'] = $academic_year->year;
+                    $arr[$key]['academic_year']['semester'] = $academic_year->semester;
+                }
+            }
         }
 
         $data['data'] = $arr;
