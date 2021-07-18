@@ -84,14 +84,8 @@ class StudentImport implements ToCollection
                     }
 
                     // create Academic Years
-                    $semester = '';
-                    if ($row[12] % 2 == 0){
-                        $semester = 'even';
-                    } else {
-                        $semester = 'odd';
-                    }
                     if (AcademicYear::where('year', $row[11])
-                        ->where('semester', $semester)->first() == null) {
+                        ->where('semester', replace_semester($row[12]))->first() == null) {
                         $academic_year = AcademicYear::create([
                             'year' => $row[11],
                             'semester' => replace_semester($row[12])
@@ -114,14 +108,7 @@ class StudentImport implements ToCollection
                     $fclass_id = Classroom::where('name', $row[2])->first()->id;
                     $fcourse_id = Course::where('code', $row[8])->first()->id;
                     $fstaff_id = Staff::where('code', $row[10])->first()->id;
-                    $semester = '';
-                    if ((int)$row[2] % 2 == 0){
-                        $semester = 'even';
-                    } else {
-                        $semester = 'odd';
-                    }
-                    $facademic_year_id = AcademicYear::where('year', $row[11])
-                                        ->where('semester', $semester)->first()->id;
+                    $facademic_year_id = AcademicYear::where('year', $row[11])->where('semester', replace_semester($row[12]))->first()->id;
                     if (ClassCourse::where('class_id', $fclass_id)
                         ->where('course_id', $fcourse_id)
                         ->where('staff_id', $fstaff_id)
