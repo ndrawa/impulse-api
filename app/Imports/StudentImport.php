@@ -7,6 +7,9 @@ use App\Models\Course;
 use App\Models\Student;
 use App\Models\StudentClass;
 use App\Models\Classroom;
+use App\Models\ClassCourse;
+use App\Models\StudentClassCourse;
+use App\Models\AcademicYear;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToCollection;
 
@@ -45,12 +48,22 @@ class StudentImport implements ToCollection
             }
         }
 
+        function replace_semester($data)
+        {
+            if ($data % 2 == 0){
+                return 'even';
+            } else {
+                return 'odd';
+            }
+        }
+
         foreach ($collection as $key => $row) 
         {
             if ($row[0] != null) {
                 if($key < 1 ) continue;
                 if (Student::where('nim', $row[0])->first() == null) 
                 {
+                    // create Student
                     Student::create([
                         'name' => $row[1],
                         'nim' => $row[0],
@@ -61,6 +74,7 @@ class StudentImport implements ToCollection
 
                 if (Student::where('nim', $row[0])->first() != null) 
                 {
+                    // create Courses
                     if (Course::where('code', $row[8])->first() == null) 
                     {
                         $course = Course::create([
@@ -69,28 +83,58 @@ class StudentImport implements ToCollection
                         ]);
                     }
 
-                    if (Classroom::where('name', $row[2])->where('course_id', Course::where('code', $row[8])->first()->id)->first() == null) 
-                    {
-                        $staff_id = Staff::where('code', $row[10])->first();
-                        $course_id = Course::where('code', $row[8])->first();
+                    // create Academic Years
+                    if (AcademicYear::where('year', $row[11])
+                        ->where('semester', replace_semester($row[12]))->first() == null) {
+                        $academic_year = AcademicYear::create([
+                            'year' => $row[11],
+                            'semester' => replace_semester($row[12])
+                        ]);
+                    }
+
+                    // create Classes
+                    if (Classroom::where('name', $row[2])
+                        ->where('academic_year', $row[11])
+                        ->where('semester', $row[12])->first() == null) {
                         $classroom = Classroom::create([
-                            'staff_id' => $staff_id->id,
                             'name' => $row[2],
-                            'course_id' => $course_id->id,
                             'academic_year' => $row[11],
-                            'semester' => $row[12],
+                            'semester' => $row[12]
                         ]);
                         $classroom->save();
-                    }   
-                    
-                    $student_id = Student::where('nim', $row[0])->first();
-                    $class_id = Classroom::where('name', $row[2])->where('course_id', Course::where('code', $row[8])->first()->id)->first();
-                    if (StudentClass::where(['student_id' => $student_id->id, 'class_id' => $class_id->id])->first() == null) 
-                    {
-                        StudentClass::create([
-                            'student_id' => $student_id->id,
-                            'class_id' => $class_id->id,
+                    }
+
+                    // create ClassCourse
+                    $fclass_id = Classroom::where('name', $row[2])->first()->id;
+                    $fcourse_id = Course::where('code', $row[8])->first()->id;
+                    $fstaff_id = Staff::where('code', $row[10])->first()->id;
+                    $facademic_year_id = AcademicYear::where('year', $row[11])->where('semester', replace_semester($row[12]))->first()->id;
+                    if (ClassCourse::where('class_id', $fclass_id)
+                        ->where('course_id', $fcourse_id)
+                        ->where('staff_id', $fstaff_id)
+                        ->where('academic_year_id', $facademic_year_id)
+                        ->first() == null) {
+                        $classcourse = ClassCourse::create([
+                            'class_id' => $fclass_id,
+                            'course_id' => $fcourse_id,
+                            'staff_id' => $fstaff_id,
+                            'academic_year_id' => $facademic_year_id
                         ]);
+                        $classcourse->save();
+                    }
+
+                    // create Student classes
+                    $student_id = Student::where('nim', $row[0])->first()->id;
+                    $class_course_id = ClassCourse::where('class_id', $fclass_id)
+                            ->where('course_id', $fcourse_id)
+                            ->where('staff_id', $fstaff_id)
+                            ->where('academic_year_id', $facademic_year_id)
+                            ->first()->id;
+                    if(StudentClassCourse::where('student_id', $student_id)->where('class_course_id', $class_course_id)->first() == null) {
+                    $student_class = StudentClassCourse::create([
+                        'student_id' => $student_id,
+                        'class_course_id' => $class_course_id,
+                    ]);
                     }
                 }
             }

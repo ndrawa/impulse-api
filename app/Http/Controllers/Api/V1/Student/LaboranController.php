@@ -182,11 +182,11 @@ class LaboranController extends BaseController
 
         // create Academic Years
         $semester = '';
-            if ($request->semester % 2 == 0){
-                $semester = 'even';
-            } else {
-                $semester = 'odd';
-            }
+        if ($request->semester % 2 == 0){
+            $semester = 'even';
+        } else {
+            $semester = 'odd';
+        }
         if (AcademicYear::where('year', $request->academic_year)
             ->where('semester', $semester)->first() == null) {
             $academic_year = AcademicYear::create([
