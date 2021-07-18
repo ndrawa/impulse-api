@@ -19,7 +19,7 @@ class LaboranTransformer extends TransformerAbstract
             'course_code' => $student->course_code,
             'course_name' => $student->course_name,
             'staff_code' => $student->staff_code,
-            'academic_year' => $student->academic_year,
+            'academic_year' => $student->year,
             'semester' => $student->semester,
         ];
     }
