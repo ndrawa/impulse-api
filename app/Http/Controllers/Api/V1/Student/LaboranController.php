@@ -269,14 +269,14 @@ class LaboranController extends BaseController
     {
         $this->validate($request, [
             'student_id' => 'required',
-            'class_id' => 'required'
+            'class_course_id' => 'required'
         ]);
-        if (StudentClassCourse::where('student_id', $request->student_id)->where('class_id', $request->class_id)->first() == null) {
+        if (StudentClassCourse::where('student_id', $request->student_id)->where('class_course_id', $request->class_course_id)->first() == null) {
             $student_class = StudentClassCourse::create([
                 'student_id' => $request->student_id,
-                'class_id' => $request->class_id,
+                'class_course_id' => $request->class_course_id,
             ]);
-            return $this->response->item($student_class, new StudentClassTransformer);
+            return $this->response->item($student_class, new StudentClassCourseTransformer);
         } else {
             return $this->response->errorNotFound('Duplicate data.');
         }
@@ -285,14 +285,15 @@ class LaboranController extends BaseController
     public function edit_student_classes(Request $request, $id)
     {
         $studentclass = StudentClassCourse::find($id);
-        print($id);
+        // print($id);
         $this->validate($request, [
             'student_id' => 'required',
-            'class_id' => 'required'
+            'class_course_id' => 'required'
         ]);
-        print('data'.$request->student_id);
+        // print('data'.$request->student_id);
         $studentclass->fill($request->all());
         $studentclass->save();
+        return $this->response->item($studentclass, new StudentClassCourseTransformer);
     }
 
     public function delete_student_classes($id)
@@ -304,7 +305,7 @@ class LaboranController extends BaseController
 
     public function get_student_classes(){
         $student_class = StudentClassCourse::query()->get();
-        return $this->response->item($student_class, new StudentClassTransformer);
+        return $this->response->item($student_class, new StudentClassCourseTransformer);
     }
 
     public function set_role(Request $request)
