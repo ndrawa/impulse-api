@@ -428,6 +428,8 @@ class LaboranController extends BaseController
         if($request->has('kelas')) {
             $kelas = strtoupper($request->get('kelas'));
         }
+        $index = 0;
+        $idx = 0;
 
         $arr = [];
         foreach($class_course as $key=>$cc) {
@@ -442,16 +444,23 @@ class LaboranController extends BaseController
             }
 
             if ($kelas == null || $isTrue){
-                $arr[$key]['id'] = $cc['id'];
-                $arr[$key]['class']['id'] = $cc['class_id'];
-                $arr[$key]['class']['name'] = $classroom->name;
-                $arr[$key]['staff']['id'] = $cc['staff_id'];
-                $arr[$key]['staff']['name'] = $staff->name;
-                $arr[$key]['course']['id'] = $cc['course_id'];
-                $arr[$key]['course']['name'] = $course->name;
-                $arr[$key]['academic_year']['id'] = $cc['academic_year_id'];
-                $arr[$key]['academic_year']['name'] = $academic_year->year;
-                $arr[$key]['academic_year']['semester'] = $academic_year->semester;
+                if($isTrue){
+                    $idx = $index;
+                    $index++;
+                }
+                else{
+                    $idx = $key;
+                }
+                $arr[$idx]['id'] = $cc['id'];
+                $arr[$idx]['class']['id'] = $cc['class_id'];
+                $arr[$idx]['class']['name'] = $classroom->name;
+                $arr[$idx]['staff']['id'] = $cc['staff_id'];
+                $arr[$idx]['staff']['name'] = $staff->name;
+                $arr[$idx]['course']['id'] = $cc['course_id'];
+                $arr[$idx]['course']['name'] = $course->name;
+                $arr[$idx]['academic_year']['id'] = $cc['academic_year_id'];
+                $arr[$idx]['academic_year']['name'] = $academic_year->year;
+                $arr[$idx]['academic_year']['semester'] = $academic_year->semester;
             }
         }
 
