@@ -56,7 +56,7 @@ class ClassroomController extends BaseController
 
     public function byname(Request $request)
     {
-        $classroom = Classroom::select('name')->get();
+        $classroom = Classroom::select('name')->orderBy('name')->get();
         return $this->response->item($classroom, new ClassroomTransformer);
     }
 
