@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1\Student;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Api\V1\BaseController;
 use App\Models\Student;
+use App\Models\StudentClassCourse;
 use App\Models\Staff;
 use App\Models\Classroom;
 use App\Models\ClassCourse;
@@ -13,13 +14,14 @@ use App\Models\User;
 use App\Models\AcademicYear;
 use App\Transformers\LaboranTransformer;
 use App\Transformers\StudentTransformer;
+use App\Transformers\StudentClassCourseTransformer;
 use App\Transformers\ClassTransformer;
 use App\Transformers\ClassCourseTransformer;
 use App\Transformers\UserTransformer;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
 use App\Imports\StudentImport;
-use App\Imports\StudentClassImport;
+// use App\Imports\StudentClassImport;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Models\Role;
 
@@ -28,13 +30,15 @@ class LaboranController extends BaseController
     public function index(Request $request)
     {
         $users = DB::table('students')
-            ->join('students_classes', 'students.id', '=', 'students_classes.student_id')
-            ->join('classes', 'classes.id', '=', 'students_classes.class_id')
-            ->join('courses', 'courses.id', '=', 'classes.course_id')
-            ->join('staffs', 'staffs.id', '=', 'classes.staff_id')
+            ->join('students_class_course', 'students.id', '=', 'students_class_course.student_id')
+            ->join('class_course', 'class_course.id', '=', 'students_class_course.class_course_id')
+            ->join('classes', 'classes.id', '=', 'class_course.class_id')
+            ->join('courses', 'courses.id', '=', 'class_course.course_id')
+            ->join('staffs', 'staffs.id', '=', 'class_course.staff_id')
+            ->join('academic_years', 'academic_years.id', '=', 'class_course.academic_year_id')
             ->select('students.id as student_id', 'students.nim', 'students.name', 'classes.id as class_id', 'classes.name as class_name', 'students.gender',
             'students.religion', 'courses.code as course_code', 'courses.name as course_name',
-            'staffs.code as staff_code', 'classes.academic_year', 'classes.semester');
+            'staffs.code as staff_code', 'academic_years.year', 'classes.semester');
         $per_page = env('PAGINATION_SIZE', 15);
         $request->whenHas('per_page', function($size) use (&$per_page) {
             $per_page = $size;
@@ -53,7 +57,7 @@ class LaboranController extends BaseController
                                                 ->orWhere('students.nim', 'ILIKE', '%'.$search.'%')
                                                 ->orWhere('courses.code', 'ILIKE', '%'.$search.'%')
                                                 ->orWhere('staffs.code', 'ILIKE', '%'.$search.'%',)
-                                                ->orWhere('classes.academic_year', 'ILIKE', '%'.$search.'%')
+                                                ->orWhere('academic_years.year', 'ILIKE', '%'.$search.'%')
                                                 ->orWhere('classes.semester', 'ILIKE', '%'.$search.'%');
                                         });
                                     // ->orWhere('students.gender', 'ILIKE', '%'.$search.'%')
@@ -77,7 +81,7 @@ class LaboranController extends BaseController
                                                 ->orWhere('students.nim', 'ILIKE', '%'.$search.'%')
                                                 ->orWhere('courses.code', 'ILIKE', '%'.$search.'%')
                                                 ->orWhere('staffs.code', 'ILIKE', '%'.$search.'%',)
-                                                ->orWhere('classes.academic_year', 'ILIKE', '%'.$search.'%')
+                                                ->orWhere('academic_years.year', 'ILIKE', '%'.$search.'%')
                                                 ->orWhere('classes.semester', 'ILIKE', '%'.$search.'%');
                                         });
                                     // ->orWhere('students.gender', 'ILIKE', '%'.$search.'%')
@@ -98,7 +102,7 @@ class LaboranController extends BaseController
                                 ->orWhere('courses.code', 'ILIKE', '%'.$search.'%')
                                 ->orWhere('courses.name', 'ILIKE', '%'.$search.'%')
                                 ->orWhere('staffs.code', 'ILIKE', '%'.$search.'%')
-                                ->orWhere('classes.academic_year', 'ILIKE', '%'.$search.'%')
+                                ->orWhere('academic_years.year', 'ILIKE', '%'.$search.'%')
                                 ->orWhere('classes.semester', 'ILIKE', '%'.$search.'%');
             });
         }
@@ -121,13 +125,15 @@ class LaboranController extends BaseController
     public function show(Request $request, $id)
     {
         $users = DB::table('students')
-            ->join('students_classes', 'students.id', '=', 'students_classes.student_id')
-            ->join('classes', 'classes.id', '=', 'students_classes.class_id')
-            ->join('courses', 'courses.id', '=', 'classes.course_id')
-            ->join('staffs', 'staffs.id', '=', 'classes.staff_id')
-            ->select('students.id as student_id', 'students.nim', 'students.name', 'classes.id as classes_id', 'classes.name as class_name', 'students.gender',
-            'students.religion', 'courses.code as courses_code', 'courses.name as course_name',
-            'staffs.code as staff_code', 'classes.academic_year', 'classes.semester')
+        ->join('students_class_course', 'students.id', '=', 'students_class_course.student_id')
+            ->join('class_course', 'class_course.id', '=', 'students_class_course.class_course_id')
+            ->join('classes', 'classes.id', '=', 'class_course.class_id')
+            ->join('courses', 'courses.id', '=', 'class_course.course_id')
+            ->join('staffs', 'staffs.id', '=', 'class_course.staff_id')
+            ->join('academic_years', 'academic_years.id', '=', 'class_course.academic_year_id')
+            ->select('students.id as student_id', 'students.nim', 'students.name', 'classes.id as class_id', 'classes.name as class_name', 'students.gender',
+            'students.religion', 'courses.code as course_code', 'courses.name as course_name',
+            'staffs.code as staff_code', 'academic_years.year', 'classes.semester')
             ->where('students.id', '=', $id)
             ->get();
         return $this->response->item($users, new LaboranTransformer);
@@ -166,7 +172,7 @@ class LaboranController extends BaseController
             ]);
         }
 
-        // create Course
+        // create Courses
         if (Course::where('code', $request->course_code)->first() == null) {
             $course = Course::create([
                 'name' => $request->course_name,
@@ -174,36 +180,73 @@ class LaboranController extends BaseController
             ]);
         }
 
-        // create Class
-        if (Classroom::where('name', $request->class_name)->first() == null) {
-            $staff_id = DB::table('staffs')
-                    ->where('code', $request->staff_code)
-                    ->first();
-            $course_id = DB::table('courses')
-                    ->where('code', $request->course_code)
-                    ->first();
-            $classroom = Classroom::create([
-                'staff_id' => $staff_id->id,
+        // create Academic Years
+        $semester = '';
+            if ($request->semester % 2 == 0){
+                $semester = 'even';
+            } else {
+                $semester = 'odd';
+            }
+        if (AcademicYear::where('year', $request->academic_year)
+            ->where('semester', $semester)->first() == null) {
+            $academic_year = AcademicYear::create([
+                'year' => $request->academic_year,
+                'semester' => $semester
+            ]);
+        }
+
+        // create Classes
+        if (Classroom::where('name', $request->class_name)
+            ->where('academic_year', $request->academic_year)
+            ->where('semester', $request->semester)->first() == null) {
+            $classes = Classroom::create([
                 'name' => $request->class_name,
-                'course_id' => $course_id->id,
                 'academic_year' => $request->academic_year,
                 'semester' => $request->semester
+            ]);
+        }
+
+        // create ClassCourse
+        $fclass_id = Classroom::where('name', $request->class_name)->first()->id;
+        $fcourse_id = Course::where('code', $request->course_code)->first()->id;
+        $fstaff_id = Staff::where('code', $request->staff_code)->first()->id;
+        $semester = '';
+        if ($request->semester % 2 == 0){
+            $semester = 'even';
+        } else {
+            $semester = 'odd';
+        }
+        $facademic_year_id = AcademicYear::where('year', $request->academic_year)
+                            ->where('semester', $semester)->first()->id;
+        if (ClassCourse::where('class_id', $fclass_id)
+            ->where('course_id', $fcourse_id)
+            ->where('staff_id', $fstaff_id)
+            ->where('academic_year_id', $facademic_year_id)
+            ->first() == null) {
+            $classcourse = ClassCourse::create([
+                'class_id' => $fclass_id,
+                'course_id' => $fcourse_id,
+                'staff_id' => $fstaff_id,
+                'academic_year_id' => $facademic_year_id
             ]);
         }
 
         // create Student classes
         $student_id = DB::table('students')
                     ->where('nim', $request->nim)
-                    ->first();
-        $class_id = DB::table('classes')
-                    ->where('name', $request->class_name)
-                    ->first();
-
-        $student_class = StudentClass::create([
-            'student_id' => $student_id->id,
-            'class_id' => $class_id->id,
-        ]);
-        return $this->response->item($student_class, new StudentClassTransformer);
+                    ->first()->id;
+        $class_course_id = ClassCourse::where('class_id', $fclass_id)
+                    ->where('course_id', $fcourse_id)
+                    ->where('staff_id', $fstaff_id)
+                    ->where('academic_year_id', $facademic_year_id)
+                    ->first()->id;
+        if(StudentClassCourse::where('student_id', $student_id)->where('class_course_id', $class_course_id)->first() == null) {
+            $student_class = StudentClassCourse::create([
+                'student_id' => $student_id,
+                'class_course_id' => $class_course_id,
+            ]);
+            return $this->response->item($student_class, new StudentClassCourseTransformer);
+        }
     }
 
     public function delete(Request $request, $id)
@@ -228,8 +271,8 @@ class LaboranController extends BaseController
             'student_id' => 'required',
             'class_id' => 'required'
         ]);
-        if (StudentClass::where('student_id', $request->student_id)->where('class_id', $request->class_id)->first() == null) {
-            $student_class = StudentClass::create([
+        if (StudentClassCourse::where('student_id', $request->student_id)->where('class_id', $request->class_id)->first() == null) {
+            $student_class = StudentClassCourse::create([
                 'student_id' => $request->student_id,
                 'class_id' => $request->class_id,
             ]);
@@ -241,7 +284,7 @@ class LaboranController extends BaseController
 
     public function edit_student_classes(Request $request, $id)
     {
-        $studentclass = StudentClass::find($id);
+        $studentclass = StudentClassCourse::find($id);
         print($id);
         $this->validate($request, [
             'student_id' => 'required',
@@ -254,13 +297,13 @@ class LaboranController extends BaseController
 
     public function delete_student_classes($id)
     {
-        $studentclass = StudentClass::find($id);
+        $studentclass = StudentClassCourse::find($id);
         $studentclass->delete();
         return $this->response->noContent();
     }
 
     public function get_student_classes(){
-        $student_class = StudentClass::query()->get();
+        $student_class = StudentClassCourse::query()->get();
         return $this->response->item($student_class, new StudentClassTransformer);
     }
 
