@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Api\V1\BaseController;
 use App\Models\Student;
 use App\Models\User;
+use App\Models\Grade;
 use App\Transformers\StudentTransformer;
 use Illuminate\Validation\Rule;
 
@@ -100,5 +101,11 @@ class StudentController extends BaseController
         $user->delete();
 
         return $this->response->noContent();
+    }
+
+    public function show_student_grade(Request $request, $user_id){
+        $grade = Grade::Where('user_id', $user_id)->get();
+
+        return $grade;
     }
 }
