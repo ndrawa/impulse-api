@@ -12,4 +12,5 @@ $api->version('v1', [
     $api->put('/{id}', ['as' => 'student.update', 'uses' => 'StudentController@update']);
     $api->post('/', ['as' => 'student.create', 'uses' => 'StudentController@create']);
     $api->delete('/{id}', ['as' => 'student.delete', 'uses' => 'StudentController@delete']);
+    $api->get('/show_student_grade/{user_id}', ['as' => 'student.show', 'uses' => 'StudentController@show_student_grade']);
 });

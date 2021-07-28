@@ -159,4 +159,10 @@ class ScheduleController extends BaseController
 
         return $this->response->error('student id not found', 404);
     }
+
+    public function show_schedule(Request $request, $class_course_id){
+        $schedule = Schedule::Where('class_course_id', $class_course_id)->get();
+
+        return $this->response->item($schedule, new ScheduleTransformer);
+    }
 }

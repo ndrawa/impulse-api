@@ -18,6 +18,7 @@ class ScheduleTransformer extends TransformerAbstract
             'room_id' => $schedule->room_id,
             'periode_start' => $schedule->periode_start,
             'periode_end' => $schedule->periode_end,
+            'class_course_id' => $schedule->class_course_id,
             'class_id' => $schedule->class_id,
             'module_id' => $schedule->module_id,
             'type' => $schedule->type
