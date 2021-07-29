@@ -45,7 +45,8 @@ class StudentController extends BaseController
 
     public function show(Request $request, $id)
     {
-        $student = Student::findOrFail($id);
+        //$student = Student::findOrFail($id);
+        $student = Student::where('nim', $id)->firstOrFail();
         return $this->response->item($student, new StudentTransformer);
     }
 
