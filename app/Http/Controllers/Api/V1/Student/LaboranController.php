@@ -185,10 +185,14 @@ class LaboranController extends BaseController
 
         // create Academic Years
         $semester = '';
-        if ($request->semester % 2 == 0){
-            $semester = 'even';
+        if (is_numeric($request->semester)){
+            if ($request->semester % 2 == 0){
+                $semester = 'even';
+            } else {
+                $semester = 'odd';
+            }
         } else {
-            $semester = 'odd';
+            $semester = $request->semester;
         }
         if (AcademicYear::where('year', $request->academic_year)
             ->where('semester', $semester)->first() == null) {
@@ -214,10 +218,14 @@ class LaboranController extends BaseController
         $fcourse_id = Course::where('code', $request->course_code)->first()->id;
         $fstaff_id = Staff::where('code', $request->staff_code)->first()->id;
         $semester = '';
-        if ($request->semester % 2 == 0){
-            $semester = 'even';
+        if (is_numeric($request->semester)){
+            if ($request->semester % 2 == 0){
+                $semester = 'even';
+            } else {
+                $semester = 'odd';
+            }
         } else {
-            $semester = 'odd';
+            $semester = $request->semester;
         }
         $facademic_year_id = AcademicYear::where('year', $request->academic_year)
                             ->where('semester', $semester)->first()->id;
@@ -513,8 +521,8 @@ class LaboranController extends BaseController
         $arr = [];
         foreach($class_course as $key=>$cc) {
             $classroom = Classroom::select('name')->where('id', $cc['class_id'])->first();
-            $staff = Staff::select('name')->where('id', $cc['staff_id'])->first();
-            $course = Course::select('name')->where('id', $cc['course_id'])->first();
+            $staff = Staff::select('name','code')->where('id', $cc['staff_id'])->first();
+            $course = Course::select('name','code')->where('id', $cc['course_id'])->first();
             $academic_year = AcademicYear::where('id', $cc['academic_year_id'])->first();
 
             $isTrue = false;
@@ -535,8 +543,10 @@ class LaboranController extends BaseController
                 $arr[$idx]['class']['name'] = $classroom->name;
                 $arr[$idx]['staff']['id'] = $cc['staff_id'];
                 $arr[$idx]['staff']['name'] = $staff->name;
+                $arr[$idx]['staff']['code'] = $staff->code;
                 $arr[$idx]['course']['id'] = $cc['course_id'];
                 $arr[$idx]['course']['name'] = $course->name;
+                $arr[$idx]['course']['code'] = $course->code;
                 $arr[$idx]['academic_year']['id'] = $cc['academic_year_id'];
                 $arr[$idx]['academic_year']['name'] = $academic_year->year;
                 $arr[$idx]['academic_year']['semester'] = $academic_year->semester;
