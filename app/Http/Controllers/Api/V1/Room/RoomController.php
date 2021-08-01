@@ -29,7 +29,8 @@ class RoomController extends BaseController
 
     public function show(Request $request, $id)
     {
-        $room = Room::findOrFail($id);
+        // $room = Room::findOrFail($id);
+        $room = Room::Where($id)->first();
         return $this->response->item($room, new RoomTransformer);
     }
 
