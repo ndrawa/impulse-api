@@ -40,4 +40,11 @@ class ModuleController extends BaseController
                     ->firstOrFail();
         return $this->response->item($module, new ModuleTransformer);
     }
+
+    public function show(Request $request, $id)
+    {
+        //$module = Module::findOrFail($id);
+        $module = Module::where('id', $id)->first();
+        return $this->response->item($module, new ModuleTransformer);
+    }
 }
