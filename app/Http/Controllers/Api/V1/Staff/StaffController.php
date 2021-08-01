@@ -59,7 +59,8 @@ class StaffController extends BaseController
 
     public function show(Request $request, $id)
     {
-        $staff = Staff::findOrFail($id);
+        // $staff = Staff::findOrFail($id);
+        $staff = Staff::Where($id)->first();
         return $this->response->item($staff, new StaffTransformer);
     }
 

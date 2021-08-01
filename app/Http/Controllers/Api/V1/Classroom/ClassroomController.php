@@ -62,7 +62,8 @@ class ClassroomController extends BaseController
 
     public function show(Request $request, $id)
     {
-        $classroom = Classroom::findOrFail($id);
+        // $classroom = Classroom::findOrFail($id);
+        $classroom = Classroom::Where($id)->first();
         return $this->response->item($classroom, new ClassroomTransformer);
     }
 
