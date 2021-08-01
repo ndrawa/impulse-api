@@ -17,4 +17,5 @@ $api->version('v1', [
     $api->put('/update-test/{id}', ['as' => 'schedule.updatetest', 'uses' => 'ScheduleController@update_test']);
     $api->get('/getstudentcourse/{student_id}', ['as' => 'schedule.getstudentcourse', 'uses' => 'ScheduleController@get_student_class_course']);
     $api->get('/show_schedule/{class_course_id}', ['as' => 'schedule.getstudentcourse', 'uses' => 'ScheduleController@show_schedule']);
+    $api->put('/{id}', ['as' => 'schedule.update', 'uses' => 'ScheduleController@update']);
 });

@@ -165,4 +165,38 @@ class ScheduleController extends BaseController
 
         return $this->response->item($schedule, new ScheduleTransformer);
     }
+
+    public function update(Request $request, $id)
+    {
+        $schedule = Schedule::findOrFail($id);
+        // $this->authorize('update', $schedule);
+        $this->validate($request, [
+            'name' => 'required',
+            'time_start' => [
+                'required'
+            ],
+            'time_end' => [
+                'required'
+            ],
+            'room_id' => [
+                'required'
+            ],
+            'class_course_id' => [
+                'required'
+            ],
+            'academic_year_id' => [
+                'required'
+            ],
+            'module_id' => [
+                'required'
+            ],
+            'date' => [
+                'required'
+            ]
+        ]);
+        $schedule->fill($request->all());
+        $schedule->save();
+
+        return $this->response->item($schedule, new ScheduleTransformer);
+    }
 }
