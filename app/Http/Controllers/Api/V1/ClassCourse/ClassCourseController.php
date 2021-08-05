@@ -196,6 +196,17 @@ class ClassCourseController extends BaseController
         return $this->response->noContent();
     }
 
+    public function set_asprak_class_course(Request $request) {
+        $this->validate($request, [
+            'student_id' => 'required',
+            'class_course_id' => 'required'
+        ]);
+
+        $asprak = Asprak::create($request->all());
+
+        return $this->response->item($asprak, new AsprakTransformer);
+    }
+
     public function get_asprak_class_course(Request $request) {
         $asprak = Asprak::query();
         $per_page = env('PAGINATION_SIZE', 15);
