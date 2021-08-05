@@ -15,7 +15,7 @@ class CreateAcademicYears extends Migration
     {
         Schema::create('academic_years', function (Blueprint $table) {
             $table->char('id', 26)->primary();
-            $table->integer('year');
+            $table->string('year');
             $table->enum('semester', [
                 'odd',
                 'even',
