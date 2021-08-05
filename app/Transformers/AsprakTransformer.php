@@ -13,7 +13,12 @@ class AsprakTransformer extends TransformerAbstract
             'id' => $acc->id,
             // 'student_id' => $acc->student_id,
             'student' => $acc->student,
-            'class_course_id' => $acc->class_course_id,
+            'class_course' => [
+                'classes' => $acc->class_course->classes,
+                'courses' => $acc->class_course->courses,
+                'academic_years' => $acc->class_course->academic_years,
+                'staffs' => $acc->class_course->staffs,
+            ]
         ];
     }
 }
