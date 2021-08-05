@@ -501,39 +501,49 @@ class LaboranController extends BaseController
         $academic_year = AcademicYear::find($request->academic_year_id);
 
         if($classroom && $staff && $course && $academic_year) {
-            $class_course = ClassCourse::create($request->all());
-            $class_course->save();
+            $class_course_check = ClassCourse::where('class_id', $request->class_id)
+                                            ->where('staff_id', $request->staff_id)
+                                            ->where('course_id', $request->course_id)
+                                            ->where('academic_year_id', $request->academic_year_id)
+                                            ->exists();
 
-            //Generate Module 1-14
-            for ($i = 1; $i < 15; $i++) {
-                $module = '';
-                if (Module::where('course_id', $request->course_id)->where('index', $i)->first() == null) {
-                    $module = Module::create([
-                        'course_id' => $request->course_id,
-                        'index' => $i,
+            if(!$class_course_check) {
+                $class_course = ClassCourse::firstOrNew($request->all());
+                $class_course->save();
+
+                //Generate Module 1-14
+                for ($i = 1; $i < 15; $i++) {
+                    $module = '';
+                    if (Module::where('course_id', $request->course_id)->where('index', $i)->first() == null) {
+                        $module = Module::create([
+                            'course_id' => $request->course_id,
+                            'index' => $i,
+                            'academic_year_id' => $request->academic_year_id,
+                        ]);
+                        $module->save();
+                    } else {
+                        $module = Module::where('course_id', $request->course_id)->where('index', $i)->first();
+                    }
+
+                    //Generate Schedule 1-14
+                    $schedule = Schedule::create([
+                        'name' => 'Module '.$i,
+                        'time_start' => '2021-01-12 07:30:00',
+                        'time_end' => '2021-01-12 10:30:00',
+                        'room_id' => Room::first()->id,
+                        'class_course_id' => ClassCourse::where('class_id', $request->class_id)
+                                            ->where('course_id', $request->course_id)
+                                            ->where('staff_id', $request->staff_id)
+                                            ->where('academic_year_id', $request->academic_year_id)
+                                            ->first()->id,
+                        'module_id' => $module->id,
                         'academic_year_id' => $request->academic_year_id,
+                        'date' => \Carbon\Carbon::now()->toDateTimeString(),
                     ]);
-                    $module->save();
-                } else {
-                    $module = Module::where('course_id', $request->course_id)->where('index', $i)->first();
+                    $schedule->save();
                 }
-
-                //Generate Schedule 1-14
-                $schedule = Schedule::create([
-                    'name' => 'Module '.$i,
-                    'time_start' => '2021-01-12 07:30:00',
-                    'time_end' => '2021-01-12 10:30:00',
-                    'room_id' => Room::first()->id,
-                    'class_course_id' => ClassCourse::where('class_id', $request->class_id)
-                                        ->where('course_id', $request->course_id)
-                                        ->where('staff_id', $request->staff_id)
-                                        ->where('academic_year_id', $request->academic_year_id)
-                                        ->first()->id,
-                    'module_id' => $module->id,
-                    'academic_year_id' => $request->academic_year_id,
-                    'date' => \Carbon\Carbon::now()->toDateTimeString(),
-                ]);
-                $schedule->save();
+            } else {
+                return $this->response->errorBadRequest('Course class already exist');
             }
         } else {
             return $this->response->errorNotFound('invalid id');
@@ -584,6 +594,32 @@ class LaboranController extends BaseController
                 $arr[$idx]['academic_year']['semester'] = $academic_year->semester;
             }
         }
+
+        $data['data'] = $arr;
+
+        return $data;
+    }
+
+    public function get_class_course_by_id(Request $request, $class_course_id) {
+        $cc = ClassCourse::findOrFail($class_course_id);
+
+        $classroom = Classroom::select('name')->where('id', $cc['class_id'])->first();
+        $staff = Staff::select('name','code')->where('id', $cc['staff_id'])->first();
+        $course = Course::select('name','code')->where('id', $cc['course_id'])->first();
+        $academic_year = AcademicYear::where('id', $cc['academic_year_id'])->first();
+
+        $arr['id'] = $cc['id'];
+        $arr['class']['id'] = $cc['class_id'];
+        $arr['class']['name'] = $classroom->name;
+        $arr['staff']['id'] = $cc['staff_id'];
+        $arr['staff']['name'] = $staff->name;
+        $arr['staff']['code'] = $staff->code;
+        $arr['course']['id'] = $cc['course_id'];
+        $arr['course']['name'] = $course->name;
+        $arr['course']['code'] = $course->code;
+        $arr['academic_year']['id'] = $cc['academic_year_id'];
+        $arr['academic_year']['name'] = $academic_year->year;
+        $arr['academic_year']['semester'] = $academic_year->semester;
 
         $data['data'] = $arr;
 
