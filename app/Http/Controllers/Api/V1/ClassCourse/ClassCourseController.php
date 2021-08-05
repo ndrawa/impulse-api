@@ -15,6 +15,7 @@ use App\Models\ClassCourse;
 use App\Models\Staff;
 use App\Models\Schedule;
 use App\Models\Asprak;
+use App\Transformers\AsprakTransformer;
 
 class ClassCourseController extends BaseController
 {
