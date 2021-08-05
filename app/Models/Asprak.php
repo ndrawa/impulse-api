@@ -26,6 +26,6 @@ class Asprak extends BaseModel
 
     public function class_course()
     {
-        return $this->belongsTo(ClassCourse::class, 'class_id', 'id');
+        return $this->belongsTo(ClassCourse::class);
     }
 }
