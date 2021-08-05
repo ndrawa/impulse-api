@@ -98,11 +98,11 @@ class StudentImport implements ToCollection
                     // create Classes
                     if (Classroom::where('name', $row[2])
                         ->where('academic_year', $row[11])
-                        ->where('semester', $row[12])->first() == null) {
+                        ->where('semester', replace_semester($row[12]))->first() == null) {
                         $classroom = Classroom::create([
                             'name' => $row[2],
                             'academic_year' => $row[11],
-                            'semester' => $row[12]
+                            'semester' => replace_semester($row[12])
                         ]);
                         $classroom->save();
                     }
