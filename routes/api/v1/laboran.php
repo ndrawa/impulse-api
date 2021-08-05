@@ -24,6 +24,7 @@ $api->version('v1', [
     $api->get('/dropdown/classcoursestaffyear', ['as' => 'laboran.get_class_course_staff_year', 'uses' => 'LaboranController@get_class_course_staff_year']);
     $api->post('/class-course', ['as' => 'laboran.create_class_course', 'uses' => 'LaboranController@create_class_course']);
     $api->get('/class-course', ['as' => 'laboran.get_class_course', 'uses' => 'LaboranController@get_class_course']);
+    $api->get('/class-course/{class_course_id}', ['as' => 'laboran.get_class_course_by_id', 'uses' => 'LaboranController@get_class_course_by_id']);
     $api->delete('/class-course/{class_course_id}', ['as' => 'laboran.delete_class_course_by_id', 'uses' => 'LaboranController@delete_class_course_by_id']);
 });
 

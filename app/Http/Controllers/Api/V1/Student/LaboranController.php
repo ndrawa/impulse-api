@@ -600,6 +600,32 @@ class LaboranController extends BaseController
         return $data;
     }
 
+    public function get_class_course_by_id(Request $request, $class_course_id) {
+        $cc = ClassCourse::findOrFail($class_course_id);
+
+        $classroom = Classroom::select('name')->where('id', $cc['class_id'])->first();
+        $staff = Staff::select('name','code')->where('id', $cc['staff_id'])->first();
+        $course = Course::select('name','code')->where('id', $cc['course_id'])->first();
+        $academic_year = AcademicYear::where('id', $cc['academic_year_id'])->first();
+
+        $arr['id'] = $cc['id'];
+        $arr['class']['id'] = $cc['class_id'];
+        $arr['class']['name'] = $classroom->name;
+        $arr['staff']['id'] = $cc['staff_id'];
+        $arr['staff']['name'] = $staff->name;
+        $arr['staff']['code'] = $staff->code;
+        $arr['course']['id'] = $cc['course_id'];
+        $arr['course']['name'] = $course->name;
+        $arr['course']['code'] = $course->code;
+        $arr['academic_year']['id'] = $cc['academic_year_id'];
+        $arr['academic_year']['name'] = $academic_year->year;
+        $arr['academic_year']['semester'] = $academic_year->semester;
+
+        $data['data'] = $arr;
+
+        return $data;
+    }
+
     public function get_class_course_staff_year(Request $request) {
         $data['data']['classes'] = Classroom::select('id','name')->get();
         $data['data']['courses'] = Course::select('id','code','name')->get();
