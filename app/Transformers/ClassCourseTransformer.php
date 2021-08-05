@@ -9,12 +9,15 @@ class ClassCourseTransformer extends TransformerAbstract
 {
     public function transform(ClassCourse $class_course)
     {
+        $data = [];
         $data = [
             'id' => $class_course->id,
             'class_id' => $class_course->class_id,
+            'staff_id' => $class_course->staff_id,
             'course_id' => $class_course->course_id,
             'academic_year_id' => $class_course->academic_year_id,
         ];
+
 
         return $data;
     }
