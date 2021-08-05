@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1\Student;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Api\V1\BaseController;
 use App\Models\AcademicYear;
+use App\Models\Asprak;
 use App\Models\Classroom;
 use App\Models\ClassCourse;
 use App\Models\Course;
@@ -15,6 +16,7 @@ use App\Models\Student;
 use App\Models\StudentClassCourse;
 use App\Models\Staff;
 use App\Models\User;
+use App\Transformers\AsprakTransformer;
 use App\Transformers\LaboranTransformer;
 use App\Transformers\StudentTransformer;
 use App\Transformers\StudentClassCourseTransformer;
@@ -205,11 +207,11 @@ class LaboranController extends BaseController
         // create Classes
         if (Classroom::where('name', $request->class_name)
             ->where('academic_year', $request->academic_year)
-            ->where('semester', $request->semester)->first() == null) {
+            ->where('semester', $semester)->first() == null) {
             $classes = Classroom::create([
                 'name' => $request->class_name,
                 'academic_year' => $request->academic_year,
-                'semester' => $request->semester
+                'semester' => $semester
             ]);
         }
 
@@ -653,6 +655,57 @@ class LaboranController extends BaseController
             $class_course = ClassCourse::truncate();
         }
 
+        return $this->response->noContent();
+    }
+
+    public function set_asprak_class_course(Request $request) {
+        $this->validate($request, [
+            'student_id' => 'required',
+            'class_course_id' => 'required'
+        ]);
+
+        $asprak = Asprak::create($request->all());
+
+        return $this->response->item($asprak, new AsprakTransformer);
+    }
+
+    public function get_asprak_class_course(Request $request) {
+        $asprak = Asprak::query();
+        $per_page = env('PAGINATION_SIZE', 15);
+        $request->whenHas('per_page', function($size) use (&$per_page) {
+            $per_page = $size;
+        });
+
+        $request->whenHas('search', function($search) use (&$asprak) {
+            $asprak = $asprak->student->where('name', 'ILIKE', '%'.$search.'%')
+                            ->orWhere('nim', 'ILIKE', '%'.$search.'%')
+                            ->orWhere('gender', 'ILIKE', '%'.$search.'%')
+                            ->orWhere('religion', 'ILIKE', '%'.$search.'%');
+        });
+
+        if($request->has('orderBy') && $request->has('sortedBy')) {
+            $orderBy = $request->get('orderBy');
+            $sortedBy = $request->get('sortedBy');
+            $asprak->orderBy($orderBy, $sortedBy);
+        } 
+        else if($request->has('orderBy')) {
+            $orderBy = $request->get('orderBy');
+            $asprak->orderBy($orderBy);
+        }
+
+        $asprak = $asprak->paginate($per_page);
+
+        return $this->response->paginator($asprak, new AsprakTransformer);
+    }
+
+    public function get_asprak_class_course_by_id(Request $request, $id) {
+        $asprak = Asprak::where('id', $id)->first();
+        return $this->response->item($asprak, new AsprakTransformer);
+    }
+
+    public function delete_asprak_class_course(Request $request, $id) {
+        $asprak = Asprak::findOrFail($id);
+        $asprak->delete();
         return $this->response->noContent();
     }
 
