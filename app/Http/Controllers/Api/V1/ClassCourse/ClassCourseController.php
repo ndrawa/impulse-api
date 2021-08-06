@@ -194,6 +194,35 @@ class ClassCourseController extends BaseController
         return $this->response->noContent();
     }
 
+    public function filter_class_course(Request $request) {
+        $class_course = ClassCourse::query();
+        if($request->has('class_name')) {
+            if(!empty($request->class_name)) {
+                $classroom = Classroom::where('name', 'like','%'.$request->class_name.'%')
+                            ->first();
+                $class_course = $class_course->where('class_id', $classroom->id);
+            }
+        }
+
+        if($request->has('course_name')) {
+            if(!empty($request->course_name)) {
+                $course = Course::where('name', 'like','%'.$request->course_name.'%')
+                    ->first();
+                $class_course = $class_course->where('course_id', $course->id);
+            }
+        }
+
+        // if($request->has('academic_year_name')) {
+        //     $academic_year = AcademicYear::where('year', (int)$request->academic_year_name)
+        //             ->first();
+        //     $class_course = $class_course->where('academic_year_id', $academic_year->id);
+        // }
+
+        $class_course = $class_course->get();
+
+        return $this->response->item($class_course, new ClassCourseTransformer);
+    }
+
     public function set_asprak_class_course(Request $request) {
         $this->validate($request, [
             'student_id' => 'required',
@@ -243,34 +272,5 @@ class ClassCourseController extends BaseController
         $asprak = Asprak::findOrFail($id);
         $asprak->delete();
         return $this->response->noContent();
-    }
-
-    public function filter_asprak_class_course(Request $request) {
-        $class_course = ClassCourse::query();
-        if($request->has('class_name')) {
-            if(!empty($request->class_name)) {
-                $classroom = Classroom::where('name', 'like','%'.$request->class_name.'%')
-                            ->first();
-                $class_course = $class_course->where('class_id', $classroom->id);
-            }
-        }
-
-        if($request->has('course_name')) {
-            if(!empty($request->course_name)) {
-                $course = Course::where('name', 'like','%'.$request->course_name.'%')
-                    ->first();
-                $class_course = $class_course->where('course_id', $course->id);
-            }
-        }
-
-        // if($request->has('academic_year_name')) {
-        //     $academic_year = AcademicYear::where('year', (int)$request->academic_year_name)
-        //             ->first();
-        //     $class_course = $class_course->where('academic_year_id', $academic_year->id);
-        // }
-
-        $class_course = $class_course->get();
-
-        return $this->response->item($class_course, new ClassCourseTransformer);
     }
 }
