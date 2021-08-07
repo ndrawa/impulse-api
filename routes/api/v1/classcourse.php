@@ -17,7 +17,4 @@ $api->version('v1', [
     $api->get('/', ['as' => 'laboran.get_class_course', 'uses' => 'ClassCourseController@get_class_course']);
     $api->get('/{class_course_id}', ['as' => 'laboran.get_class_course_by_id', 'uses' => 'ClassCourseController@get_class_course_by_id']);
     $api->delete('/{class_course_id}', ['as' => 'laboran.delete_class_course_by_id', 'uses' => 'ClassCourseController@delete_class_course_by_id']);
-    $api->post('/filter', ['as' => 'laboran.filter_class_course', 'uses' => 'ClassCourseController@filter_class_course']);
-
-
 });
