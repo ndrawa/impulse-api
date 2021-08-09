@@ -89,14 +89,31 @@ class ClassCourseController extends BaseController
     }
 
     public function get_class_course(Request $request) {
-        $class_course = ClassCourse::all();
+        $class_course = ClassCourse::query();
 
-        $kelas = null;
-        if($request->has('kelas')) {
-            $kelas = strtoupper($request->get('kelas'));
+        if($request->has('class_name')) {
+            if(!empty($request->class_name)) {
+                $classroom = Classroom::where('name', 'like','%'.$request->class_name.'%')
+                                ->first();
+                $class_course = $class_course->where('class_id', $classroom->id);
+            }
         }
-        $index = 0;
-        $idx = 0;
+
+        if($request->has('course_name')) {
+            if(!empty($request->course_name)) {
+                $course = Course::where('name', 'like','%'.$request->course_name.'%')
+                            ->first();
+                $class_course = $class_course->where('course_id', $course->id);
+            }
+        }
+
+        if($request->has('academic_year_id')) {
+            if(!empty($request->academic_year_id)) {
+                $class_course = $class_course->where('academic_year_id', $request->academic_year_id);
+            }
+        }
+
+        $class_course = $class_course->get();
 
         $arr = [];
         foreach($class_course as $key=>$cc) {
@@ -105,32 +122,18 @@ class ClassCourseController extends BaseController
             $course = Course::select('name','code')->where('id', $cc['course_id'])->first();
             $academic_year = AcademicYear::where('id', $cc['academic_year_id'])->first();
 
-            $isTrue = false;
-            if($kelas != null){
-                $isTrue = str_contains($classroom->name, $kelas);
-            }
-
-            if ($kelas == null || $isTrue){
-                if($isTrue){
-                    $idx = $index;
-                    $index++;
-                }
-                else{
-                    $idx = $key;
-                }
-                $arr[$idx]['id'] = $cc['id'];
-                $arr[$idx]['class']['id'] = $cc['class_id'];
-                $arr[$idx]['class']['name'] = $classroom->name;
-                $arr[$idx]['staff']['id'] = $cc['staff_id'];
-                $arr[$idx]['staff']['name'] = $staff->name;
-                $arr[$idx]['staff']['code'] = $staff->code;
-                $arr[$idx]['course']['id'] = $cc['course_id'];
-                $arr[$idx]['course']['name'] = $course->name;
-                $arr[$idx]['course']['code'] = $course->code;
-                $arr[$idx]['academic_year']['id'] = $cc['academic_year_id'];
-                $arr[$idx]['academic_year']['name'] = $academic_year->year;
-                $arr[$idx]['academic_year']['semester'] = $academic_year->semester;
-            }
+            $arr[$key]['id'] = $cc['id'];
+            $arr[$key]['class']['id'] = $cc['class_id'];
+            $arr[$key]['class']['name'] = $classroom->name;
+            $arr[$key]['staff']['id'] = $cc['staff_id'];
+            $arr[$key]['staff']['name'] = $staff->name;
+            $arr[$key]['staff']['code'] = $staff->code;
+            $arr[$key]['course']['id'] = $cc['course_id'];
+            $arr[$key]['course']['name'] = $course->name;
+            $arr[$key]['course']['code'] = $course->code;
+            $arr[$key]['academic_year']['id'] = $cc['academic_year_id'];
+            $arr[$key]['academic_year']['name'] = $academic_year->year;
+            $arr[$key]['academic_year']['semester'] = $academic_year->semester;
         }
 
         $data['data'] = $arr;
@@ -243,34 +246,5 @@ class ClassCourseController extends BaseController
         $asprak = Asprak::findOrFail($id);
         $asprak->delete();
         return $this->response->noContent();
-    }
-
-    public function filter_asprak_class_course(Request $request) {
-        $class_course = ClassCourse::query();
-        if($request->has('class_name')) {
-            if(!empty($request->class_name)) {
-                $classroom = Classroom::where('name', 'like','%'.$request->class_name.'%')
-                            ->first();
-                $class_course = $class_course->where('class_id', $classroom->id);
-            }
-        }
-
-        if($request->has('course_name')) {
-            if(!empty($request->course_name)) {
-                $course = Course::where('name', 'like','%'.$request->course_name.'%')
-                    ->first();
-                $class_course = $class_course->where('course_id', $course->id);
-            }
-        }
-
-        // if($request->has('academic_year_name')) {
-        //     $academic_year = AcademicYear::where('year', (int)$request->academic_year_name)
-        //             ->first();
-        //     $class_course = $class_course->where('academic_year_id', $academic_year->id);
-        // }
-
-        $class_course = $class_course->get();
-
-        return $this->response->item($class_course, new ClassCourseTransformer);
     }
 }
