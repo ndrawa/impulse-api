@@ -140,13 +140,13 @@ class ScheduleTableSeeder extends Seeder
         ]);
         $schedule_1 = Schedule::create([
             'name' => 'PBO PRAKTIKUM 1 (dummy)',
-            'time_start' => '2021-01-12 07:30:00',
-            'time_end' => '2021-01-12 10:30:00',
+            'time_start' => '2021-08-12 07:30:00',
+            'time_end' => '2021-08-12 10:30:00',
             'room_id' => $room_id->id,
             'class_course_id' => $class_course_id->id,
             'module_id' => $module->id,
             'academic_year_id' => $academic_year_id->id,
-            'date' => '2021-01-12 07:30:00',
+            'date' => '2021-08-12',
         ]);
         $schedule_1->save();
         //Create test for posttest modul 2
@@ -210,13 +210,13 @@ class ScheduleTableSeeder extends Seeder
         ]);
         $schedule_2 = Schedule::create([
             'name' => 'PBO PRAKTIKUM 2 (dummy)',
-            'time_start' => '2021-01-19 07:30:00',
-            'time_end' => '2021-01-19 10:30:00',
+            'time_start' => '2021-08-19 07:30:00',
+            'time_end' => '2021-08-19 10:30:00',
             'room_id' => $room_id->id,
             'class_course_id' => $class_course_id->id,
             'module_id' => $module->id,
             'academic_year_id' => $academic_year_id->id,
-            'date' => '2021-01-19 07:30:00',
+            'date' => '2021-08-19',
         ]);
         $schedule_2->save();
 
@@ -227,13 +227,13 @@ class ScheduleTableSeeder extends Seeder
         ]);
         $schedule_3 = Schedule::create([
             'name' => 'PBO PRAKTIKUM 3 (dummy)',
-            'time_start' => '2021-01-26 07:30:00',
-            'time_end' => '2021-01-26 10:30:00',
+            'time_start' => '2021-08-26 07:30:00',
+            'time_end' => '2021-08-26 10:30:00',
             'room_id' => $room_id->id,
             'class_course_id' => $class_course_id->id,
             'module_id' => $module->id,
             'academic_year_id' => $academic_year_id->id,
-            'date' => '2021-01-26 07:30:00',
+            'date' => '2021-08-26',
         ]);
         $schedule_3->save();
 
@@ -244,8 +244,8 @@ class ScheduleTableSeeder extends Seeder
         $schedule_test_1 = ScheduleTest::create([
             'schedule_id' => $schedule_1->id,
             'test_id' => $pretest_1->id,
-            'time_start' => '2021-01-12 07:30:00',
-            'time_end' => '2021-01-12 07:45:00',
+            'time_start' => '2021-08-12 07:30:00',
+            'time_end' => '2021-08-12 07:45:00',
             'is_active' => 'false',
             'auth' => '123456'
         ]);
@@ -254,8 +254,8 @@ class ScheduleTableSeeder extends Seeder
         $schedule_test_1 = ScheduleTest::create([
             'schedule_id' => $schedule_2->id,
             'test_id' => $posttest_1->id,
-            'time_start' => '2021-01-12 10:00:00',
-            'time_end' => '2021-01-12 10:30:00',
+            'time_start' => '2021-08-12 10:00:00',
+            'time_end' => '2021-08-12 10:30:00',
             'is_active' => 'false',
             'auth' => '123456'
         ]);

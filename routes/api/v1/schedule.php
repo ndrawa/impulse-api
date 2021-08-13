@@ -8,6 +8,7 @@ $api->version('v1', [
     'prefix' => 'v1/schedule'
 ], function($api) {
     $api->get('/', ['as' => 'schedule.index', 'uses' => 'ScheduleController@index']);
+    $api->get('/simple', ['as' => 'schedule.index', 'uses' => 'ScheduleController@index_simple']);
     $api->post('/', ['as' => 'schedule.create', 'uses' => 'ScheduleController@create']);
     $api->post('/import', ['as' => 'staff.import', 'uses' => 'ScheduleController@import']);
     //Test

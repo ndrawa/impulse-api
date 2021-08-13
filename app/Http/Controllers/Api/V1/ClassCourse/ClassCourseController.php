@@ -61,8 +61,8 @@ class ClassCourseController extends BaseController
                     //Generate Schedule 1-14
                     $schedule = Schedule::create([
                         'name' => 'Module '.$i,
-                        'time_start' => '2021-01-12 07:30:00',
-                        'time_end' => '2021-01-12 10:30:00',
+                        'time_start' => null,
+                        'time_end' => null,
                         'room_id' => Room::first()->id,
                         'class_course_id' => ClassCourse::where('class_id', $request->class_id)
                                             ->where('course_id', $request->course_id)

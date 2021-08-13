@@ -22,7 +22,7 @@ class CreateSchedules extends Migration
             $table->char('class_course_id', 26);
             $table->char('module_id', 26);
             $table->char('academic_year_id', 26);
-            $table->datetime('date');
+            $table->date('date');
             $table->timestamps();
             $table->foreign('room_id')
                 ->references('id')
