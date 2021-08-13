@@ -14,6 +14,8 @@ use App\Models\Test;
 use App\Models\StudentClassCourse;
 use App\Models\ClassCourse;
 use App\Models\AcademicYear;
+use App\Models\Room;
+use App\Models\Module;
 use App\Transformers\ScheduleTransformer;
 use App\Transformers\TestTransformer;
 use App\Transformers\ClassCourseTransformer;
@@ -41,6 +43,30 @@ class ScheduleController extends BaseController
         return $this->response->paginator($schedules, new ScheduleTransformer);
     }
 
+    public function index_simple(Request $request) {
+        $schedules = Schedule::get();
+        $arr = [];
+        foreach($schedules as $key=>$s) {
+            $class_course = ClassCourse::where('id', $s['class_course_id'])->first();
+            $academic_year = AcademicYear::where('id', $s['academic_year_id'])->first();
+            $module = Module::where('id', $s['module_id'])->first();
+            $room = Room::where('id', $s['room_id'])->first();
+
+            $arr[$key]['id'] = $s['id'];
+            $arr[$key]['title'] = $s['name'];
+            $arr[$key]['start'] = $s['time_start'];
+            $arr[$key]['end'] = $s['time_end'];
+            $arr[$key]['room'] = $room;
+            $arr[$key]['class_course'] = $class_course;
+            $arr[$key]['module'] = $module;
+            $arr[$key]['academic_year'] = $academic_year;
+            $arr[$key]['date'] = $s['date'];
+        }
+
+        $data['data'] = $arr;
+        return $data;
+    }
+
     public function import(Request $request) {
         Excel::import(new ScheduleImport, request()->file('file'));
 
@@ -52,15 +78,13 @@ class ScheduleController extends BaseController
         // $this->authorize('create', $this->user());
         $this->validate($request, [
             'name' => 'required',
-            'day' => 'required',
             'time_start' => 'required',
             'time_end' => 'required',
             'room_id' => 'required',
-            // 'periode_start' => 'required',
-            // 'periode_end' => 'required',
-            'class_id' => 'required',
+            'class_course_id' => 'required',
+            'academic_year_id' => 'required',
             'module_id' => 'required',
-            'type' => 'required',
+            'date' => 'required',
         ]);
         $schedule = Schedule::create($request->all());
 

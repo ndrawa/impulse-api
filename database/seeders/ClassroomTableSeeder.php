@@ -18,7 +18,7 @@ class ClassroomTableSeeder extends Seeder
         $classroom = Classroom::create([
             'name' => 'IF-43-01',
             'academic_year' => '2021',
-            'semester' => 'old',
+            'semester' => 'odd',
         ]);
         $classroom->save();
 
@@ -26,12 +26,12 @@ class ClassroomTableSeeder extends Seeder
         $classroom = Classroom::create([
             'name' => 'IF-43-02',
             'academic_year' => '2021',
-            'semester' => 'old',
+            'semester' => 'odd',
         ]);
         $classroom = Classroom::create([
             'name' => 'IF-43-03',
             'academic_year' => '2021',
-            'semester' => 'old',
+            'semester' => 'odd',
         ]);
         $classroom->save();
     }

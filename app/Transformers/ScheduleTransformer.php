@@ -12,7 +12,6 @@ class ScheduleTransformer extends TransformerAbstract
         return [
             'id' => $schedule->id,
             'name' => $schedule->name,
-            'day' => $schedule->day,
             'time_start' => $schedule->time_start,
             'time_end' => $schedule->time_end,
             'room_id' => $schedule->room_id,
