@@ -44,26 +44,59 @@ class ScheduleController extends BaseController
     }
 
     public function index_simple(Request $request) {
-        $schedules = Schedule::get();
-        $arr = [];
-        foreach($schedules as $key=>$s) {
-            $class_course = ClassCourse::where('id', $s['class_course_id'])->first();
-            $academic_year = AcademicYear::where('id', $s['academic_year_id'])->first();
-            $module = Module::where('id', $s['module_id'])->first();
-            $room = Room::where('id', $s['room_id'])->first();
+        $class_course = ClassCourse::query();
 
-            $arr[$key]['id'] = $s['id'];
-            $arr[$key]['title'] = $s['name'];
-            $arr[$key]['start'] = $s['time_start'];
-            $arr[$key]['end'] = $s['time_end'];
-            $arr[$key]['room'] = $room;
-            $arr[$key]['class_course'] = $class_course;
-            $arr[$key]['module'] = $module;
-            $arr[$key]['academic_year'] = $academic_year;
-            $arr[$key]['date'] = $s['date'];
+        if($request->has('class_name')) {
+            if(!empty($request->class_name)) {
+                $classroom = Classroom::where('name', 'like','%'.$request->class_name.'%')
+                                ->first();
+                $class_course = $class_course->where('class_id', $classroom->id);
+            }
+        }
+        if($request->has('course_name')) {
+            if(!empty($request->course_name)) {
+                $course = Course::where('name', 'like','%'.$request->course_name.'%')
+                            ->first();
+                $class_course = $class_course->where('course_id', $course->id);
+            }
+        }
+        if($request->has('academic_year_id')) {
+            if(!empty($request->academic_year_id)) {
+                $class_course = $class_course->where('academic_year_id', $request->academic_year_id);
+            }
+        }
+        $class_course = $class_course->get();
+
+        $data['total_data'] = 0;
+        $data['data'] = [];
+        foreach($class_course as $key=>$cc){
+            $class_course_id = $cc['id'];
+            $schedules = Schedule::Where('class_course_id', $class_course_id)->get();
+
+            $arr = [];
+            foreach($schedules as $key=>$s){
+                $class_course = ClassCourse::where('id', $s['class_course_id'])->first();
+                $academic_year = AcademicYear::where('id', $s['academic_year_id'])->first();
+                $module = Module::where('id', $s['module_id'])->first();
+                $room = Room::where('id', $s['room_id'])->first();
+
+                $arr[$key]['id'] = $s['id'];
+                $arr[$key]['title'] = $s['name'];
+                $arr[$key]['start'] = $s['time_start'];
+                $arr[$key]['end'] = $s['time_end'];
+                $arr[$key]['room'] = $room;
+                $arr[$key]['class_course'] = $class_course;
+                $arr[$key]['module'] = $module;
+                $arr[$key]['academic_year'] = $academic_year;
+                $arr[$key]['date'] = $s['date'];
+            }
+
+            foreach($arr as $key=>$a){
+                array_push($data['data'],$a);
+            }
+            $data['total_data'] = $data['total_data'] + count($arr);
         }
 
-        $data['data'] = $arr;
         return $data;
     }
 
