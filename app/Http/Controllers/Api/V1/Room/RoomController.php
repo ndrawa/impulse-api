@@ -43,9 +43,12 @@ class RoomController extends BaseController
             'msteam_code' => 'required',
             'msteam_link' => 'required'
         ]);
-        $room = Room::create($request->all());
-
-        return $this->response->item($room, new RoomTransformer);
+        if (Room::where('name', $request->name)->first() == null){
+            $room = Room::create($request->all());
+            return $this->response->item($room, new RoomTransformer);
+        } else {
+            return $this->response->error('Data already exist', 422);
+        }
     }
 
     public function update(Request $request, $id)
@@ -72,6 +75,7 @@ class RoomController extends BaseController
 
         return $this->response->noContent();
     }
+
     // without paginator
     // public function rooms(Request $request)
     // {

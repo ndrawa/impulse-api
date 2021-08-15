@@ -63,9 +63,13 @@ class CourseController extends BaseController
             ],
             'name' => 'required',
         ]);
-        $course = Course::create($request->all());
-
-        return $this->response->item($course, new CourseTransformer);
+        if(Course::where('code', $request->code)->first() == null){
+            $course = Course::create($request->all());
+            return $this->response->item($course, new CourseTransformer);
+        } else {
+            return $this->response->noContent();
+        }
+        // return $this->response->item($course, new CourseTransformer);
     }
 
     public function update(Request $request, $id)
