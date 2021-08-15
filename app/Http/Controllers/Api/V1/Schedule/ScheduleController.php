@@ -217,6 +217,32 @@ class ScheduleController extends BaseController
         return $this->response->error('student id not found', 404);
     }
 
+    public function show(Request $request, $id)
+    {
+        $schedules = Schedule::where('id', $id)->first();
+
+        $arr = [];
+
+        $class_course = ClassCourse::where('id', $schedules['class_course_id'])->first();
+        $academic_year = AcademicYear::where('id', $schedules['academic_year_id'])->first();
+        $module = Module::where('id', $schedules['module_id'])->first();
+        $room = Room::where('id', $schedules['room_id'])->first();
+
+        $arr['id'] = $schedules['id'];
+        $arr['title'] = $schedules['name'];
+        $arr['start'] = $schedules['time_start'];
+        $arr['end'] = $schedules['time_end'];
+        $arr['room'] = $room;
+        $arr['class_course'] = $class_course;
+        $arr['module'] = $module;
+        $arr['academic_year'] = $academic_year;
+        $arr['date'] = $schedules['date'];
+
+        $data['data'] = $arr;
+        return $data;
+
+    }
+
     public function show_schedule(Request $request, $class_course_id){
         $schedule = Schedule::Where('class_course_id', $class_course_id)->get();
 

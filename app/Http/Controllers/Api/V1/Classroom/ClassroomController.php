@@ -75,9 +75,12 @@ class ClassroomController extends BaseController
             'academic_year' => 'required',
             'semester' => 'required'
         ]);
-        $classroom = Classroom::create($request->all());
-
-        return $this->response->item($classroom, new ClassroomTransformer);
+        if(Classroom::where('name', $request->name)->first() == null){
+            $classroom = Classroom::create($request->all());
+            return $this->response->item($classroom, new ClassroomTransformer);
+        } else {
+            return $this->response->noContent();
+        }
     }
 
     public function update(Request $request, $id)

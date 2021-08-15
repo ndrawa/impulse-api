@@ -78,9 +78,12 @@ class StaffController extends BaseController
                 Rule::unique('staffs')
             ]
         ]);
-        $staff = Staff::create($request->all());
-
-        return $this->response->item($staff, new StaffTransformer);
+        if(Staff::where('nip', $request->nip)->first() == null){
+            $staff = Staff::create($request->all());
+            return $this->response->item($staff, new StaffTransformer);
+        } else {
+            return $this->response->noContent();
+        }
     }
 
     public function update(Request $request, $id)

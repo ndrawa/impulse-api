@@ -43,9 +43,12 @@ class RoomController extends BaseController
             'msteam_code' => 'required',
             'msteam_link' => 'required'
         ]);
-        $room = Room::create($request->all());
-
-        return $this->response->item($room, new RoomTransformer);
+        if (Room::where('name', $request->name)->first() == null){
+            $room = Room::create($request->all());
+            return $this->response->item($room, new RoomTransformer);
+        } else {
+            return $this->response->noContent();
+        }
     }
 
     public function update(Request $request, $id)
