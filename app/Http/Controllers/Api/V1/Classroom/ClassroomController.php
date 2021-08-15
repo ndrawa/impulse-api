@@ -79,7 +79,7 @@ class ClassroomController extends BaseController
             $classroom = Classroom::create($request->all());
             return $this->response->item($classroom, new ClassroomTransformer);
         } else {
-            return $this->response->noContent();
+            return $this->response->error('Data already exist', 422);
         }
     }
 

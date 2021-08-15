@@ -47,7 +47,7 @@ class RoomController extends BaseController
             $room = Room::create($request->all());
             return $this->response->item($room, new RoomTransformer);
         } else {
-            return $this->response->noContent();
+            return $this->response->error('Data already exist', 422);
         }
     }
 
@@ -75,6 +75,7 @@ class RoomController extends BaseController
 
         return $this->response->noContent();
     }
+
     // without paginator
     // public function rooms(Request $request)
     // {
