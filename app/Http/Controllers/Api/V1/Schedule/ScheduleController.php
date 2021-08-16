@@ -219,24 +219,25 @@ class ScheduleController extends BaseController
 
     public function show(Request $request, $id)
     {
-        $schedules = Schedule::where('id', $id)->first();
+        $schedule = Schedule::where('id', $id)->first();
+        $arr = null;
 
-        $arr = [];
+        if($schedule != null){
+            $class_course = ClassCourse::where('id', $schedule['class_course_id'])->first();
+            $academic_year = AcademicYear::where('id', $schedule['academic_year_id'])->first();
+            $module = Module::where('id', $schedule['module_id'])->first();
+            $room = Room::where('id', $schedule['room_id'])->first();
 
-        $class_course = ClassCourse::where('id', $schedules['class_course_id'])->first();
-        $academic_year = AcademicYear::where('id', $schedules['academic_year_id'])->first();
-        $module = Module::where('id', $schedules['module_id'])->first();
-        $room = Room::where('id', $schedules['room_id'])->first();
-
-        $arr['id'] = $schedules['id'];
-        $arr['title'] = $schedules['name'];
-        $arr['start'] = $schedules['time_start'];
-        $arr['end'] = $schedules['time_end'];
-        $arr['room'] = $room;
-        $arr['class_course'] = $class_course;
-        $arr['module'] = $module;
-        $arr['academic_year'] = $academic_year;
-        $arr['date'] = $schedules['date'];
+            $arr['id'] = $schedule['id'];
+            $arr['title'] = $schedule['name'];
+            $arr['start'] = $schedule['time_start'];
+            $arr['end'] = $schedule['time_end'];
+            $arr['room'] = $room;
+            $arr['class_course'] = $class_course;
+            $arr['module'] = $module;
+            $arr['academic_year'] = $academic_year;
+            $arr['date'] = $schedule['date'];
+        }
 
         $data['data'] = $arr;
         return $data;
@@ -244,9 +245,23 @@ class ScheduleController extends BaseController
     }
 
     public function show_schedule(Request $request, $class_course_id){
-        $schedule = Schedule::Where('class_course_id', $class_course_id)->get();
+        $schedules = Schedule::Where('class_course_id', $class_course_id)->get();
 
-        return $this->response->item($schedule, new ScheduleTransformer);
+        $arr = $schedules;
+        if($request->has('module') && !empty($request->module)) {
+            $arr = null;
+            $index = $request->module;
+            foreach($schedules as $key=>$s){
+                $module = Module::where('id', $s['module_id'])->first();
+                if($module != null && strval($module['index']) == strval($index)){
+                    $arr = $s;
+                    break;
+                }
+            }
+        }
+
+        $data['data'] = $arr;
+        return $data;
     }
 
     public function update(Request $request, $id)
