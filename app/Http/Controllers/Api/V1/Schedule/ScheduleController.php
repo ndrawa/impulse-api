@@ -45,38 +45,71 @@ class ScheduleController extends BaseController
     }
 
     public function index_simple(Request $request) {
-        $schedules = Schedule::get();
-        $arr = [];
-        foreach($schedules as $key=>$s) {
-            $class_course = ClassCourse::where('id', $s['class_course_id'])->first();
-            $class = Classroom::where('id', $class_course['class_id'])->first();
-            $course = Course::where('id', $class_course['course_id'])->first();
-            $staff = Staff::where('id', $class_course['staff_id'])->first();
-            $class_academic_year = Staff::where('id', $class_course['staff_id'])->first();
-            $academic_year = AcademicYear::where('id', $s['academic_year_id'])->first();
-            $module = Module::where('id', $s['module_id'])->first();
-            $room = Room::where('id', $s['room_id'])->first();
+        $class_course = ClassCourse::query();
 
-            $arr[$key]['id'] = $s['id'];
-            $arr[$key]['title'] = $s['name'];
-            $arr[$key]['start'] = $s['time_start'];
-            $arr[$key]['end'] = $s['time_end'];
-            $arr[$key]['room'] = $room;
-            $arr[$key]['class_course']['id'] = $class_course['id'];
-            $arr[$key]['class_course']['class']['id'] = $class['id'];
-            $arr[$key]['class_course']['class']['name'] = $class['name'];
-            $arr[$key]['class_course']['class']['academic_year'] = $class['academic_year'];
-            $arr[$key]['class_course']['course']['id'] = $course['id'];
-            $arr[$key]['class_course']['course']['name'] = $course['name'];
-            $arr[$key]['class_course']['staff']['id'] = $staff['id'];
-            $arr[$key]['class_course']['staff']['name'] = $staff['name'];
-            $arr[$key]['class_course']['staff']['code'] = $staff['code'];
-            $arr[$key]['module'] = $module;
-            $arr[$key]['academic_year'] = $academic_year;
-            $arr[$key]['date'] = $s['date'];
+        if($request->has('class_name')) {
+            if(!empty($request->class_name)) {
+                $classroom = Classroom::where('name', 'like','%'.$request->class_name.'%')
+                                ->first();
+                $class_course = $class_course->where('class_id', $classroom->id);
+            }
+        }
+        if($request->has('course_name')) {
+            if(!empty($request->course_name)) {
+                $course = Course::where('name', 'like','%'.$request->course_name.'%')
+                            ->first();
+                $class_course = $class_course->where('course_id', $course->id);
+            }
+        }
+        if($request->has('academic_year_id')) {
+            if(!empty($request->academic_year_id)) {
+                $class_course = $class_course->where('academic_year_id', $request->academic_year_id);
+            }
+        }
+        $class_course = $class_course->get();
+
+        $data['total_data'] = 0;
+        $data['data'] = [];
+        foreach($class_course as $key=>$cc){
+            $class_course_id = $cc['id'];
+            $schedules = Schedule::Where('class_course_id', $class_course_id)->get();
+
+            $arr = [];
+            foreach($schedules as $key=>$s) {
+                $class_course = ClassCourse::where('id', $s['class_course_id'])->first();
+                $class = Classroom::where('id', $class_course['class_id'])->first();
+                $course = Course::where('id', $class_course['course_id'])->first();
+                $staff = Staff::where('id', $class_course['staff_id'])->first();
+                $class_academic_year = Staff::where('id', $class_course['staff_id'])->first();
+                $academic_year = AcademicYear::where('id', $s['academic_year_id'])->first();
+                $module = Module::where('id', $s['module_id'])->first();
+                $room = Room::where('id', $s['room_id'])->first();
+
+                $arr[$key]['id'] = $s['id'];
+                $arr[$key]['title'] = $s['name'];
+                $arr[$key]['start'] = $s['time_start'];
+                $arr[$key]['end'] = $s['time_end'];
+                $arr[$key]['room'] = $room;
+                $arr[$key]['class_course']['id'] = $class_course['id'];
+                $arr[$key]['class_course']['class']['id'] = $class['id'];
+                $arr[$key]['class_course']['class']['name'] = $class['name'];
+                $arr[$key]['class_course']['class']['academic_year'] = $class['academic_year'];
+                $arr[$key]['class_course']['course']['id'] = $course['id'];
+                $arr[$key]['class_course']['course']['name'] = $course['name'];
+                $arr[$key]['class_course']['staff']['id'] = $staff['id'];
+                $arr[$key]['class_course']['staff']['name'] = $staff['name'];
+                $arr[$key]['class_course']['staff']['code'] = $staff['code'];
+                $arr[$key]['module'] = $module;
+                $arr[$key]['academic_year'] = $academic_year;
+                $arr[$key]['date'] = $s['date'];
+            }
+
+            foreach($arr as $key=>$a){
+                array_push($data['data'],$a);
+            }
+            $data['total_data'] = $data['total_data'] + count($arr);
         }
 
-        $data['data'] = $arr;
         return $data;
     }
 
@@ -197,10 +230,63 @@ class ScheduleController extends BaseController
         return $this->response->error('student id not found', 404);
     }
 
-    public function show_schedule(Request $request, $class_course_id){
-        $schedule = Schedule::Where('class_course_id', $class_course_id)->get();
+    public function show(Request $request, $id)
+    {
+        $schedule = Schedule::where('id', $id)->first();
+        $arr = null;
 
-        return $this->response->item($schedule, new ScheduleTransformer);
+        if($schedule != null){
+            $class_course = ClassCourse::where('id', $schedule['class_course_id'])->first();
+            $class = Classroom::where('id', $class_course['class_id'])->first();
+            $course = Course::where('id', $class_course['course_id'])->first();
+            $staff = Staff::where('id', $class_course['staff_id'])->first();
+            $class_academic_year = Staff::where('id', $class_course['staff_id'])->first();
+            $academic_year = AcademicYear::where('id', $schedule['academic_year_id'])->first();
+            $module = Module::where('id', $schedule['module_id'])->first();
+            $room = Room::where('id', $schedule['room_id'])->first();
+
+            $arr['id'] = $schedule['id'];
+            $arr['title'] = $schedule['name'];
+            $arr['start'] = $schedule['time_start'];
+            $arr['end'] = $schedule['time_end'];
+            $arr['room'] = $room;
+            $arr['class_course']['id'] = $class_course['id'];
+            $arr['class_course']['class']['id'] = $class['id'];
+            $arr['class_course']['class']['name'] = $class['name'];
+            $arr['class_course']['class']['academic_year'] = $class['academic_year'];
+            $arr['class_course']['course']['id'] = $course['id'];
+            $arr['class_course']['course']['name'] = $course['name'];
+            $arr['class_course']['staff']['id'] = $staff['id'];
+            $arr['class_course']['staff']['name'] = $staff['name'];
+            $arr['class_course']['staff']['code'] = $staff['code'];
+            $arr['module'] = $module;
+            $arr['academic_year'] = $academic_year;
+            $arr['date'] = $schedule['date'];
+        }
+
+        $data['data'] = $arr;
+        return $data;
+
+    }
+
+    public function show_schedule(Request $request, $class_course_id){
+        $schedules = Schedule::Where('class_course_id', $class_course_id)->get();
+
+        $arr = $schedules;
+        if($request->has('module') && !empty($request->module)) {
+            $arr = null;
+            $index = $request->module;
+            foreach($schedules as $key=>$s){
+                $module = Module::where('id', $s['module_id'])->first();
+                if($module != null && strval($module['index']) == strval($index)){
+                    $arr = $s;
+                    break;
+                }
+            }
+        }
+
+        $data['data'] = $arr;
+        return $data;
     }
 
     public function update(Request $request, $id)
