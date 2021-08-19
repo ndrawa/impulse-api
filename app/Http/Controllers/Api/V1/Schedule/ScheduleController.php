@@ -14,6 +14,7 @@ use App\Models\Test;
 use App\Models\StudentClassCourse;
 use App\Models\ClassCourse;
 use App\Models\AcademicYear;
+use App\Models\Staff;
 use App\Models\Room;
 use App\Models\Module;
 use App\Transformers\ScheduleTransformer;
@@ -74,8 +75,12 @@ class ScheduleController extends BaseController
             $schedules = Schedule::Where('class_course_id', $class_course_id)->get();
 
             $arr = [];
-            foreach($schedules as $key=>$s){
+            foreach($schedules as $key=>$s) {
                 $class_course = ClassCourse::where('id', $s['class_course_id'])->first();
+                $class = Classroom::where('id', $class_course['class_id'])->first();
+                $course = Course::where('id', $class_course['course_id'])->first();
+                $staff = Staff::where('id', $class_course['staff_id'])->first();
+                $class_academic_year = Staff::where('id', $class_course['staff_id'])->first();
                 $academic_year = AcademicYear::where('id', $s['academic_year_id'])->first();
                 $module = Module::where('id', $s['module_id'])->first();
                 $room = Room::where('id', $s['room_id'])->first();
@@ -85,7 +90,15 @@ class ScheduleController extends BaseController
                 $arr[$key]['start'] = $s['time_start'];
                 $arr[$key]['end'] = $s['time_end'];
                 $arr[$key]['room'] = $room;
-                $arr[$key]['class_course'] = $class_course;
+                $arr[$key]['class_course']['id'] = $class_course['id'];
+                $arr[$key]['class_course']['class']['id'] = $class['id'];
+                $arr[$key]['class_course']['class']['name'] = $class['name'];
+                $arr[$key]['class_course']['class']['academic_year'] = $class['academic_year'];
+                $arr[$key]['class_course']['course']['id'] = $course['id'];
+                $arr[$key]['class_course']['course']['name'] = $course['name'];
+                $arr[$key]['class_course']['staff']['id'] = $staff['id'];
+                $arr[$key]['class_course']['staff']['name'] = $staff['name'];
+                $arr[$key]['class_course']['staff']['code'] = $staff['code'];
                 $arr[$key]['module'] = $module;
                 $arr[$key]['academic_year'] = $academic_year;
                 $arr[$key]['date'] = $s['date'];
@@ -224,6 +237,10 @@ class ScheduleController extends BaseController
 
         if($schedule != null){
             $class_course = ClassCourse::where('id', $schedule['class_course_id'])->first();
+            $class = Classroom::where('id', $class_course['class_id'])->first();
+            $course = Course::where('id', $class_course['course_id'])->first();
+            $staff = Staff::where('id', $class_course['staff_id'])->first();
+            $class_academic_year = Staff::where('id', $class_course['staff_id'])->first();
             $academic_year = AcademicYear::where('id', $schedule['academic_year_id'])->first();
             $module = Module::where('id', $schedule['module_id'])->first();
             $room = Room::where('id', $schedule['room_id'])->first();
@@ -233,7 +250,15 @@ class ScheduleController extends BaseController
             $arr['start'] = $schedule['time_start'];
             $arr['end'] = $schedule['time_end'];
             $arr['room'] = $room;
-            $arr['class_course'] = $class_course;
+            $arr['class_course']['id'] = $class_course['id'];
+            $arr['class_course']['class']['id'] = $class['id'];
+            $arr['class_course']['class']['name'] = $class['name'];
+            $arr['class_course']['class']['academic_year'] = $class['academic_year'];
+            $arr['class_course']['course']['id'] = $course['id'];
+            $arr['class_course']['course']['name'] = $course['name'];
+            $arr['class_course']['staff']['id'] = $staff['id'];
+            $arr['class_course']['staff']['name'] = $staff['name'];
+            $arr['class_course']['staff']['code'] = $staff['code'];
             $arr['module'] = $module;
             $arr['academic_year'] = $academic_year;
             $arr['date'] = $schedule['date'];
