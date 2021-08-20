@@ -16,6 +16,7 @@ class StudentClassCourseTransformer extends TransformerAbstract
                 'id' => $studentclass->class_course->id,
                 'class' => $studentclass->class_course->classes,
                 'staff' => $studentclass->class_course->staffs,
+                'course' => $studentclass->class_course->courses,
                 'academic_year' => $studentclass->class_course->academic_years,
             ]
 
