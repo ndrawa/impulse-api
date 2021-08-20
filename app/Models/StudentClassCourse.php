@@ -19,7 +19,7 @@ class StudentClassCourse extends BaseModel
         'class_course_id'
     ];
 
-    public function students()
+    public function student()
     {
         return $this->belongsTo(Student::class);
     }

@@ -10,9 +10,15 @@ class StudentClassCourseTransformer extends TransformerAbstract
     public function transform(StudentClassCourse $studentclass)
     {
         return [
-            // 'id' => $studentclass->id,
-            'student_id' => $studentclass->student_id,
-            'class_course_id' => $studentclass->class_course_id
+            'id' => $studentclass->id,
+            'student' => $studentclass->student,
+            'class_course' => [
+                'id' => $studentclass->class_course->id,
+                'class' => $studentclass->class_course->classes,
+                'staff' => $studentclass->class_course->staffs,
+                'academic_year' => $studentclass->class_course->academic_years,
+            ]
+
         ];
     }
 }
