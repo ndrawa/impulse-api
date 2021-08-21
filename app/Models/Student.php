@@ -73,4 +73,8 @@ class Student extends BaseModel implements IUser
     {
         $this->removeRole(Role::ROLE_ASLAB);
     }
+
+    public function student_class_course() {
+        $this->hasMany(StudentClassCourse::class);
+    }
 }

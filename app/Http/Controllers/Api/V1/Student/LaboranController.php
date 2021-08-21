@@ -348,9 +348,30 @@ class LaboranController extends BaseController
         return $this->response->noContent();
     }
 
-    public function get_student_classes(){
-        $student_class = StudentClassCourse::query()->get();
-        return $this->response->item($student_class, new StudentClassCourseTransformer);
+    public function get_student_classes(Request $request){
+        $student_class = StudentClassCourse::query();
+
+        $per_page = env('PAGINATION_SIZE', 15);
+        $request->whenHas('per_page', function($size) use (&$per_page) {
+            $per_page = $size;
+        });
+
+        $arr = [];
+        foreach($student_class as $key=>$sc) {
+            $class_course = $sc->class_course;
+            $arr[$key]['id'] = $sc['id'];
+            $arr[$key]['student'] = Student::where('id', $sc['student_id'])->first();;
+            $arr[$key]['class_course']['class'] = $class_course->classes;;
+            $arr[$key]['class_course']['course'] = $class_course->courses;
+            $arr[$key]['class_course']['staff'] = $class_course->staffs;
+            $arr[$key]['class_course']['academic_year'] = $class_course->academic_years;
+        }
+        $data['data'] = $arr;
+
+        $student_class = $student_class->paginate($per_page);
+
+        return $this->response->paginator($student_class, new StudentClassCourseTransformer);
+        return $data;
     }
 
     public function set_role(Request $request)
