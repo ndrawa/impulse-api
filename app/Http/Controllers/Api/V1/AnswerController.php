@@ -136,6 +136,12 @@ class AnswerController extends BaseController
             return $this->response->errorBadRequest();
         }
         foreach($request->answers as $answer) {
+            if(StudentEssayAnswer::where('user_id', $this->user->id)
+                                ->where('question_id', $answer['question_id'])
+                                ->exists())
+            {
+                continue;
+            }
             StudentEssayAnswer::create([
                 'question_id' => $answer['question_id'],
                 'answers' => $answer['answers'],
@@ -156,6 +162,12 @@ class AnswerController extends BaseController
             return $this->response->errorBadRequest();
         }
         foreach($request->answers as $answer) {
+            if(StudentMultipleChoiceAnswer::where('user_id', $this->user->id)
+                                ->where('question_id', $answer['question_id'])
+                                ->exists())
+            {
+                continue;
+            }
             StudentMultipleChoiceAnswer::create([
                 'question_id' => $answer['question_id'],
                 'answer_id' => $answer['answer_id'],
