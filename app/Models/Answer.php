@@ -15,4 +15,8 @@ class Answer extends BaseModel
     public function questions() {
         return $this->belongsTo(Question::class);
     }
+
+    public function studient_answers_multiple_choice() {
+        return $this->hasMany(StudentMultipleChoiceAnswer::class);
+    }
 }
