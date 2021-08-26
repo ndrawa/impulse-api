@@ -4,7 +4,7 @@ $api = app('Dingo\Api\Routing\Router');
 
 $api->version('v1', [
     'namespace' => 'App\Http\Controllers\Api\V1\ClassCourse',
-    'middleware' => ['auth:api', 'role:admin|laboran|asprak|aslab'],
+    'middleware' => ['auth:api', 'role:student|admin|laboran|asprak|aslab'],
     'prefix' => 'v1/classcourse'
 ], function($api) {
     $api->get('/asprak', ['as' => 'laboran.get_asprak_class_course', 'uses' => 'ClassCourseController@get_asprak_class_course']);
