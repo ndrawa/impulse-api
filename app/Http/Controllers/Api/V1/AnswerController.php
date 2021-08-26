@@ -79,6 +79,7 @@ class AnswerController extends BaseController
             $data['data']['answer'][$key]['question']['id'] = $question->id;
             $data['data']['answer'][$key]['question']['question'] = $question->question;
             $data['data']['answer'][$key]['answer']['id'] = $answer->id;
+            $data['data']['answer'][$key]['answer']['answer'] = $answer->answer;
             $data['data']['answer'][$key]['answer']['is_answer'] = $answer->is_answer;
             $data['data']['answer'][$key]['answer']['question_id'] = $answer->question_id;
         }
