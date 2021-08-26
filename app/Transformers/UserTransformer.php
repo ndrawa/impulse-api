@@ -17,6 +17,7 @@ class UserTransformer extends TransformerAbstract
             $transformer = new StudentTransformer;
             $data = $transformer->transform($user->student);
         }
+        $data['user_id'] = $user->id;
         $data["roles"] = $user->getRoleNames();
         $data["username"] = $user->username;
 
