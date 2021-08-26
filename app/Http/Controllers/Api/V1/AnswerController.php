@@ -34,7 +34,6 @@ class AnswerController extends BaseController
                                             ->where('user_id', $user_id)
                                             ->get();
 
-        // return $student_answer;
         $data = [];
         $data['data']['student'] = $user->student;
         $data['data']['test']['id'] = $test->id;
@@ -80,6 +79,7 @@ class AnswerController extends BaseController
             $data['data']['answer'][$key]['question']['id'] = $question->id;
             $data['data']['answer'][$key]['question']['question'] = $question->question;
             $data['data']['answer'][$key]['answer']['id'] = $answer->id;
+            $data['data']['answer'][$key]['answer']['answer'] = $answer->answer;
             $data['data']['answer'][$key]['answer']['is_answer'] = $answer->is_answer;
             $data['data']['answer'][$key]['answer']['question_id'] = $answer->question_id;
         }
@@ -121,7 +121,11 @@ class AnswerController extends BaseController
         $data['correct'] = $correct;
         $data['wrong'] = $wrong;
         $data['question_total'] = $q_total;
-        $data['grade'] = $correct / $q_total * 100.0;;
+        if($q_total != 0) {
+            $data['grade'] = $correct / $q_total * 100.0;;
+        } else {
+            $data['grade'] = 0;
+        }
         return $data;
 
     }
