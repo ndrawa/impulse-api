@@ -25,4 +25,12 @@ class Question extends BaseModel
     public function answers() {
         return $this->hasMany(Answer::class);
     }
+
+    public function student_answers_essay() {
+        return $this->hasMany(StudentEssayAnswer::class);
+    }
+
+    public function student_answers_multiple_choice() {
+        return $this->hasMany(StudentMultipleChoiceAnswer::class);
+    }
 }
