@@ -15,6 +15,8 @@ $api->version('v1', [
     $api->get('/{id}', ['as' => 'schedule.show', 'uses' => 'ScheduleController@show']);
     $api->get('/get-test/{id}', ['as' => 'schedule.gettest', 'uses' => 'ScheduleController@getTest']);
     $api->post('/create-test', ['as' => 'schedule.createtest', 'uses' => 'ScheduleController@create_test']);
+    $api->put('/update-question/{id}', ['as' => 'schedule.updatequestion', 'uses' => 'ScheduleController@update_question']);
+    $api->delete('/delete-question/{id}', ['as' => 'schedule.delete_question', 'uses' => 'ScheduleController@delete_question']);
     $api->delete('/delete-test/{id}', ['as' => 'schedule.deletetest', 'uses' => 'ScheduleController@delete_test']);
     $api->put('/update-test/{id}', ['as' => 'schedule.updatetest', 'uses' => 'ScheduleController@update_test']);
     $api->get('/getstudentcourse/{student_id}', ['as' => 'schedule.getstudentcourse', 'uses' => 'ScheduleController@get_student_class_course']);
