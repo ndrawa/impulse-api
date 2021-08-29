@@ -40,4 +40,9 @@ class ClassCourse extends BaseModel
     {
         return $this->belongsTo(Staff::class, 'staff_id');
     }
+
+    public function schedule()
+    {
+        return $this->hasMany(Schedule::class);
+    }
 }

@@ -158,13 +158,31 @@ class ScheduleController extends BaseController
         $this->validate($request, [
             'type' => 'required',
             'questions' => 'required',
+            'module_id' => 'required',
+            'test_type' => 'required',
         ]);
+        // test_type have to be pretest/journal/posttest
+        $module = Module::find($request->module_id);
+        if(!$module) {
+            return $this->response->errorNotFound('invalid module id');
+        }
 
         $test = Test::create([
             'type' => $request->type,
         ]);
 
         $questions = $this->add_question($request, $test->id);
+
+        if($request->test_type === 'pretest') {
+            $module->update(['pretest_id' => $test->id]);
+        } else if($request->test_type === 'journal') {
+            $module->update(['journal_id' => $test->id]);
+        } else if($request->test_type === 'posttest') {
+            $module->update(['posttest_id' => $test->id]);
+        } else {
+            return $this->response->errorBadRequest('invalid test type');
+        }
+        $module->save();
 
         return json_encode(['msg' => 'success']);
     }
@@ -210,6 +228,32 @@ class ScheduleController extends BaseController
         } else {
             return $this->response->noContent();
         }
+    }
+
+    public function update_question(Request $request, $id) {
+        $this->validate($request, [
+            'question' => 'required',
+        ]);
+        $question = Question::find($id);
+        if(!$question) {
+            return $this->response->errorNotFound('invalid question id');
+        }
+
+        $question->update(['question' => $request->question]);
+        $question->save();
+
+        return $this->response->noContent();
+    }
+
+    public function delete_question(Request $request, $id) {
+        $question = Question::find($id);
+        if(!$question) {
+            return $this->response->errorNotFound('invalid question id');
+        }
+
+        $question->delete();
+
+        return $this->response->noContent();
     }
 
     public function get_student_class_course(Request $request, $student_id) {
