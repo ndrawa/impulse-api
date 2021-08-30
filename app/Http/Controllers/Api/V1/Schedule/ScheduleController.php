@@ -264,11 +264,17 @@ class ScheduleController extends BaseController
                 $class_course = ClassCourse::find($cc_scc->class_course_id);
                 $course = $class_course->courses;
                 $class = $class_course->classes;
+                $staff = $class_course->staffs;
                 $academic_year = $class_course->academic_years;
                 $academic_year = AcademicYear::firstWhere('id', $class_course->academic_year_id);
 
-                $data['data'][$key]['id'] = $class_course->id;
-                $data['data'][$key]['name'] = $course->name.'/'.$class->name.' ('.$academic_year->year.')';
+                $data['data'][$key]['class_course_id'] = $class_course->id;
+                $data['data'][$key]['class_name'] = $class->name;
+                $data['data'][$key]['course_code'] = $course->code;
+                $data['data'][$key]['course_name'] = $course->name;
+                $data['data'][$key]['staff_code'] = $staff->code;
+                $data['data'][$key]['staff_name'] = $staff->name;
+                $data['data'][$key]['academic_year'] = $academic_year->year.'/'.$academic_year->semester;
             }
             return $data;
 
