@@ -17,6 +17,7 @@ use App\Models\Schedule;
 use App\Models\Asprak;
 use App\Transformers\AsprakTransformer;
 use App\Transformers\ClassCourseTransformer;
+use App\Models\StudentClassCourse;
 
 class ClassCourseController extends BaseController
 {
@@ -91,6 +92,16 @@ class ClassCourseController extends BaseController
     public function get_class_course(Request $request) {
         $class_course = ClassCourse::query();
 
+        if($request->has('student_id')) {
+            if(!empty($request->student_id)) {
+                $student_class_course = StudentClassCourse::where('student_id', $request->student_id)->get();
+                $x = [];
+                foreach($student_class_course as $key=>$scc) {
+                    $x[$key] = $scc->class_course_id;
+                }
+                $class_course = $class_course->whereIn('id', $x);
+            }
+        }
         if($request->has('class_name')) {
             if(!empty($request->class_name)) {
                 $classroom = Classroom::where('name', 'like','%'.$request->class_name.'%')
