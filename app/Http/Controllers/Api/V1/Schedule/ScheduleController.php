@@ -256,6 +256,32 @@ class ScheduleController extends BaseController
         return $this->response->noContent();
     }
 
+    public function update_answer(Request $request, $id) {
+        $this->validate($request, [
+            'answer' => 'required',
+        ]);
+        $question = Question::find($id);
+        if(!$question) {
+            return $this->response->errorNotFound('invalid question id');
+        }
+
+        $question->update(['question' => $request->question]);
+        $question->save();
+
+        return $this->response->noContent();
+    }
+
+    public function delete_answer(Request $request, $id) {
+        $question = Question::find($id);
+        if(!$question) {
+            return $this->response->errorNotFound('invalid question id');
+        }
+
+        $question->delete();
+
+        return $this->response->noContent();
+    }
+
     public function get_student_class_course(Request $request, $student_id) {
         $class_course_in_scc = StudentClassCourse::where('student_id',$student_id)->get();
         if($class_course_in_scc != NULL) {
