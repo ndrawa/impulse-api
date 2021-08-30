@@ -106,6 +106,7 @@ class ScheduleController extends BaseController
                 $arr[$key]['class_course']['class']['academic_year'] = $class['academic_year'];
                 $arr[$key]['class_course']['course']['id'] = $course['id'];
                 $arr[$key]['class_course']['course']['name'] = $course['name'];
+                $arr[$key]['class_course']['course']['code'] = $course['code'];
                 $arr[$key]['class_course']['staff']['id'] = $staff['id'];
                 $arr[$key]['class_course']['staff']['name'] = $staff['name'];
                 $arr[$key]['class_course']['staff']['code'] = $staff['code'];
@@ -274,7 +275,7 @@ class ScheduleController extends BaseController
                 $data['data'][$key]['course_name'] = $course->name;
                 $data['data'][$key]['staff_code'] = $staff->code;
                 $data['data'][$key]['staff_name'] = $staff->name;
-                $data['data'][$key]['academic_year'] = $academic_year->year.'/'.$academic_year->semester;
+                $data['data'][$key]['academic_year'] = $academic_year->year.' / '.$academic_year->semester;
             }
             return $data;
 
@@ -316,6 +317,7 @@ class ScheduleController extends BaseController
             $arr['class_course']['class']['academic_year'] = $class['academic_year'];
             $arr['class_course']['course']['id'] = $course['id'];
             $arr['class_course']['course']['name'] = $course['name'];
+            $arr['class_course']['course']['code'] = $course['code'];
             $arr['class_course']['staff']['id'] = $staff['id'];
             $arr['class_course']['staff']['name'] = $staff['name'];
             $arr['class_course']['staff']['code'] = $staff['code'];
@@ -356,6 +358,7 @@ class ScheduleController extends BaseController
             $arr[$key]['class_course']['class']['academic_year'] = $class['academic_year'];
             $arr[$key]['class_course']['course']['id'] = $course['id'];
             $arr[$key]['class_course']['course']['name'] = $course['name'];
+            $arr[$key]['class_course']['course']['code'] = $course['code'];
             $arr[$key]['class_course']['staff']['id'] = $staff['id'];
             $arr[$key]['class_course']['staff']['name'] = $staff['name'];
             $arr[$key]['class_course']['staff']['code'] = $staff['code'];
