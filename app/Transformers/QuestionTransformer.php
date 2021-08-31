@@ -12,6 +12,7 @@ class QuestionTransformer extends TransformerAbstract
         $data['question'] = [
             'type'  => $question->type,
             'question' => $question->question,
+            'weight' => $question->weight,
         ];
 
         $transformer = new AnswerTransformer;

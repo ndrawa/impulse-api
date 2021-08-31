@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateQuestionsTable extends Migration
+class CreateBapTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,17 +13,17 @@ class CreateQuestionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('questions', function (Blueprint $table) {
+        Schema::create('bap', function (Blueprint $table) {
             $table->char('id', 26)->primary();
-            $table->char('test_id', 26);
-            $table->text('question');
-            $table->float('weight')->nullable();
-
+            $table->char('schedule_id', 26);
+            $table->string('materi');
+            $table->longtext('evaluasi');
+            $table->enum('jenis', ['offline','online']);
             $table->timestamps();
 
-            $table->foreign('test_id')
+            $table->foreign('schedule_id')
                 ->references('id')
-                ->on('tests')
+                ->on('schedules')
                 ->onDelete('cascade');
         });
     }
@@ -35,6 +35,6 @@ class CreateQuestionsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('questions');
+        Schema::dropIfExists('bap');
     }
 }
