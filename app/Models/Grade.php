@@ -30,6 +30,6 @@ class Grade extends BaseModel
 
     public function schedule_test()
     {
-        return $this->belongsTo(ScheduleTest::class);
+        return $this->hasOne(ScheduleTest::class);
     }
 }

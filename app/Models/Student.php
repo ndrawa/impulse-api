@@ -75,6 +75,6 @@ class Student extends BaseModel implements IUser
     }
 
     public function student_class_course() {
-        $this->hasMany(StudentClassCourse::class);
+        return $this->hasMany(StudentClassCourse::class);
     }
 }

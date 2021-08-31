@@ -150,6 +150,7 @@ $app->router->group([
     require __DIR__.'/../routes/api/v1/classcourse.php';
     require __DIR__.'/../routes/api/v1/academicYear.php';
     require __DIR__.'/../routes/api/v1/answer.php';
+    require __DIR__.'/../routes/api/v1/grade.php';
 });
 
 return $app;
