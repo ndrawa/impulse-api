@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class AsprakPresence extends Model
+class AsprakPresence extends BaseModel
 {
     protected $table = "asprak_presence";
 
