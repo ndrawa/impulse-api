@@ -21,5 +21,7 @@ $api->version('v1', [
     $api->delete('/deleteall/{table}', ['as' => 'laboran.deleteall', 'uses' => 'LaboranController@deleteall']);
     $api->get('/roles/{role}', ['as' => 'laboran.report_roles', 'uses' => 'LaboranController@report_roles']);
     // $api->put('/student/{id}', ['as' => 'laboran.update', 'uses' => 'LaboranController@update']);
+    $api->get('/bap/{schedule_id}', ['as' => 'laboran.show_bap', 'uses' => 'LaboranController@show_bap']);
+    $api->post('/bap/{schedule_id}', ['as' => 'laboran.set_bap', 'uses' => 'LaboranController@set_bap']);
 });
 

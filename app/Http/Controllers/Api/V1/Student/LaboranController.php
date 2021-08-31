@@ -16,8 +16,12 @@ use App\Models\Student;
 use App\Models\StudentClassCourse;
 use App\Models\Staff;
 use App\Models\User;
+use App\Models\StudentPresence;
+use App\Models\AsprakPresence;
+use App\Models\Bap;
 use App\Transformers\AsprakTransformer;
 use App\Transformers\LaboranTransformer;
+use App\Transformers\ScheduleTransformer;
 use App\Transformers\StudentTransformer;
 use App\Transformers\StudentClassCourseTransformer;
 use App\Transformers\ClassTransformer;
@@ -469,5 +473,77 @@ class LaboranController extends BaseController
             }
         }
         return $data;
+    }
+
+    public function show_bap($schedule_id)
+    {
+        $schedule = Schedule::findOrFail($schedule_id);
+        $id_classcourse = $schedule->class_course->id;
+
+        $aspraks = Asprak::get();
+        $students = StudentClassCourse::get();
+
+        $data = [];
+        $schedule->room;
+        $schedule->class_course;
+        $schedule->class_course->courses;
+        $schedule->class_course->staffs;
+        $schedule->module;
+        $schedule->academic_year;
+        $data['schedule'] = $schedule;
+
+        $i = 0;
+        foreach ($aspraks as $key => $asprak) {
+            if ($asprak->class_course_id == $id_classcourse) {
+                $data['asprak'][$i++] = $asprak->student_id;
+            }
+        }
+
+        $i = 0;
+        foreach ($students as $key => $student) {
+            if ($student->class_course_id == $id_classcourse) {
+                $data['student'][$i++] = $student->student_id;
+            }
+        }
+        return $data;
+    }
+
+    public function set_bap(Request $request, $schedule_id)
+    {
+        if (Schedule::findOrFail($schedule_id)) {
+            $data = [];
+
+            foreach ($request->asprak as $key => $asprak) {
+                if (!AsprakPresence::where('student_id', $asprak)->where('schedule_id', $schedule_id)->first()) {
+                    $asprak = AsprakPresence::create([
+                        'student_id' => $asprak,
+                        'schedule_id' => $schedule_id
+                    ]);
+                    $data['asprak'] = $asprak;
+                }
+            }
+
+            foreach ($request->student as $key => $student) {
+                if (!StudentPresence::where('student_id', $student)->where('schedule_id', $schedule_id)->first()) {    
+                    $student = StudentPresence::create([
+                        'student_id' => $student,
+                        'schedule_id' => $schedule_id
+                    ]);
+                    $data['student'] = $student;
+                }
+            }
+
+            if (!Bap::where('schedule_id', $schedule_id)->first()) {
+                $bap = Bap::create([
+                    'schedule_id' => $schedule_id,
+                    'materi' => $request->materi,
+                    'evaluasi' => $request->evaluasi,
+                    'jenis' => $request->jenis,
+                ]);
+                $data['bap'] = $bap;
+            }
+
+            return $data;
+        }
     }
 }
