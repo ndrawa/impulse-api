@@ -261,24 +261,27 @@ class ScheduleController extends BaseController
         $this->validate($request, [
             'answer' => 'required',
         ]);
-        $question = Question::find($id);
-        if(!$question) {
-            return $this->response->errorNotFound('invalid question id');
+        $answer = Answer::find($id);
+        if(!$answer) {
+            return $this->response->errorNotFound('invalid answer id');
         }
 
-        $question->update(['question' => $request->question]);
-        $question->save();
+        $answer->update(['answer' => $request->answer]);
+        if($request->has('is_answer')) {
+            $answer->update(['is_answer' => $request->is_answer]);
+        }
+        $answer->save();
 
         return $this->response->noContent();
     }
 
     public function delete_answer(Request $request, $id) {
-        $question = Question::find($id);
-        if(!$question) {
-            return $this->response->errorNotFound('invalid question id');
+        $answer = Answer::find($id);
+        if(!$answer) {
+            return $this->response->errorNotFound('invalid answer id');
         }
 
-        $question->delete();
+        $answer->delete();
 
         return $this->response->noContent();
     }
