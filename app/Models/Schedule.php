@@ -27,7 +27,7 @@ class Schedule extends BaseModel
     // module_id belum dimasukkan, menunggu instruksi lebih lanjut karena
     // ada relasi ke tabel yg belum dibuat
 
-    public function rooms()
+    public function room()
     {
         return $this->belongsTo(Room::class);
     }
