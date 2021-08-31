@@ -57,7 +57,8 @@ class ScheduleTableSeeder extends Seeder
         //Create 1st question for pretest modul 1
         $question = Question::create([
             'test_id' => $pretest_1->id,
-            'question' => 'Apa penyebab penangangan pandemi COVID-19 carut marut di Indonesia?'
+            'question' => 'Apa penyebab penangangan pandemi COVID-19 carut marut di Indonesia?',
+            'weight' => 5,
         ]);
         $answer = Answer::create([
             'question_id' => $question->id,
@@ -67,7 +68,8 @@ class ScheduleTableSeeder extends Seeder
         //Create 2nd question for pretest modul 1
         $question = Question::create([
             'test_id' => $pretest_1->id,
-            'question' => 'Kenapa kamu tidak percaya jika omongan adalah doa?'
+            'question' => 'Kenapa kamu tidak percaya jika omongan adalah doa?',
+            'weight' => 5,
         ]);
         $answer = Answer::create([
             'question_id' => $question->id,
@@ -84,6 +86,7 @@ class ScheduleTableSeeder extends Seeder
         $question = Question::create([
             'test_id' => $posttest_1->id,
             'question' => 'Ban ban apa yang ilang?',
+            'weight' => 5,
         ]);
         $answer = Answer::create([
             'question_id' => $question->id,
@@ -157,7 +160,8 @@ class ScheduleTableSeeder extends Seeder
         //Create 1st question for posttest modul 2
         $question = Question::create([
             'test_id' => $posttest_2->id,
-            'question' => 'Sebutkan 3 tim sepak bola dari London ...'
+            'question' => 'Sebutkan 3 tim sepak bola dari London ...',
+            'weight' => 5,
         ]);
         $answer = Answer::create([
             'question_id' => $question->id,
@@ -168,7 +172,8 @@ class ScheduleTableSeeder extends Seeder
         //Create 2nd question for pretest modul 2
         $question = Question::create([
             'test_id' => $posttest_2->id,
-            'question' => 'Isilah dengan jawaban panjang:'
+            'question' => 'Isilah dengan jawaban panjang:',
+            'weight' => 5,
         ]);
         $answer = Answer::create([
             'question_id' => $question->id,
@@ -182,7 +187,8 @@ class ScheduleTableSeeder extends Seeder
         //Create 3rd question for pretest modul 2
         $question = Question::create([
             'test_id' => $posttest_2->id,
-            'question' => 'Panjangin lagi dong?'
+            'question' => 'Panjangin lagi dong?',
+            'weight' => 5,
         ]);
         $answer = Answer::create([
             'question_id' => $question->id,
