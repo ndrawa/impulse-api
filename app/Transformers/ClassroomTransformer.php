@@ -11,9 +11,7 @@ class ClassroomTransformer extends TransformerAbstract
     {
         return [
             'id' => $classroom->id,
-            'name' => $classroom->name,
-            'academic_year' => $classroom->academic_year,
-            'semester' => $classroom->semester,
+            'name' => $classroom->name
         ];
     }
 }
