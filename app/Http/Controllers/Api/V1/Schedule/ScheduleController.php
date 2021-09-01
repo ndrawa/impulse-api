@@ -376,9 +376,21 @@ class ScheduleController extends BaseController
     public function show_schedule(Request $request, $class_course_id){
         $schedules = Schedule::Where('class_course_id', $class_course_id)->get();
 
+        if($request->has('module')) {
+            if(!empty($request->module)) {
+                $module = Module::where('index', $request->module)->get();
+                $x = [];
+                foreach($module as $key=>$m) {
+                    $x[$key] = $m->id;
+                }
+                $schedules = $schedules->whereIn('module_id', $x);
+            }
+        }
+
         $data['total_data'] = 0;
         $data['data'] = [];
         $arr = [];
+
         foreach($schedules as $key=>$s) {
             $class_course = ClassCourse::where('id', $s['class_course_id'])->first();
             $class = Classroom::where('id', $class_course['class_id'])->first();
