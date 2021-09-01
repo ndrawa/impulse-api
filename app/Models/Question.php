@@ -11,6 +11,7 @@ class Question extends BaseModel
     protected $fillable = [
         'test_id',
         'question',
+        'weight',
     ];
 
     public function get_answer_for_test($question_id) {

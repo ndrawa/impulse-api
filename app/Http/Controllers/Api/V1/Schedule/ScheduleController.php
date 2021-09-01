@@ -9,6 +9,7 @@ use App\Models\Schedule;
 use App\Models\Classroom;
 use App\Models\Course;
 use App\Models\Answer;
+use App\Models\Asprak;
 use App\Models\Question;
 use App\Models\Test;
 use App\Models\StudentClassCourse;
@@ -57,6 +58,18 @@ class ScheduleController extends BaseController
                 $class_course = $class_course->whereIn('id', $x);
             }
         }
+
+        if($request->has('asprak_id')) {
+            if(!empty($request->asprak_id)) {
+                $student_class_course = Asprak::where('student_id', $request->asprak_id)->get();
+                $x = [];
+                foreach($student_class_course as $key=>$scc) {
+                    $x[$key] = $scc->class_course_id;
+                }
+                $class_course = $class_course->whereIn('id', $x);
+            }
+        }
+
         if($request->has('class_name')) {
             if(!empty($request->class_name)) {
                 $classroom = Classroom::where('name', 'like','%'.$request->class_name.'%')
@@ -253,6 +266,35 @@ class ScheduleController extends BaseController
         }
 
         $question->delete();
+
+        return $this->response->noContent();
+    }
+
+    public function update_answer(Request $request, $id) {
+        $this->validate($request, [
+            'answer' => 'required',
+        ]);
+        $answer = Answer::find($id);
+        if(!$answer) {
+            return $this->response->errorNotFound('invalid answer id');
+        }
+
+        $answer->update(['answer' => $request->answer]);
+        if($request->has('is_answer')) {
+            $answer->update(['is_answer' => $request->is_answer]);
+        }
+        $answer->save();
+
+        return $this->response->noContent();
+    }
+
+    public function delete_answer(Request $request, $id) {
+        $answer = Answer::find($id);
+        if(!$answer) {
+            return $this->response->errorNotFound('invalid answer id');
+        }
+
+        $answer->delete();
 
         return $this->response->noContent();
     }

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateGradeTable extends Migration
+class CreateStudentPresenceTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,30 +13,19 @@ class CreateGradeTable extends Migration
      */
     public function up()
     {
-        Schema::create('grade', function (Blueprint $table) {
+        Schema::create('student_presence', function (Blueprint $table) {
             $table->char('id', 26)->primary();
             $table->char('student_id', 26);
-            $table->char('schedule_test_id', 26);
-            $table->char('question_id', 26);
-            $table->float('grade');
-            $table->char('asprak_id', 26);
+            $table->char('schedule_id', 26);
             $table->timestamps();
 
-            $table->foreign('asprak_id')
-                ->references('id')
-                ->on('students')
-                ->onDelete('cascade');
             $table->foreign('student_id')
                 ->references('id')
                 ->on('students')
                 ->onDelete('cascade');
-            $table->foreign('question_id')
+            $table->foreign('schedule_id')
                 ->references('id')
-                ->on('students')
-                ->onDelete('cascade');
-            $table->foreign('schedule_test_id')
-                ->references('id')
-                ->on('schedule_tests')
+                ->on('schedules')
                 ->onDelete('cascade');
         });
     }
@@ -48,6 +37,6 @@ class CreateGradeTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('grade');
+        Schema::dropIfExists('student_presence');
     }
 }

@@ -14,22 +14,30 @@ class Grade extends BaseModel
      * @var array
      */
     protected $fillable = [
-        'user_id',
+        'student_id',
         'schedule_test_id',
-        'grade_tp',
-        'grade_pretest',
-        'grade_jurnal',
-        'grade_posttest',
-        'grade'
+        'question_id',
+        'grade',
+        'asprak_id'
     ];
 
-    public function user()
+    public function student()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Student::class);
+    }
+
+    public function asprak()
+    {
+        return $this->belongsTo(Student::class);
     }
 
     public function schedule_test()
     {
-        return $this->belongsTo(ScheduleTest::class);
+        return $this->hasMany(ScheduleTest::class);
+    }
+
+    public function question()
+    {
+        return $this->belongsTo(Question::class);
     }
 }
