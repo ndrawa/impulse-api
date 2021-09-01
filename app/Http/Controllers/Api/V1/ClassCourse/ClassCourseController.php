@@ -223,10 +223,12 @@ class ClassCourseController extends BaseController
             'student_id' => 'required',
             'class_course_id' => 'required'
         ]);
-
-        $asprak = Asprak::create($request->all());
-
-        return $this->response->item($asprak, new AsprakTransformer);
+        if (!Asprak::where('student_id', $request->student_id)->where('class_course_id', $request->class_course_id)->first()) {  
+            $asprak = Asprak::create($request->all());
+            return $this->response->item($asprak, new AsprakTransformer);
+        } else {
+            return $this->response->errorNotFound('Duplicate data.');
+        }
     }
 
     public function get_asprak_class_course(Request $request) {
