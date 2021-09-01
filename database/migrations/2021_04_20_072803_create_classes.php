@@ -17,8 +17,8 @@ class CreateClasses extends Migration
             $table->char('id', 26)->primary();
             // $table->char('staff_id', 26);
             $table->string('name');
-            $table->string('academic_year');
-            $table->string('semester');
+            // $table->string('academic_year');
+            // $table->string('semester');
             $table->timestamps();
             // $table->foreign('staff_id')
             //     ->references('id')

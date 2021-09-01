@@ -47,7 +47,7 @@ class LaboranController extends BaseController
             ->join('academic_years', 'academic_years.id', '=', 'class_course.academic_year_id')
             ->select('students.id as student_id', 'students.nim', 'students.name', 'classes.id as class_id', 'classes.name as class_name', 'students.gender',
             'students.religion', 'courses.code as course_code', 'courses.name as course_name',
-            'staffs.code as staff_code', 'academic_years.year', 'classes.semester');
+            'staffs.code as staff_code', 'academic_years.year', 'academic_years.semester');
         $per_page = env('PAGINATION_SIZE', 15);
         $request->whenHas('per_page', function($size) use (&$per_page) {
             $per_page = $size;
@@ -179,13 +179,9 @@ class LaboranController extends BaseController
         }
 
         // create Classes
-        if (Classroom::where('name', $request->class_name)
-            ->where('academic_year', $request->academic_year)
-            ->where('semester', $semester)->first() == null) {
+        if (Classroom::where('name', $request->class_name)->first() == null) {
             $classes = Classroom::create([
-                'name' => $request->class_name,
-                'academic_year' => $request->academic_year,
-                'semester' => $semester
+                'name' => $request->class_name
             ]);
         }
 
@@ -270,10 +266,8 @@ class LaboranController extends BaseController
 
     public function delete(Request $request, $id)
     {
-        $student = Student::findOrFail($id);
-        $this->authorize('delete', $student);
-        $user = User::findOrFail($student->user_id);
-        $user->delete();
+        $student_class_course = StudentClassCourse::where('student_id', $id);
+        $student_class_course->delete();
 
         return $this->response->noContent();
     }

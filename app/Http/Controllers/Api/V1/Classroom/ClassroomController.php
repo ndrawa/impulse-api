@@ -19,9 +19,7 @@ class ClassroomController extends BaseController
         });
 
         $request->whenHas('search', function($search) use (&$classrooms) {
-            $classrooms = $classrooms->where('name', 'ILIKE', '%'.$search.'%')
-                                        ->orWhere('academic_year', 'ILIKE', '%'.$search.'%')
-                                        ->orWhere('semester', 'ILIKE', '%'.$search.'%');
+            $classrooms = $classrooms->where('name', 'ILIKE', '%'.$search.'%');
         });
 
         if($request->has('orderBy') && $request->has('sortedBy')) {
@@ -62,8 +60,8 @@ class ClassroomController extends BaseController
 
     public function show(Request $request, $id)
     {
-        // $classroom = Classroom::findOrFail($id);
-        $classroom = Classroom::Where($id)->first();
+        $classroom = Classroom::findOrFail($id);
+        // $classroom = Classroom::where($id)->get();
         return $this->response->item($classroom, new ClassroomTransformer);
     }
 
@@ -71,9 +69,7 @@ class ClassroomController extends BaseController
     {
         // $this->authorize('create', Classroom::class);
         $this->validate($request, [
-            'name' => 'required',
-            'academic_year' => 'required',
-            'semester' => 'required'
+            'name' => 'required'
         ]);
         if(Classroom::where('name', $request->name)->first() == null){
             $classroom = Classroom::create($request->all());
@@ -88,9 +84,7 @@ class ClassroomController extends BaseController
         $classroom = Classroom::findOrFail($id);
         // $this->authorize('update', $classroom);
         $this->validate($request, [
-            'name' => 'required',
-            'academic_year' => 'required',
-            'semester' => 'required'
+            'name' => 'required'
         ]);
         $classroom->fill($request->all());
         $classroom->save();
@@ -101,16 +95,8 @@ class ClassroomController extends BaseController
     public function delete(Request $request, $id)
     {
         $classroom = Classroom::findOrFail($id);
-        // $this->authorize('delete', $classroom);
         $classroom->delete();
 
         return $this->response->noContent();
     }
-    // without paginator
-    // public function rooms(Request $request)
-    // {
-    //     $rooms = Room::get();
-
-    //     return $this->response->collection($rooms, new RoomTransformer);
-    // }
 }
