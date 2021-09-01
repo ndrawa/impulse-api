@@ -140,6 +140,7 @@ class AnswerController extends BaseController
             return $this->response->errorBadRequest();
         }
         foreach($request->answers as $answer) {
+            //Kalau memenuhi kondisi, skip ke iterasi selanjutnya
             if(StudentEssayAnswer::where('user_id', $this->user->id)
                                 ->where('question_id', $answer['question_id'])
                                 ->exists())
@@ -166,6 +167,7 @@ class AnswerController extends BaseController
             return $this->response->errorBadRequest();
         }
         foreach($request->answers as $answer) {
+            //Kalau memenuhi kondisi, skip ke iterasi selanjutnya
             if(StudentMultipleChoiceAnswer::where('user_id', $this->user->id)
                                 ->where('question_id', $answer['question_id'])
                                 ->exists())
@@ -180,5 +182,42 @@ class AnswerController extends BaseController
         }
 
         return $this->response->created();
+    }
+
+    public function updateEssayAnswer(Request $request)
+    {
+        $this->validate($request, [
+            'test_id' => 'required',
+            'answers' => 'required',
+        ]);
+        if(!is_array($request->answers) or sizeof($request->answers) < 1) {
+            return $this->response->errorBadRequest();
+        }
+
+        foreach($request->answers as $answer) {
+            $data_answer = StudentEssayAnswer::find($answer['id']);
+            $data_answer->update(['answers' => $answer['answers']]);
+            $data_answer->save;
+        }
+
+        return $this->response->noContent();
+    }
+
+    public function updateMultipleChoiceAnswer(Request $request)
+    {
+        $this->validate($request, [
+            'test_id' => 'required',
+            'answers' => 'required',
+        ]);
+        if(!is_array($request->answers) or sizeof($request->answers) < 1) {
+            return $this->response->errorBadRequest();
+        }
+        foreach($request->answers as $answer) {
+            $data_answer = StudentMultipleChoiceAnswer::find($answer['id']);
+            $data_answer->update(['answer_id' => $answer['answer_id']]);
+            $data_answer->save;
+        }
+
+        return $this->response->noContent();
     }
 }
