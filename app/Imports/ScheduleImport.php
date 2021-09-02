@@ -2,10 +2,13 @@
 
 namespace App\Imports;
 
+use App\Models\AcademicYear;
 use App\Models\Schedule;
 use App\Models\Room;
 use App\Models\Course;
+use App\Models\ClassCourse;
 use App\Models\Classroom;
+use App\Models\Module;
 use App\Models\Staff;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Collection;
@@ -18,6 +21,14 @@ class ScheduleImport implements ToCollection
     */
     public function collection(Collection $collection)
     {
+        function replace_semester($data)
+        {
+            if ($data == 'ODD') {
+                return 'odd';
+            } else {
+                return 'even';
+            }
+        }
 
         foreach ($collection as $key => $row)
         {
@@ -36,54 +47,96 @@ class ScheduleImport implements ToCollection
                 $day = 'saturday';
             }
 
-            $room = Room::where('name', $row[2])->first();
-            if ($room == null) {
+            if (Room::where('name', $row[2])->first() == null) {
                 $room = Room::create([
                     'name' => $row[2],
+                    'desc' => '-',
+                    'msteam_code' => 'belum ada',
+                    'msteam_link' => 'belum ada',
                 ]);
+                $room->save();
             }
 
-            $course = Course::where('code', $row[3])
-                            ->where('name', $row[4])
-                            ->first();
-            if ($course == null) {
+            if (Course::where('code', $row[3])->where('name', $row[4])->first() == null) {
                 $course = Course::create([
                     'code' => $row[3],
                     'name' => $row[4],
                 ]);
+                $course->save();
             }
 
-            $staff = Staff::where('code', $row[6])
-                            ->first();
-            $course = Course::where('code', $row[3])
-                            ->first();
-            $classroom = Classroom::where('name', $row[5])
-                            ->where('course_id', $course->id)
-                            ->where('staff_id', $staff->id)
-                            ->first();
-            if ($classroom == null) {
-                $classroom = Classroom::create([
-                    'staff_id' => $staff->id,
-                    'name' => $row[5],
-                    'course_id' => $course->id,
-                    'academic_year' => '',
-                    'semester' => '',
+            if (AcademicYear::where('year', $row[9])->where('semester', replace_semester($row[8]))->first() == null) {
+                $academic_year = AcademicYear::create([
+                    'year'      => $row[9],
+                    'semester'  => replace_semester($row[8]),
                 ]);
+                $academic_year->save();
             }
 
-            $time = explode(' - ',trim($row[1]));
-            Schedule::create([
-                'name' => 'PRAKTIKUM '.$row[4],
-                'day' => $day,
-                'time_start' => $time[0],
-                'time_end' => $time[1],
-                'room_id' => $room->id,
-                'periode_start' => null,
-                'periode_end' => null,
-                'class_id' => $classroom->id,
-                'type' => $row[7],
-                'module_id' => 'Belum ada',
-            ]);
+            if (Classroom::where('name', $row[5])->first() == null) {
+                $classroom = Classroom::create([
+                    'name' => $row[5],
+                ]);
+                $classroom->save();
+            }
+
+            $room = Room::where('name', $row[2])->first();
+            $course = Course::where('code', $row[3])->first();
+            $academic_year = AcademicYear::where('year', $row[9])
+                            ->where('semester', replace_semester($row[8]))
+                            ->first();
+            $staff = Staff::where('code', $row[6])->first();
+            $classroom = Classroom::where('name', $row[5])->first();
+
+            if($classroom && $staff && $course && $academic_year && $room)  {
+                $class_course_check = ClassCourse::where('class_id', $classroom->id)
+                                                ->where('course_id', $course->id)
+                                                ->where('staff_id', $staff->id)
+                                                ->where('academic_year_id', $academic_year->id)
+                                                ->exists();
+                if(!$class_course_check) {
+                    $class_course = ClassCourse::firstOrNew([
+                        'class_id' => $classroom->id,
+                        'course_id' => $course->id,
+                        'staff_id' => $staff->id,
+                        'academic_year_id' => $academic_year->id
+                    ]);
+                    $class_course->save();
+    
+                    //Generate Module 1-14
+                    for ($i = 1; $i < 15; $i++) {
+                        $module = '';
+                        if (Module::where('course_id', $course->id)->where('index', $i)->first() == null) {
+                            $module = Module::create([
+                                'course_id' => $course->id,
+                                'index' => $i,
+                                'academic_year_id' => $academic_year->id,
+                            ]);
+                            $module->save();
+                        } else {
+                            $module = Module::where('course_id', $course->id)->where('index', $i)->first();
+                        }
+    
+                        $time = explode(' - ',trim($row[1]));
+                        //Generate Schedule 1-14
+                        $schedule = Schedule::create([
+                            'name' => 'Module '.$i,
+                            'time_start' => null,
+                            'time_end' => null,
+                            'room_id' => $room->id,
+                            'class_course_id' => ClassCourse::where('class_id', $classroom->id)
+                                                ->where('course_id', $course->id)
+                                                ->where('staff_id', $staff->id)
+                                                ->where('academic_year_id', $academic_year->id)
+                                                ->first()->id,
+                            'module_id' => $module->id,
+                            'academic_year_id' => $academic_year->id,
+                            'date' => \Carbon\Carbon::now()->toDateTimeString(),
+                        ]);
+                        $schedule->save();
+                    }
+                } 
+            }
         }
     }
 }
