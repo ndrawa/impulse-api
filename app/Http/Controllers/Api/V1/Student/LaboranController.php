@@ -45,7 +45,7 @@ class LaboranController extends BaseController
             ->join('courses', 'courses.id', '=', 'class_course.course_id')
             ->join('staffs', 'staffs.id', '=', 'class_course.staff_id')
             ->join('academic_years', 'academic_years.id', '=', 'class_course.academic_year_id')
-            ->select('students.id as student_id', 'students.nim', 'students.name', 'classes.id as class_id', 'classes.name as class_name', 'students.gender',
+            ->select('students.id as student_id', 'students.nim', 'students.name', 'students_class_course.id as students_class_course_id', 'classes.id as class_id', 'classes.name as class_name', 'students.gender',
             'students.religion', 'courses.code as course_code', 'courses.name as course_name',
             'staffs.code as staff_code', 'academic_years.year', 'academic_years.semester');
         $per_page = env('PAGINATION_SIZE', 15);
@@ -266,9 +266,9 @@ class LaboranController extends BaseController
 
     public function delete(Request $request, $id)
     {
-        $student_class_course = StudentClassCourse::where('student_id', $id);
+        $student_class_course = StudentClassCourse::findOrFail($id);
+        // $student_class_course = StudentClassCourse::where('id', $id);
         $student_class_course->delete();
-
         return $this->response->noContent();
     }
 
