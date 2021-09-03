@@ -26,19 +26,19 @@ class CreateModulesTable extends Migration
             $table->foreign('pretest_id')
                 ->references('id')
                 ->on('tests')
-                ->onDelete('cascade');
+                ->onDelete('set null');
             $table->foreign('posttest_id')
                 ->references('id')
                 ->on('tests')
-                ->onDelete('cascade');
+                ->onDelete('set null');
             $table->foreign('journal_id')
                 ->references('id')
                 ->on('tests')
-                ->onDelete('cascade');
+                ->onDelete('set_null');
             $table->foreign('academic_year_id')
                 ->references('id')
                 ->on('academic_years')
-                ->onDelete('cascade');
+                ->onDelete('set null');
         });
     }
 
