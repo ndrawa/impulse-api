@@ -144,4 +144,27 @@ class ModuleController extends BaseController
 
         // return $this->response->item($module, new ModuleTransformer);
     }
+
+    public function updateTest(Request $request, $id) {
+        $this->validate($request, [
+            'test_type' => 'required',
+            'test_id' => 'required',
+        ]);
+        $module = Module::find($id);
+        if(!$module) {
+            return $this->response->errorNotFound('invalid module id');
+        }
+        $test = Test::find($request->test_id);
+        if(!$test) {
+            return $this->response->errorNotFound('invalid test id');
+        }
+        if($request->test_type == 'pretest') {
+            $module->update(['pretest_id' => $request->test_id]);
+        } else if($request->test_type == 'posttest') {
+            $module->update(['posttest_id' => $request->test_id]);
+        } else if($request->test_type == 'journal') {
+            $module->update(['journal_id' => $request->test_id]);
+        }
+        $module->save();
+    }
 }
