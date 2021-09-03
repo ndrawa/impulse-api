@@ -16,7 +16,7 @@ class CreateStudentAnswersMultipleChoiceTable extends Migration
         Schema::create('student_answers_multiple_choice', function (Blueprint $table) {
             $table->char('id', 26)->primary();
             $table->char('question_id', 26);
-            $table->char('answer_id', 26);
+            $table->char('answer_id', 26)->nullable();
             $table->char('user_id', 26);
             $table->timestamps();
 
