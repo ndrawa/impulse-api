@@ -34,7 +34,7 @@ class CreateModulesTable extends Migration
             $table->foreign('journal_id')
                 ->references('id')
                 ->on('tests')
-                ->onDelete('set_null');
+                ->onDelete('set null');
             $table->foreign('academic_year_id')
                 ->references('id')
                 ->on('academic_years')
