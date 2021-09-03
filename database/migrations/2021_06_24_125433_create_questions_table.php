@@ -17,7 +17,7 @@ class CreateQuestionsTable extends Migration
             $table->char('id', 26)->primary();
             $table->char('test_id', 26);
             $table->text('question');
-            $table->float('weight')->nullable();
+            $table->float('weight')->default(0.0);
 
             $table->timestamps();
 

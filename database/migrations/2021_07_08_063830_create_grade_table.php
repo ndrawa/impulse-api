@@ -18,7 +18,7 @@ class CreateGradeTable extends Migration
             $table->char('student_id', 26);
             $table->char('schedule_test_id', 26);
             $table->char('question_id', 26);
-            $table->float('grade');
+            $table->float('grade')->default(0.0);
             $table->char('asprak_id', 26)->nullable();
             $table->timestamps();
 
