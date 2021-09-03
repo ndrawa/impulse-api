@@ -33,23 +33,10 @@ class ScheduleImport implements ToCollection
         foreach ($collection as $key => $row)
         {
             if($key < 1 ) continue;
-            if(strcmp($row[0], 'SENIN')) {
-                $day = 'monday';
-            } else if(strcmp($row[0], 'SELASA')) {
-                $day = 'tuesday';
-            } else if(strcmp($row[0], 'RABU')) {
-                $day = 'wednesday';
-            } else if(strcmp($row[0], 'KAMIS')) {
-                $day = 'thrusday';
-            } else if(strcmp($row[0], 'JUMAT')) {
-                $day = 'friday';
-            } else if(strcmp($row[0], 'SABTU')) {
-                $day = 'saturday';
-            }
 
-            if (Room::where('name', $row[2])->first() == null) {
+            if (Room::where('name', $row[3])->first() == null) {
                 $room = Room::create([
-                    'name' => $row[2],
+                    'name' => $row[3],
                     'desc' => '-',
                     'msteam_code' => 'belum ada',
                     'msteam_link' => 'belum ada',
@@ -57,36 +44,36 @@ class ScheduleImport implements ToCollection
                 $room->save();
             }
 
-            if (Course::where('code', $row[3])->where('name', $row[4])->first() == null) {
+            if (Course::where('code', $row[4])->where('name', $row[5])->first() == null) {
                 $course = Course::create([
-                    'code' => $row[3],
-                    'name' => $row[4],
+                    'code' => $row[4],
+                    'name' => $row[5],
                 ]);
                 $course->save();
             }
 
-            if (AcademicYear::where('year', $row[9])->where('semester', replace_semester($row[8]))->first() == null) {
+            if (AcademicYear::where('year', $row[10])->where('semester', replace_semester($row[9]))->first() == null) {
                 $academic_year = AcademicYear::create([
-                    'year'      => $row[9],
-                    'semester'  => replace_semester($row[8]),
+                    'year'      => $row[10],
+                    'semester'  => replace_semester($row[9]),
                 ]);
                 $academic_year->save();
             }
 
-            if (Classroom::where('name', $row[5])->first() == null) {
+            if (Classroom::where('name', $row[6])->first() == null) {
                 $classroom = Classroom::create([
-                    'name' => $row[5],
+                    'name' => $row[6],
                 ]);
                 $classroom->save();
             }
 
-            $room = Room::where('name', $row[2])->first();
-            $course = Course::where('code', $row[3])->first();
-            $academic_year = AcademicYear::where('year', $row[9])
-                            ->where('semester', replace_semester($row[8]))
+            $room = Room::where('name', $row[3])->first();
+            $course = Course::where('code', $row[4])->first();
+            $academic_year = AcademicYear::where('year', $row[10])
+                            ->where('semester', replace_semester($row[9]))
                             ->first();
-            $staff = Staff::where('code', $row[6])->first();
-            $classroom = Classroom::where('name', $row[5])->first();
+            $staff = Staff::where('code', $row[7])->first();
+            $classroom = Classroom::where('name', $row[6])->first();
 
             if($classroom && $staff && $course && $academic_year && $room)  {
                 $class_course_check = ClassCourse::where('class_id', $classroom->id)
@@ -117,12 +104,12 @@ class ScheduleImport implements ToCollection
                             $module = Module::where('course_id', $course->id)->where('index', $i)->first();
                         }
     
-                        $time = explode(' - ',trim($row[1]));
+                        $time = explode(' - ',trim($row[2]));
                         //Generate Schedule 1-14
                         $schedule = Schedule::create([
                             'name' => 'Module '.$i,
-                            'time_start' => null,
-                            'time_end' => null,
+                            'time_start' => date("Y-m-d ", $row[1]).$time[0],
+                            'time_end' => date("Y-m-d ", $row[1]).$time[1],
                             'room_id' => $room->id,
                             'class_course_id' => ClassCourse::where('class_id', $classroom->id)
                                                 ->where('course_id', $course->id)
