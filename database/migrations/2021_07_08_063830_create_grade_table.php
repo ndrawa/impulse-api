@@ -19,13 +19,13 @@ class CreateGradeTable extends Migration
             $table->char('schedule_test_id', 26);
             $table->char('question_id', 26);
             $table->float('grade');
-            $table->char('asprak_id', 26);
+            $table->char('asprak_id', 26)->nullable();
             $table->timestamps();
 
             $table->foreign('asprak_id')
                 ->references('id')
                 ->on('students')
-                ->onDelete('cascade');
+                ->onDelete('set null');
             $table->foreign('student_id')
                 ->references('id')
                 ->on('students')
