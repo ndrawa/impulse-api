@@ -218,8 +218,8 @@ class ModuleController extends BaseController
             if ($file != null) {
                 $question = Question::where('test_id',$file->id)->first();
                 // return Storage::temporaryUrl('Journal/'.$question->question, now()->addMinutes(5));
-                return Storage::url('Journal/'.$question->question);
-                // return Storage::download('Journal/'.$question->question);
+                // return Storage::url('Journal/'.$question->question);
+                return Storage::download('Journal/'.$question->question);
             } else {
                 return 'File not Found';
             }
