@@ -16,6 +16,7 @@ use App\Models\Module;
 use App\Transformers\ModuleTransformer;
 
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Storage;
 
 class ModuleController extends BaseController
 {
@@ -166,5 +167,64 @@ class ModuleController extends BaseController
             $module->update(['journal_id' => $request->test_id]);
         }
         $module->save();
+    }
+
+    public function uploadFile(Request $request, $id)
+    {
+        $this->validate($request, [
+            'type' => 'required',
+            'file' => 'required'
+        ]);
+        $file = $request->file('file');
+        $filename = time().str_replace(" ", "",$file->getClientOriginalName());
+
+        $module = Module::findOrFail($id);
+        if ($module != null && $request->type == 'journal') {
+            $test_id = $module->journal_id;
+            if (Test::where('id',$module->journal_id)->first() == null) {
+                $test = Test::create([
+                    'type' => 'file'
+                ]);
+                $test->save(); 
+                $test_id = $test->id;
+            }
+            $module = Module::find($id);
+            $module->journal_id = $test_id;
+            $module->save();
+            if (Question::where('test_id',$test_id)->first() == null) {
+                $question = Question::create([
+                    'test_id' => $test_id,
+                    'question' => $filename
+                ]);
+                $question->save();
+            } else {
+                $quest = Question::where('test_id', $test_id)->first();
+                Storage::delete('Journal/'.$quest->question);
+                $question = Question::where('test_id', $test_id)->update([
+                    'question' => $filename
+                ]);
+            }
+            return $file->storeAs('Journal', $filename);
+        } else {
+            return 'Module not Found';
+        }
+    }
+
+    public function download($module_id, $journal_id)
+    {
+        $module = Module::where('id',$module_id)->where('journal_id', $journal_id)->first();
+        if (empty(!$module)) {
+            $file = Test::where('id',$module->journal_id)->first();
+            if ($file != null) {
+                $question = Question::where('test_id',$file->id)->first();
+                // return Storage::temporaryUrl('Journal/'.$question->question, now()->addMinutes(5));
+                return Storage::url('Journal/'.$question->question);
+                // return Storage::download('Journal/'.$question->question);
+            } else {
+                return 'File not Found';
+            }
+        } else {
+            return 'Module not Found';
+        }
     }
 }
