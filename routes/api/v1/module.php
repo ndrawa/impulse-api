@@ -10,5 +10,6 @@ $api->version('v1', [
     $api->get('/{course_id}/{academic_year_id}', ['as' => 'module.percourse', 'uses' => 'ModuleController@getCourseModule']);
     $api->get('/{course_id}/{academic_year_id}/{index}', ['as' => 'module.getmodule', 'uses' => 'ModuleController@getModule']);
     $api->get('/{id}', ['as' => 'module.show', 'uses' => 'ModuleController@show']);
-    $api->put('/{id}/test', ['as' => 'module.update_test', 'uses' => 'ModuleController@updateTest']);
+    $api->post('/journal/{module_id}/{journal_id}', ['as' => 'module.download', 'uses' => 'ModuleController@download']);
+    $api->post('/journal/{id}', ['as' => 'module.uploadFile', 'uses' => 'ModuleController@uploadFile']);
 });

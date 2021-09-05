@@ -24,6 +24,7 @@ use App\Transformers\ClassCourseTransformer;
 use Illuminate\Validation\Rule;
 use App\Imports\ScheduleImport;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Storage;
 
 
 class ScheduleController extends BaseController
@@ -181,22 +182,90 @@ class ScheduleController extends BaseController
             return $this->response->errorNotFound('invalid module id');
         }
 
+        $questions = $request->questions;
+
         $test = Test::create([
             'type' => $request->type,
         ]);
 
-        $questions = $this->add_question($request, $test->id);
+        if($request->has('file')) {
+            $file = $request->file('file');
+            $filename = time().str_replace(" ", "",$file->getClientOriginalName());
+
+            $question = Question::create([
+                'test_id' => $test->id,
+                'question' => $filename,
+                'weight' => $questions['weight'],
+            ]);
+
+            $file->storeAs('Journal', $filename);
+        } else {
+            $questions = $this->add_question($request, $test->id);
+        }
 
         if($request->test_type === 'pretest') {
-            $module->update(['pretest_id' => $test->id]);
+            if($module->pretest_id == null) {
+                $modules = Module::where('course_id', $module->course_id)
+                                ->where('index', $module->index)
+                                ->select('id')
+                                ->get();
+                $ids = [];
+                foreach($modules as $m) {
+                    array_push($ids, $m['id']);
+                }
+
+                foreach($ids as $id) {
+                    $module = Module::find($id);
+                    $module->update(['pretest_id' => $test->id]);
+                    $module->save();
+                }
+            } else {
+                $module->update(['pretest_id' => $test->id]);
+                $module->save();
+            }
         } else if($request->test_type === 'journal') {
-            $module->update(['journal_id' => $test->id]);
+            if($module->journal_id == null) {
+                $modules = Module::where('course_id', $module->course_id)
+                                ->where('index', $module->index)
+                                ->select('id')
+                                ->get();
+                $ids = [];
+                foreach($modules as $m) {
+                    array_push($ids, $m['id']);
+                }
+
+                foreach($ids as $id) {
+                    $module = Module::find($id);
+                    $module->update(['journal_id' => $test->id]);
+                    $module->save();
+                }
+            } else {
+                $module->update(['journal_id' => $test->id]);
+                $module->save();
+            }
         } else if($request->test_type === 'posttest') {
-            $module->update(['posttest_id' => $test->id]);
+            if($module->posttest_id == null) {
+                $modules = Module::where('course_id', $module->course_id)
+                                ->where('index', $module->index)
+                                ->select('id')
+                                ->get();
+                $ids = [];
+                foreach($modules as $m) {
+                    array_push($ids, $m['id']);
+                }
+
+                foreach($ids as $id) {
+                    $module = Module::find($id);
+                    $module->update(['posttest_id' => $test->id]);
+                    $module->save();
+                }
+            } else {
+                $module->update(['posttest_id' => $test->id]);
+                $module->save();
+            }
         } else {
             return $this->response->errorBadRequest('invalid test type');
         }
-        $module->save();
 
         return $this->response->item($test, TestTransformer::class);
     }
