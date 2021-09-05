@@ -198,7 +198,7 @@ class ScheduleController extends BaseController
         }
         $module->save();
 
-        return json_encode(['msg' => 'success']);
+        return $this->response->item($test, TestTransformer::class);
     }
 
     public function delete_test(Request $request, $id) {

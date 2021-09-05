@@ -47,17 +47,11 @@ class ClassCourseController extends BaseController
 
                 //Generate Module 1-14
                 for ($i = 1; $i < 15; $i++) {
-                    $module = '';
-                    if (Module::where('course_id', $request->course_id)->where('index', $i)->first() == null) {
-                        $module = Module::create([
-                            'course_id' => $request->course_id,
-                            'index' => $i,
-                            'academic_year_id' => $request->academic_year_id,
-                        ]);
-                        $module->save();
-                    } else {
-                        $module = Module::where('course_id', $request->course_id)->where('index', $i)->first();
-                    }
+                    $module = Module::create([
+                        'course_id' => $request->course_id,
+                        'index' => $i,
+                        'academic_year_id' => $request->academic_year_id,
+                    ]);
 
                     //Generate Schedule 1-14
                     $schedule = Schedule::create([
@@ -223,7 +217,7 @@ class ClassCourseController extends BaseController
             'student_id' => 'required',
             'class_course_id' => 'required'
         ]);
-        if (!Asprak::where('student_id', $request->student_id)->where('class_course_id', $request->class_course_id)->first()) {  
+        if (!Asprak::where('student_id', $request->student_id)->where('class_course_id', $request->class_course_id)->first()) {
             $asprak = Asprak::create($request->all());
             return $this->response->item($asprak, new AsprakTransformer);
         } else {
