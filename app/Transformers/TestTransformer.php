@@ -23,7 +23,7 @@ class TestTransformer extends TransformerAbstract
 
         foreach($data['question'] as $key=>$q) {
             $question = $data['question'][$key];
-            $answer = $question->answers;
+            $data['question']['answer'] = $question->answers;
         }
         return $data;
     }

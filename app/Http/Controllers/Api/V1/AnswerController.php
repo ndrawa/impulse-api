@@ -9,6 +9,7 @@ use App\Models\Test;
 use App\Models\StudentEssayAnswer;
 use App\Models\StudentMultipleChoiceAnswer;
 use App\Models\Answer;
+use App\Models\Grade;
 use App\Models\User;
 use App\Transformers\AnswerEssayTransformer;
 use App\Transformers\AnswerMultipleChoiceTransformer;
@@ -133,7 +134,7 @@ class AnswerController extends BaseController
     public function StoreEssayAnswer(Request $request)
     {
         $this->validate($request, [
-            'test_id' => 'required',
+            'schedule_test_id' => 'required',
             'answers' => 'required',
         ]);
         if(!is_array($request->answers) or sizeof($request->answers) < 1) {
@@ -160,7 +161,7 @@ class AnswerController extends BaseController
     public function StoreMultipleChoiceAnswer(Request $request)
     {
         $this->validate($request, [
-            'test_id' => 'required',
+            'schedule_test_id' => 'required',
             'answers' => 'required',
         ]);
         if(!is_array($request->answers) or sizeof($request->answers) < 1) {
@@ -174,10 +175,47 @@ class AnswerController extends BaseController
             {
                 continue;
             }
+
             StudentMultipleChoiceAnswer::create([
                 'question_id' => $answer['question_id'],
                 'answer_id' => $answer['answer_id'],
                 'user_id' => $this->user->id,
+            ]);
+
+            //$a is object of Answer
+            //$q is object of question, retrieved from $a
+            $a = Answer::find($answer['answer_id']);
+            $q = $a->questions;
+            //$q_answer is a collection of answer from the $q (list all choices)
+            $q_answer = $q->answers;
+            //$a_true will collect the answers with is_answer = true
+            $a_true = [];
+            foreach($q_answer as $a_t) {
+                if($t['is_answer'] == 'true') {
+                    $array_push($a_true,$a_t['id']);
+                }
+            }
+
+
+            if(count($a_true) > 1) {
+                //If question has more than one is_answer = true answer
+                $per_q_weight = $q->weight / count($a_true);
+            } else {
+                $per_q_weight = $q->weight;
+            }
+
+            if(in_array($answer['answer_id'], $a_true)) {
+                $grade = $per_q_weight;
+            } else {
+                $grade = 0.0;
+            }
+
+            //Creating a row of grade
+            $grade = Grade::create([
+                'student_id' => $this->user->id,
+                'question_id' => $answer['question_id'],
+                'schedule_test_id' => $request->schedule_test_id,
+                'grade' => $grade,
             ]);
         }
 

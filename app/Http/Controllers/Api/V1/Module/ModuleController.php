@@ -185,7 +185,7 @@ class ModuleController extends BaseController
                 $test = Test::create([
                     'type' => 'file'
                 ]);
-                $test->save(); 
+                $test->save();
                 $test_id = $test->id;
             }
             $module = Module::find($id);
