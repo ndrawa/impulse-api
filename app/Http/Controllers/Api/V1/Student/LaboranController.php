@@ -469,7 +469,7 @@ class LaboranController extends BaseController
         return $data;
     }
 
-    public function show_bap($schedule_id)
+    public function info_bap($schedule_id)
     {
         $schedule = Schedule::findOrFail($schedule_id);
         $id_classcourse = $schedule->class_course->id;
@@ -537,6 +537,81 @@ class LaboranController extends BaseController
                 $data['bap'] = $bap;
             }
 
+            return $data;
+        }
+    }
+
+    public function show_bap(Request $request) {
+        $class_course = ClassCourse::query();
+
+        if($request->has('class_name')) {
+            if(!empty($request->class_name)) {
+                $classroom = Classroom::where('name', 'like','%'.$request->class_name.'%')
+                                ->first();
+                $class_course = $class_course->where('class_id', $classroom->id);
+            }
+        }
+        if($request->has('course_name')) {
+            if(!empty($request->course_name)) {
+                $course = Course::where('name', 'like','%'.$request->course_name.'%')
+                            ->first();
+                $class_course = $class_course->where('course_id', $course->id);
+            }
+        }
+        if($request->has('academic_year_id')) {
+            if(!empty($request->academic_year_id)) {
+                $class_course = $class_course->where('academic_year_id', $request->academic_year_id);
+            }
+        }
+        $class_course = $class_course->get();
+
+        $data['total_data'] = 0;
+        $data['data'] = [];
+        foreach($class_course as $key=>$cc){
+            $class_course_id = $cc['id'];
+            $schedules = Schedule::Where('class_course_id', $class_course_id)->get();
+
+            $arr = [];
+            foreach($schedules as $key=>$s) {
+                $course = Course::where('id', $cc['course_id'])->first();
+                $module = Module::where('id', $s['module_id'])->first();
+                $academic_year = AcademicYear::where('id', $s['academic_year_id'])->first();
+                $class = Classroom::where('id', $cc['class_id'])->first();
+                $staff = Staff::where('id', $cc['staff_id'])->first();
+
+                
+                $arr[$key]['id'] = $s['id'];
+                $arr[$key]['title'] = $s['name'];
+                $arr[$key]['start'] = $s['time_start'];
+                $arr[$key]['end'] = $s['time_end'];
+                $arr[$key]['class_course']['course']['name'] = $course['name'];
+                $arr[$key]['module'] = $module;
+                $arr[$key]['class_course']['class']['name'] = $class['name'];
+                $arr[$key]['class_course']['staff']['code'] = $staff['code'];
+                $arr[$key]['date'] = $s['date'];
+                $arr[$key]['academic_year'] = $academic_year;
+
+            }
+            foreach($arr as $key=>$a){
+                array_push($data['data'],$a);
+            }
+            $data['total_data'] = $data['total_data'] + count($arr);
+        }
+        return $data;
+    }
+
+    public function show_bap_detail($schedule_id)
+    {
+        if (empty(Schedule::find($schedule_id))) {
+            return 'Schedule not Found';
+        } else{
+            $bap = Bap::where('schedule_id', $schedule_id)->get();
+            $student_presence = StudentPresence::where('schedule_id', $schedule_id)->get();
+            $asprak_presence = AsprakPresence::where('schedule_id', $schedule_id)->get();
+            $data = [];
+            $data['bap'] = $bap;
+            $data['student_presence'] = $student_presence;
+            $data['asprak_presence'] = $asprak_presence;
             return $data;
         }
     }
