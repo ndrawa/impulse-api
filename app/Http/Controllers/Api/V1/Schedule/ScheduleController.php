@@ -214,6 +214,7 @@ class ScheduleController extends BaseController
                 $qstion = Question::create([
                     'test_id' => $test_id,
                     'question' => $q['text'],
+                    'weight' => $q['weight'],
                 ]);
                 $answer = Answer::create([
                     'question_id' => $qstion['id'],
@@ -225,6 +226,7 @@ class ScheduleController extends BaseController
                 $qstion = Question::create([
                     'test_id' => $test_id,
                     'question' => $q['text'],
+                    'weight' => $q['weight'],
                 ]);
 
                 foreach($request->questions[$key]['options'] as $key=>$ans) {
