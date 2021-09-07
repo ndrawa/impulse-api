@@ -16,7 +16,7 @@ class CreateStudentAnswersEssayTable extends Migration
         Schema::create('student_answers_essay', function (Blueprint $table) {
             $table->char('id', 26)->primary();
             $table->char('question_id', 26);
-            $table->char('user_id', 26);
+            $table->char('student_id', 26);
             $table->text('answers');
             $table->timestamps();
 
@@ -24,9 +24,9 @@ class CreateStudentAnswersEssayTable extends Migration
                 ->references('id')
                 ->on('questions')
                 ->onDelete('cascade');
-            $table->foreign('user_id')
+            $table->foreign('student_id')
                 ->references('id')
-                ->on('users')
+                ->on('students')
                 ->onDelete('cascade');
         });
     }

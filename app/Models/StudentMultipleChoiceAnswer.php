@@ -11,12 +11,12 @@ class StudentMultipleChoiceAnswer extends BaseModel
     protected $fillable = [
         'question_id',
         'answer_id',
-        'user_id',
+        'student_id',
     ];
 
-    public function user()
+    public function student()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Student::class);
     }
 
     public function question()
