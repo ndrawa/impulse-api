@@ -17,7 +17,7 @@ class CreateStudentAnswersEssayTable extends Migration
             $table->char('id', 26)->primary();
             $table->char('question_id', 26);
             $table->char('student_id', 26);
-            $table->text('answers');
+            $table->text('answers')->nullable();
             $table->timestamps();
 
             $table->foreign('question_id')
