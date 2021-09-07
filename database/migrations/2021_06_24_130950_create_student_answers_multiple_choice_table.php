@@ -17,7 +17,7 @@ class CreateStudentAnswersMultipleChoiceTable extends Migration
             $table->char('id', 26)->primary();
             $table->char('question_id', 26);
             $table->char('answer_id', 26)->nullable();
-            $table->char('user_id', 26);
+            $table->char('student_id', 26);
             $table->timestamps();
 
             $table->foreign('question_id')
@@ -28,9 +28,9 @@ class CreateStudentAnswersMultipleChoiceTable extends Migration
                 ->references('id')
                 ->on('answers')
                 ->onDelete('cascade');
-            $table->foreign('user_id')
+            $table->foreign('student_id')
                 ->references('id')
-                ->on('users')
+                ->on('students')
                 ->onDelete('cascade');
         });
     }
