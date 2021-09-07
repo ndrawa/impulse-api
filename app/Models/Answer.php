@@ -12,8 +12,8 @@ class Answer extends BaseModel
         'is_answer',
     ];
 
-    public function questions() {
-        return $this->belongsTo(Question::class);
+    public function question() {
+        return $this->belongsTo(Question::class, 'question_id');
     }
 
     public function studient_answers_multiple_choice() {
