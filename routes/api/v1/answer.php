@@ -11,7 +11,7 @@ $api->version('v1', [
     $api->post('/StoreMultipleChoice', ['as' => 'answer.store_multiple_choice', 'uses' => 'AnswerController@StoreMultipleChoiceAnswer']);
     $api->put('/updateEssayAnswer', ['as' => 'answer.update_essay', 'uses' => 'AnswerController@updateEssayAnswer']);
     $api->put('/updateMultipleChoiceAnswer', ['as' => 'answer.update_multiple_choice', 'uses' => 'AnswerController@updateMultipleChoiceAnswer']);
-    $api->get('/getEssayAnswer/{test_id}/{user_id}', ['as' => 'answer.getEssayAnswer', 'uses' => 'AnswerController@getStudentEssayAnswer']);
-    $api->get('/getMultipleChoiceAnswer/{test_id}/{user_id}', ['as' => 'answer.getStudentMultipleChoiceAnswer', 'uses' => 'AnswerController@getStudentMultipleChoiceAnswer']);
-    $api->get('/getMultipleChoiceGrade/{test_id}/{user_id}', ['as' => 'answer.getMultipleChoiceGrade', 'uses' => 'AnswerController@getMultipleChoiceGrade']);
+    $api->get('/essayAnswer/{student_id}/{test_id}', ['as' => 'answer.getEssayAnswer', 'uses' => 'AnswerController@getStudentEssayAnswer']);
+    $api->get('/multipleChoiceAnswer/{student_id}/{test_id}', ['as' => 'answer.getStudentMultipleChoiceAnswer', 'uses' => 'AnswerController@getStudentMultipleChoiceAnswer']);
+    $api->get('/answer-grade/{student_id}/{test_id}', ['as' => 'answer.getAnswerGrade', 'uses' => 'AnswerController@getAnswerGrade']);
 });

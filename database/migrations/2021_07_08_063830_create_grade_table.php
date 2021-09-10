@@ -32,7 +32,7 @@ class CreateGradeTable extends Migration
                 ->onDelete('cascade');
             $table->foreign('question_id')
                 ->references('id')
-                ->on('students')
+                ->on('questions')
                 ->onDelete('cascade');
             $table->foreign('schedule_test_id')
                 ->references('id')

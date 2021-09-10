@@ -46,4 +46,9 @@ class Schedule extends BaseModel
     {
         return $this->belongsTo(AcademicYear::class);
     }
+
+    public function schedule_test()
+    {
+        return $this->hasMany(ScheduleTest::class);
+    }
 }

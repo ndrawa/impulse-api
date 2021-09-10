@@ -112,6 +112,7 @@ class ScheduleTableSeeder extends Seeder
         $question = Question::create([
             'test_id' => $posttest_1->id,
             'question' => 'Dari 1-4 bagaimana kondisi ekonomi anda saat ini?',
+            'weight' => 10,
         ]);
         $answer = Answer::create([
             'question_id' => $question->id,
