@@ -14,11 +14,12 @@ class ScheduleTransformer extends TransformerAbstract
             'name' => $schedule->name,
             'time_start' => $schedule->time_start,
             'time_end' => $schedule->time_end,
-            'room_id' => $schedule->room_id,
+            'room' => $schedule->room,
             'class_course_id' => $schedule->class_course_id,
-            'module_id' => $schedule->module_id,
+            'module' => $schedule->module,
             'academic_year_id' => $schedule->academic_year_id,
-            'date' => $schedule->date
+            'date' => $schedule->date,
+            'schedule_test' => $schedule->schedule_test,
         ];
     }
 }

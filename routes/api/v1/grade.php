@@ -8,4 +8,7 @@ $api->version('v1', [
     'prefix' => 'v1/grade'
 ], function($api) {
     $api->get('/me', ['as' => 'course.me_grade', 'uses' => 'GradeController@getMeGrades']);
+    $api->get('/test/{student_id}/{test_id}', ['as' => 'course.me_grade', 'uses' => 'GradeController@getStudentTestGrade']);
+    $api->get('/all/{student_id}/{course_id?}', ['as' => 'course.getStudentGrades', 'uses' => 'GradeController@getStudentGrades']);
+
 });
