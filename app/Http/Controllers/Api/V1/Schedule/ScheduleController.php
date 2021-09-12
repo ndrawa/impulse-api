@@ -191,11 +191,17 @@ class ScheduleController extends BaseController
         if($request->has('file')) {
             $file = $request->file('file');
             $filename = time().str_replace(" ", "",$file->getClientOriginalName());
+            $weight = $request->weight;
+            $get_answer = $request->answer;
 
             $question = Question::create([
                 'test_id' => $test->id,
                 'question' => $filename,
-                'weight' => $questions['weight'],
+                'weight' => $weight,
+            ]);
+            $answer = Answer::create([
+                'question_id' => $question['id'],
+                'answer' => $get_answer,
             ]);
 
             $file->storeAs('Journal', $filename);
