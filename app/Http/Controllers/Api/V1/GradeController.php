@@ -144,9 +144,9 @@ class GradeController extends BaseController
         }
         $student_grade = Grade::whereIn('question_id', $q_ids)->get();
         $total_grade = 0;
-        foreach($student_grade as $val) {
-            $total_grade = $total_grade + $val['grade'];
-        }
+        // foreach($student_grade as $val) {
+        //     $total_grade = $total_grade + $val['grade'];
+        // }
 
         $data['student'] = $this->user->student;
         foreach($student_grade as $key=>$val) {

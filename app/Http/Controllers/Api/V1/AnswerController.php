@@ -160,6 +160,12 @@ class AnswerController extends BaseController
         ]);
 
         foreach($request->questions as $val) {
+            $answered_question_check = StudentMultipleChoiceAnswer::where('student_id', $this->user->student->id)
+                                                            ->where('question_id', $val['id'])
+                                                            ->first();
+            if($answered_question_check) {
+                continue;
+            }
             if($val['answers'][0] != '') {
                 $question = Question::find($val['id']);
                 $question_answers = Answer::where('question_id', $val['id'])->get();
@@ -184,9 +190,32 @@ class AnswerController extends BaseController
                     }
                 }
 
-                $count_is_answer = count($a_true);
-                $count_student_true = count($student_answer_true);
-                $grade = $count_student_true / $count_is_answer * $question->weight;
+
+
+                //Untuk antisipasi case :
+                //Misal opsi jawaban soal no. 1 adalah A B C D E
+                //Opsi yang benar (is_answer) adalah B
+                //Sedangkan opsi yang dipilih praktikan adalah A B C E
+                //Maka akan masuk ke baris else
+                //Apabila misal opsi yang benar adalah A B
+                //Sedangkan opsi yang dipilih praktikan adalah B C
+                //Maka seharusnya akan masuk baris if dan karena tidak sesuai, grade = 0
+                if(count($val['answers']) == count($a_true)) {
+                    $val_answers = sort($val['answers']);
+                    sort($student_answer_true);
+                    if($val_answers == $student_answer_true) {
+                        $grade = $question->weight;
+                    } else {
+                        $grade = 0;
+                    }
+                } else {
+                    $grade = 0;
+                }
+
+                // $count_is_answer = count($a_true);
+                // $count_student_choices = count($val['answers']);
+                // $count_student_true = count($student_answer_true);
+                // $grade = $count_student_true / $count_student_choices * $question->weight;
 
                 Grade::create([
                     'student_id' => $this->user->student->id,
