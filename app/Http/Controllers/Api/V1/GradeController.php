@@ -125,7 +125,8 @@ class GradeController extends BaseController
             }
         }
 
-        return json_encode($class_courses);
+        $data['data'] = $class_courses;
+        return json_encode($data);
     }
 
     public function getStudentTestGrade(Request $request, $student_id, $test_id) {
