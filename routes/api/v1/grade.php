@@ -11,5 +11,6 @@ $api->version('v1', [
     $api->get('/test/{student_id}/{test_id}', ['as' => 'course.me_grade', 'uses' => 'GradeController@getStudentTestGrade']);
     $api->get('/all/{student_id}/{course_id?}', ['as' => 'course.getStudentGrades', 'uses' => 'GradeController@getStudentGrades']);
     $api->get('/schedule/{schedule_id}', ['as' => 'course.getScheduleGrade', 'uses' => 'GradeController@getScheduleGrade']);
+    $api->put('/student/{student_id}', ['as' => 'course.asprakUpdateGrade', 'uses' => 'GradeController@asprakUpdateGrade']);
 
 });
