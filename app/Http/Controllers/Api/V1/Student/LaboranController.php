@@ -544,6 +544,16 @@ class LaboranController extends BaseController
     public function show_bap(Request $request) {
         $class_course = ClassCourse::query();
 
+        if($request->has('asprak_id')) {
+            if(!empty($request->asprak_id)) {
+                $student_class_course = Asprak::where('student_id', $request->asprak_id)->get();
+                $x = [];
+                foreach($student_class_course as $key=>$scc) {
+                    $x[$key] = $scc->class_course_id;
+                }
+                $class_course = $class_course->whereIn('id', $x);
+            }
+        }
         if($request->has('class_name')) {
             if(!empty($request->class_name)) {
                 $classroom = Classroom::where('name', 'like','%'.$request->class_name.'%')
