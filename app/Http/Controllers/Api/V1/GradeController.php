@@ -112,22 +112,22 @@ class GradeController extends BaseController
                             ->get()
                             ->toArray();
 
-                $module_test[$cc_key]['modules'][$s_key]['index'] =  $index[0]['index'];
-                $module_test[$cc_key]['modules'][$s_key]['pretest_grade'] =  $pretest_grade;
-                $module_test[$cc_key]['modules'][$s_key]['journal_grade'] =  $journal_grade;
-                $module_test[$cc_key]['modules'][$s_key]['posttest_grade'] =  $posttest_grade;
+                $module_test[$cc_key][$s_key]['index'] =  $index[0]['index'];
+                $module_test[$cc_key][$s_key]['pretest_grade'] =  $pretest_grade;
+                $module_test[$cc_key][$s_key]['journal_grade'] =  $journal_grade;
+                $module_test[$cc_key][$s_key]['posttest_grade'] =  $posttest_grade;
 
             }
         }
 
         foreach($class_courses as $key=>$val) {
-            $class_courses[$key]['schedules'] = $class_course_schedules[$key];
-            foreach($class_courses[$key]['schedules'] as $s_key=>$schedule)  {
-                $class_courses[$key]['schedules'] = $module_test[$key];
+            $class_courses[$key]['modules'] = $class_course_schedules[$key];
+            foreach($class_courses[$key]['modules'] as $s_key=>$schedule)  {
+                $class_courses[$key]['modules'] = $module_test[$key];
             }
         }
-
-        $data['data'] = $class_courses;
+        $data['data']['student'] = $student;
+        $data['data']['result'] = $class_courses;
         return json_encode($data);
     }
 
@@ -259,6 +259,23 @@ class GradeController extends BaseController
         }
         $data['data'] = $students;
         return $data;
+    }
 
+    public function asprakUpdateGrade(Request $request, $student_id) {
+        $this->validate($request, [
+            'grade' => 'required',
+        ]);
+        foreach($request->grade as $val) {
+            $grade = Grade::where('student_id', $student_id)
+                        ->where('question_id', $val['question_id'])
+                        ->first();
+            $grade->update([
+                'grade' => $val['grade'],
+                'asprak_id' => $this->user->student->id
+            ]);
+            $grade->save();
+        }
+
+        return $this->response->noContent();
     }
 }
