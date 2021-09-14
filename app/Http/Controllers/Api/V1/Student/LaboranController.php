@@ -489,14 +489,16 @@ class LaboranController extends BaseController
         $i = 0;
         foreach ($aspraks as $key => $asprak) {
             if ($asprak->class_course_id == $id_classcourse) {
-                $data['asprak'][$i++] = $asprak->student_id;
+                $data_mhs = Student::where('id', $asprak->student_id)->first();
+                $data['asprak'][$i++] = $data_mhs;
             }
         }
 
         $i = 0;
         foreach ($students as $key => $student) {
             if ($student->class_course_id == $id_classcourse) {
-                $data['student'][$i++] = $student->student_id;
+                $data_mhs = Student::where('id', $student->student_id)->first();
+                $data['student'][$i++] = $data_mhs;
             }
         }
         return $data;
