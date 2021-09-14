@@ -45,4 +45,9 @@ class ClassCourse extends BaseModel
     {
         return $this->hasMany(Schedule::class);
     }
+
+    public function student()
+    {
+        return $this->hasMany(StudentClassCourse::class);
+    }
 }

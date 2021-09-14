@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Seeder;
 use App\Models\Student;
+use App\Models\StudentClassCourse;
 use App\Models\Asprak;
 use App\Models\Role;
 
@@ -198,5 +199,116 @@ class StudentTableSeeder extends Seeder
         ]);
         $asp_3->save();
 
+
+        //More Student 14 Sept 2021
+        $student = Student::create([
+            'nim' => '1301181234',
+            'name' => 'Jake',
+            'gender' => 'male',
+            'religion' => 'islam'
+        ]);
+        $student->save();
+        $student_class_course = StudentClassCourse::create([
+            'student_id' => $student->id,
+            'class_course_id' => $class_course_1->id,
+        ]);
+        $student_class_course = StudentClassCourse::create([
+            'student_id' => $student->id,
+            'class_course_id' => $class_course_3->id,
+        ]);
+
+        $student = Student::create([
+            'nim' => '1301181235',
+            'name' => 'Beny',
+            'gender' => 'male',
+            'religion' => 'islam'
+        ]);
+        $student->save();
+        $student_class_course = StudentClassCourse::create([
+            'student_id' => $student->id,
+            'class_course_id' => $class_course_1->id,
+        ]);
+        $student_class_course = StudentClassCourse::create([
+            'student_id' => $student->id,
+            'class_course_id' => $class_course_3->id,
+        ]);
+
+        $student = Student::create([
+            'nim' => '1301181240',
+            'name' => 'Puput',
+            'gender' => 'female',
+            'religion' => 'katolik'
+        ]);
+        $student->save();
+        $student_class_course = StudentClassCourse::create([
+            'student_id' => $student->id,
+            'class_course_id' => $class_course_1->id,
+        ]);
+        $student_class_course = StudentClassCourse::create([
+            'student_id' => $student->id,
+            'class_course_id' => $class_course_3->id,
+        ]);
+
+        $student = Student::create([
+            'nim' => '1301181249',
+            'name' => 'Fitryiana Yasmin',
+            'gender' => 'female',
+            'religion' => 'islam'
+        ]);
+        $student->save();
+        $student_class_course = StudentClassCourse::create([
+            'student_id' => $student->id,
+            'class_course_id' => $class_course_1->id,
+        ]);
+        $student_class_course = StudentClassCourse::create([
+            'student_id' => $student->id,
+            'class_course_id' => $class_course_2->id,
+        ]);
+
+        $student = Student::create([
+            'nim' => '1301184269',
+            'name' => 'Banu Lokit',
+            'gender' => 'male',
+            'religion' => 'hindu'
+        ]);
+        $student->save();
+        $student_class_course = StudentClassCourse::create([
+            'student_id' => $student->id,
+            'class_course_id' => $class_course_1->id,
+        ]);
+        $student_class_course = StudentClassCourse::create([
+            'student_id' => $student->id,
+            'class_course_id' => $class_course_2->id,
+        ]);
+
+        $student = Student::create([
+            'nim' => '1301181277',
+            'name' => 'Lionel Ronaldo',
+            'gender' => 'male',
+            'religion' => 'protestan'
+        ]);
+        $student->save();
+        $student_class_course = StudentClassCourse::create([
+            'student_id' => $student->id,
+            'class_course_id' => $class_course_1->id,
+        ]);
+        $student_class_course = StudentClassCourse::create([
+            'student_id' => $student->id,
+            'class_course_id' => $class_course_2->id,
+        ]);
+
+        $student = Student::create([
+            'nim' => '1301182972',
+            'name' => 'Thomas the Train',
+            'gender' => 'male',
+            'religion' => 'islam'
+        ]);
+        $student->save();
+        $student_class_course = StudentClassCourse::create([
+            'student_id' => $student->id,
+            'class_course_id' => $class_course_1->id,
+        ]);
+
+        //
     }
 }

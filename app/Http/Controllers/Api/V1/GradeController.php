@@ -23,6 +23,8 @@ use App\Transformers\GradeTransformer;
 use App\Transformers\ScheduleTransformer;
 use App\Transformers\UserTransformer;
 
+use Illuminate\Support\Arr;
+
 class GradeController extends BaseController
 {
     public function getStudentGrades(Request $request, $student_id, $course_id = null) {
@@ -131,47 +133,132 @@ class GradeController extends BaseController
 
     public function getStudentTestGrade(Request $request, $student_id, $test_id) {
         $student = Student::find($student_id);
-        $test = Test::find($test_id);
-
-        if(!$student or !$test) {
-            return $this->response->errorNotFound('invalid student id or test id');
+        if(!$student) {
+            return $this->response->errorNotFound('invalid student id');
         }
-        $q = $test->questions;
+        if($test_id != null) {
+            $test = Test::find($test_id);
 
-        $q_ids = [];
-        foreach($q as $key=>$val) {
-            array_push($q_ids, $val['id']);
-        }
-        $student_grade = Grade::whereIn('question_id', $q_ids)->get();
-        $total_grade = 0;
-        // foreach($student_grade as $val) {
-        //     $total_grade = $total_grade + $val['grade'];
-        // }
-
-        $data['student'] = $this->user->student;
-        foreach($student_grade as $key=>$val) {
-            $data['grade'][$key]['id'] = $val['id'];
-            $data['grade'][$key]['schedule_test_id'] = $val['schedule_test_id'];
-            $question = Question::find($val['question_id']);
-            $data['grade'][$key]['question'] = $question;
-            $data['grade'][$key]['question']['answers'] = $question->answers;
-            $data['grade'][$key]['grade'] = $val['grade'];
-            $total_grade = $total_grade + $val['grade'];
-            $data['grade'][$key]['asprak'] = Student::find($val['asprak_id']);
-            if($test->type == 'multiple_choice') {
-                $student_answer = StudentMultipleChoiceAnswer::where('question_id', $question->id)
-                                                            ->where('student_id', $this->user->student->id)
-                                                            ->get();
-            } else if($test->type == 'essay') {
-                $student_answer = StudentEssayAnswer::where('question_id', $question->id)
-                                                            ->where('student_id', $this->user->student->id)
-                                                            ->first();
+            if(!$test) {
+                return $this->response->errorNotFound('invalid test id');
             }
-            $data['grade'][$key]['student_answer'] = $student_answer;
+            $q = $test->questions;
+
+            $q_ids = [];
+            foreach($q as $key=>$val) {
+                array_push($q_ids, $val['id']);
+            }
+            $student_grade = Grade::whereIn('question_id', $q_ids)
+                                    ->where('student_id', $student->id)
+                                    ->get();
+            $total_grade = 0;
+            // foreach($student_grade as $val) {
+            //     $total_grade = $total_grade + $val['grade'];
+            // }
+
+            $data['student'] = $this->user->student;
+            foreach($student_grade as $key=>$val) {
+                $data['grade'][$key]['id'] = $val['id'];
+                $data['grade'][$key]['schedule_test_id'] = $val['schedule_test_id'];
+                $question = Question::find($val['question_id']);
+                $data['grade'][$key]['question'] = $question;
+                $data['grade'][$key]['question']['answers'] = $question->answers;
+                $data['grade'][$key]['grade'] = $val['grade'];
+                $total_grade = $total_grade + $val['grade'];
+                $data['grade'][$key]['asprak'] = Student::find($val['asprak_id']);
+                if($test->type == 'multiple_choice') {
+                    $student_answer = StudentMultipleChoiceAnswer::where('question_id', $question->id)
+                                                                ->where('student_id', $this->user->student->id)
+                                                                ->get();
+                } else if($test->type == 'essay') {
+                    $student_answer = StudentEssayAnswer::where('question_id', $question->id)
+                                                                ->where('student_id', $this->user->student->id)
+                                                                ->first();
+                }
+                $data['grade'][$key]['student_answer'] = $student_answer;
+            }
+            $data['total_grade'] = $total_grade;
+
+        } else {
+            $data['total_grade'] = 'null test';
         }
-        $data['total_grade'] = $total_grade;
 
         $arr_return['data'] = $data;
         return $arr_return;
+    }
+
+    // public function getClassCourseGrade(Request $request, $class_course_id, $module_index) {
+    //     $class_course = ClassCourse::find($class_course_id);
+    //     if(!$class_course) {
+    //         return $this->response->errorNotFound('invalid class course id');
+    //     }
+    //     if($module_index < 1 or $module_index > 14) {
+    //         return $this->response->errorBadRequest('index out of bonds');
+    //     }
+    //     $class_course_students = $class_course->student->toArray();
+
+    //     $schedules = Schedule::where('class_course_id', $class_course_id)->get()->toArray();
+    //     foreach($schedules as $key=>$val) {
+    //         $module = Module::find($val['module_id']);
+    //         if($module->index == $module_index) {
+    //             break;
+    //         }
+    //     }
+
+    //     $students = array();
+    //     foreach($class_course_students as $key=>$val) {
+    //         $stud = Student::find($val['student_id']);
+    //         $students[$key] = [
+    //             'id' => $stud->id,
+    //             'nim' => $stud->nim,
+    //             'name' => $stud->name,
+    //             'test_id' => [
+    //                 'pretest_id' => $module['pretest_id'],
+    //                 'journal_id' => $module['journal_id'],
+    //                 'posttest_id' => $module['posttest_id'],
+    //             ],
+    //             'grade' => [
+    //                 'pretest' => $this->getStudentTestGrade($request, $stud->id, $module['pretest_id'])['data']['total_grade'],
+    //                 'journal' => $this->getStudentTestGrade($request, $stud->id, $module['journal_id'])['data']['total_grade'],
+    //                 'posttest' => $this->getStudentTestGrade($request, $stud->id, $module['posttest_id'])['data']['total_grade'],
+    //             ]
+    //         ];
+    //     }
+
+    //     $data['data'] = $students;
+    //     return json_encode($data);
+    // }
+
+    public function getScheduleGrade(Request $request, $schedule_id) {
+        $schedule = Schedule::find($schedule_id);
+        if(!$schedule) {
+            return $this->response->errorNotFound('invalid schedule id');
+        }
+
+        $module = $schedule->module;
+        $class_course_students = $schedule->class_course->student;
+
+        $students = array();
+        foreach($class_course_students as $key=>$val) {
+            $stud = Student::find($val['student_id']);
+            $students[$key] = [
+                'id' => $stud->id,
+                'nim' => $stud->nim,
+                'name' => $stud->name,
+                'test_id' => [
+                    'pretest_id' => $module['pretest_id'],
+                    'journal_id' => $module['journal_id'],
+                    'posttest_id' => $module['posttest_id'],
+                ],
+                'grade' => [
+                    'pretest' => $this->getStudentTestGrade($request, $stud->id, $module['pretest_id'])['data']['total_grade'],
+                    'journal' => $this->getStudentTestGrade($request, $stud->id, $module['journal_id'])['data']['total_grade'],
+                    'posttest' => $this->getStudentTestGrade($request, $stud->id, $module['posttest_id'])['data']['total_grade'],
+                ]
+            ];
+        }
+        $data['data'] = $students;
+        return $data;
+
     }
 }
