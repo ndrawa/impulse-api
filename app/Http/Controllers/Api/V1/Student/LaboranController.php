@@ -600,6 +600,12 @@ class LaboranController extends BaseController
                 $arr[$key]['class_course']['staff']['code'] = $staff['code'];
                 $arr[$key]['date'] = $s['date'];
                 $arr[$key]['academic_year'] = $academic_year;
+                if (Bap::where('schedule_id', $s['id'])->first()) {
+                    $arr[$key]['is_present'] = true;
+                }
+                else{
+                    $arr[$key]['is_present'] = false;
+                }
 
             }
             foreach($arr as $key=>$a){
