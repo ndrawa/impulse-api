@@ -471,38 +471,43 @@ class LaboranController extends BaseController
 
     public function info_bap($schedule_id)
     {
-        $schedule = Schedule::findOrFail($schedule_id);
-        $id_classcourse = $schedule->class_course->id;
-
-        $aspraks = Asprak::get();
-        $students = StudentClassCourse::get();
-
-        $data = [];
-        $schedule->room;
-        $schedule->class_course;
-        $schedule->class_course->courses;
-        $schedule->class_course->classes;
-        $schedule->class_course->staffs;
-        $schedule->module;
-        $schedule->academic_year;
-        $data['schedule'] = $schedule;
-
-        $i = 0;
-        foreach ($aspraks as $key => $asprak) {
-            if ($asprak->class_course_id == $id_classcourse) {
-                $data_mhs = Student::where('id', $asprak->student_id)->first();
-                $data['asprak'][$i++] = $data_mhs;
-            }
+        $schedule = Schedule::where('id', $schedule_id)->first();
+        if($schedule == null){
+            return $this->response->noContent();
         }
+        else{
+            $id_classcourse = $schedule->class_course->id;
 
-        $i = 0;
-        foreach ($students as $key => $student) {
-            if ($student->class_course_id == $id_classcourse) {
-                $data_mhs = Student::where('id', $student->student_id)->first();
-                $data['student'][$i++] = $data_mhs;
+            $aspraks = Asprak::get();
+            $students = StudentClassCourse::get();
+
+            $data = [];
+            $schedule->room;
+            $schedule->class_course;
+            $schedule->class_course->courses;
+            $schedule->class_course->classes;
+            $schedule->class_course->staffs;
+            $schedule->module;
+            $schedule->academic_year;
+            $data['schedule'] = $schedule;
+
+            $i = 0;
+            foreach ($aspraks as $key => $asprak) {
+                if ($asprak->class_course_id == $id_classcourse) {
+                    $data_mhs = Student::where('id', $asprak->student_id)->first();
+                    $data['asprak'][$i++] = $data_mhs;
+                }
             }
+
+            $i = 0;
+            foreach ($students as $key => $student) {
+                if ($student->class_course_id == $id_classcourse) {
+                    $data_mhs = Student::where('id', $student->student_id)->first();
+                    $data['student'][$i++] = $data_mhs;
+                }
+            }
+            return $data;
         }
-        return $data;
     }
 
     public function set_bap(Request $request, $schedule_id)
@@ -622,7 +627,7 @@ class LaboranController extends BaseController
     public function show_bap_detail($schedule_id)
     {
         if (empty(Schedule::find($schedule_id))) {
-            return 'Schedule not Found';
+            return $this->response->noContent();
         } else{
             $bap = Bap::where('schedule_id', $schedule_id)->get();
             $data = [];
