@@ -639,6 +639,16 @@ class LaboranController extends BaseController
                 $data = [];
                 $data['bap'] = $bap;
 
+                $schedule = Schedule::where('id', $schedule_id)->first();
+                $schedule->room;
+                $schedule->class_course;
+                $schedule->class_course->courses;
+                $schedule->class_course->classes;
+                $schedule->class_course->staffs;
+                $schedule->module;
+                $schedule->academic_year;
+                $data['schedule'] = $schedule;
+
                 $asprak_presence = AsprakPresence::where('schedule_id', $schedule_id)->get();
                 $student_presence = StudentPresence::where('schedule_id', $schedule_id)->get();
                 // $data['asprak_presence'] = $asprak_presence;
