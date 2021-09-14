@@ -481,6 +481,7 @@ class LaboranController extends BaseController
         $schedule->room;
         $schedule->class_course;
         $schedule->class_course->courses;
+        $schedule->class_course->classes;
         $schedule->class_course->staffs;
         $schedule->module;
         $schedule->academic_year;
@@ -624,12 +625,26 @@ class LaboranController extends BaseController
             return 'Schedule not Found';
         } else{
             $bap = Bap::where('schedule_id', $schedule_id)->get();
-            $student_presence = StudentPresence::where('schedule_id', $schedule_id)->get();
-            $asprak_presence = AsprakPresence::where('schedule_id', $schedule_id)->get();
             $data = [];
             $data['bap'] = $bap;
-            $data['student_presence'] = $student_presence;
-            $data['asprak_presence'] = $asprak_presence;
+
+            $asprak_presence = AsprakPresence::where('schedule_id', $schedule_id)->get();
+            $student_presence = StudentPresence::where('schedule_id', $schedule_id)->get();
+            // $data['asprak_presence'] = $asprak_presence;
+            // $data['student_presence'] = $student_presence;
+
+            $i = 0;
+            foreach ($asprak_presence as $key => $asprak) {
+                $data_mhs = Student::where('id', $asprak->student_id)->first();
+                $data['asprak_presence'][$i++] = $data_mhs;
+            }
+
+            $i = 0;
+            foreach ($student_presence as $key => $student) {
+                $data_mhs = Student::where('id', $student->student_id)->first();
+                $data['student_presence'][$i++] = $data_mhs;
+            }
+
             return $data;
         }
     }
