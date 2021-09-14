@@ -35,10 +35,12 @@ class GradeController extends BaseController
         $student_class_courses = StudentClassCourse::where('student_id', $student_id)->get();
         $class_courses = [];
         if($course_id != null) {
-            $class_course_ids = ClassCourse::select('class_course.id as class_course_id', 'courses.name as course', 'classes.name as class')
+            $class_course_ids = ClassCourse::select('class_course.id as class_course_id', 'courses.name as course', 'classes.name as class', 'staffs.code as staff', 'academic_years.year as year', 'academic_years.semester as semester')
                                             ->where('class_course.course_id', $course_id)
                                             ->join('courses','courses.id', '=', 'class_course.course_id')
                                             ->join('classes','classes.id', '=', 'class_course.class_id')
+                                            ->join('staffs','staffs.id', '=', 'class_course.staff_id')
+                                            ->join('academic_years','academic_years.id', '=', 'class_course.academic_year_id')
                                             ->get()
                                             ->toArray();
             foreach($class_course_ids as $cc_id) {
@@ -51,10 +53,12 @@ class GradeController extends BaseController
             }
         } else {
             foreach($student_class_courses as $val) {
-                $class_course = ClassCourse::select('class_course.id as class_course_id', 'courses.name as course', 'classes.name as class')
+                $class_course = ClassCourse::select('class_course.id as class_course_id', 'courses.name as course', 'classes.name as class', 'staffs.code as staff', 'academic_years.year as year', 'academic_years.semester as semester')
                                         ->where('class_course.id',$val['class_course_id'])
                                         ->join('courses','courses.id', '=', 'class_course.course_id')
                                         ->join('classes','classes.id', '=', 'class_course.class_id')
+                                        ->join('staffs','staffs.id', '=', 'class_course.staff_id')
+                                        ->join('academic_years','academic_years.id', '=', 'class_course.academic_year_id')
                                         ->first()
                                         ->toArray();
                 array_push($class_courses, $class_course);

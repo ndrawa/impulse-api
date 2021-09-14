@@ -389,7 +389,9 @@ class ScheduleController extends BaseController
                 $academic_year = AcademicYear::firstWhere('id', $class_course->academic_year_id);
 
                 $data['data'][$key]['class_course_id'] = $class_course->id;
+                $data['data'][$key]['class_id'] = $class->id;
                 $data['data'][$key]['class_name'] = $class->name;
+                $data['data'][$key]['course_id'] = $course->id;
                 $data['data'][$key]['course_code'] = $course->code;
                 $data['data'][$key]['course_name'] = $course->name;
                 $data['data'][$key]['staff_code'] = $staff->code;
