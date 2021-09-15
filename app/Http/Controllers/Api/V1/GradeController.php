@@ -87,8 +87,10 @@ class GradeController extends BaseController
                                 ->toArray();
                 if($pretest[0]['pretest_id'] == null) {
                     $pretest_grade = 0;
+                    $pretest_submitted = false;
                 } else {
                     $pretest_grade = $this->getStudentTestGrade($request, $student_id, $pretest[0]['pretest_id'])['data']['total_grade'];
+                    $pretest_submitted = true;
                 }
 
                 $journal = Module::select('journal_id')
@@ -97,8 +99,10 @@ class GradeController extends BaseController
                                 ->toArray();
                 if($journal[0]['journal_id'] == null) {
                     $journal_grade = 0;
+                    $journal_submitted = false;
                 } else {
                     $journal_grade = $this->getStudentTestGrade($request, $student_id, $journal[0]['journal_id'])['data']['total_grade'];
+                    $journal_submitted = true;
                 }
 
                 $posttest = Module::select('posttest_id')
@@ -107,8 +111,10 @@ class GradeController extends BaseController
                                 ->toArray();
                 if($posttest[0]['posttest_id'] == null) {
                     $posttest_grade = 0;
+                    $posttest_submitted = false;
                 } else {
                     $posttest_grade = $this->getStudentTestGrade($request, $student_id, $posttest[0]['posttest_id'])['data']['total_grade'];
+                    $posttest_submitted = true;
                 }
 
                 $index = Module::select('index')
@@ -155,6 +161,11 @@ class GradeController extends BaseController
             $student_grade = Grade::whereIn('question_id', $q_ids)
                                     ->where('student_id', $student->id)
                                     ->get();
+            if(count($student_grade) > 0) {
+                $data['submitted'] = true;
+            } else {
+                $data['submitted'] = false;
+            }
             $total_grade = 0;
             // foreach($student_grade as $val) {
             //     $total_grade = $total_grade + $val['grade'];
@@ -168,8 +179,8 @@ class GradeController extends BaseController
                 $data['question'][$key]['answers'] = $question->answers;
             }
             unset($data['question']);
-            
-            $data['student'] = $this->user->student;
+
+            $data['student'] = $student;
             foreach($student_grade as $key=>$val) {
                 $data['grade'][$key]['id'] = $val['id'];
                 $data['grade'][$key]['schedule_test_id'] = $val['schedule_test_id'];
@@ -181,19 +192,21 @@ class GradeController extends BaseController
                 $total_grade = $total_grade + $val['grade'];
                 if($test->type == 'multiple_choice') {
                     $student_answer = StudentMultipleChoiceAnswer::where('question_id', $question->id)
-                                                                ->where('student_id', $this->user->student->id)
+                                                                ->where('student_id', $student->id)
                                                                 ->get();
                 } else if($test->type == 'essay') {
                     $student_answer = StudentEssayAnswer::where('question_id', $question->id)
-                                                                ->where('student_id', $this->user->student->id)
+                                                                ->where('student_id', $student->id)
                                                                 ->first();
                 }
                 $data['grade'][$key]['student_answer'] = $student_answer;
             }
+
             $data['total_grade'] = $total_grade;
 
         } else {
             $data['total_grade'] = 'null test';
+            $data['submitted'] = false;
         }
 
         $arr_return['data'] = $data;
@@ -254,6 +267,10 @@ class GradeController extends BaseController
         $students = array();
         foreach($class_course_students as $key=>$val) {
             $stud = Student::find($val['student_id']);
+            $pretest = $this->getStudentTestGrade($request, $stud->id, $module['pretest_id']);
+            $journal = $this->getStudentTestGrade($request, $stud->id, $module['journal_id']);
+            $posttest = $this->getStudentTestGrade($request, $stud->id, $module['posttest_id']);
+            // return $pretest['data']['submitted'];
             $students[$key] = [
                 'id' => $stud->id,
                 'nim' => $stud->nim,
@@ -264,9 +281,14 @@ class GradeController extends BaseController
                     'posttest_id' => $module['posttest_id'],
                 ],
                 'grade' => [
-                    'pretest' => $this->getStudentTestGrade($request, $stud->id, $module['pretest_id'])['data']['total_grade'],
-                    'journal' => $this->getStudentTestGrade($request, $stud->id, $module['journal_id'])['data']['total_grade'],
-                    'posttest' => $this->getStudentTestGrade($request, $stud->id, $module['posttest_id'])['data']['total_grade'],
+                    'pretest' => $pretest['data']['total_grade'],
+                    'journal' => $journal['data']['total_grade'],
+                    'posttest' => $posttest['data']['total_grade'],
+                ],
+                'submitted' => [
+                    'pretest' => $pretest['data']['submitted'],
+                    'journal' => $journal['data']['submitted'],
+                    'posttest' => $posttest['data']['submitted'],
                 ]
             ];
         }
