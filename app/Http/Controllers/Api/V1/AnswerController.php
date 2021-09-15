@@ -23,7 +23,7 @@ class AnswerController extends BaseController
         if(!$test or !$student) {
             return $this->response->errorNotFound('invalid test id or student id');
         }
-        if($test->type != 'essay') {
+        if($test->type != 'essay' && $test->type != 'file') {
             return $this->response->errorNotFound('invalid test id');
         }
         $questions = $test->questions;
