@@ -190,8 +190,6 @@ class AnswerController extends BaseController
                     }
                 }
 
-
-
                 //Untuk antisipasi case :
                 //Misal opsi jawaban soal no. 1 adalah A B C D E
                 //Opsi yang benar (is_answer) adalah B
