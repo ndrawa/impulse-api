@@ -70,6 +70,8 @@ class ClassCourseController extends BaseController
                     ]);
                     $schedule->save();
                 }
+
+                return $class_course;
             } else {
                 return $this->response->errorBadRequest('Course class already exist');
             }

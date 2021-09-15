@@ -279,4 +279,42 @@ class AnswerController extends BaseController
 
         return $this->response->noContent();
     }
+
+    public function asprakResetStudentTest(Request $request, $student_id, $test_id) {
+        $student = Student::find($student_id);
+        $test = Test::find($test_id);
+
+        if(!$student) {
+            return $this->response->errorNotFound('invalid student id');
+        }
+        if(!$test) {
+            return $this->response->errorNotFound('invalid test id');
+        }
+
+        $q_ids = array();
+        foreach($test->questions as $key=>$val) {
+            array_push($q_ids, $val['id']);
+        }
+
+        if($test->type == 'essay' or $test->type == 'file') {
+            $student_answers = StudentEssayAnswer::whereIn('question_id', $q_ids)
+                                        ->where('student_id', $student_id)
+                                        ->get('id');
+            StudentEssayAnswer::destroy($student_answers->toArray());
+        } else if($test->type == 'multiple_choice') {
+            $student_answers = StudentMultipleChoiceAnswer::whereIn('question_id', $q_ids)
+                                                ->where('student_id', $student_id)
+                                                ->get('id');
+
+            StudentMultipleChoiceAnswer::destroy($student_answers->toArray());
+        }
+
+        $stored_grades = Grade::whereIn('question_id', $q_ids)
+                            ->where('student_id', $student_id)
+                            ->get('id');
+        Grade::destroy($stored_grades->toArray());
+
+
+        return $this->response->noContent();
+    }
 }
