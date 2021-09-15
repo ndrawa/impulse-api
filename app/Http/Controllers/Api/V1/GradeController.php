@@ -159,7 +159,8 @@ class GradeController extends BaseController
             // foreach($student_grade as $val) {
             //     $total_grade = $total_grade + $val['grade'];
             // }
-
+            $data['total_grade'] = 0;
+            $data['test'] = $test = Test::firstWhere('id', $test_id);
             $data['student'] = $this->user->student;
             foreach($student_grade as $key=>$val) {
                 $data['grade'][$key]['id'] = $val['id'];
