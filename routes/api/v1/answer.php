@@ -14,4 +14,5 @@ $api->version('v1', [
     $api->get('/essayAnswer/{student_id}/{test_id}', ['as' => 'answer.getEssayAnswer', 'uses' => 'AnswerController@getStudentEssayAnswer']);
     $api->get('/multipleChoiceAnswer/{student_id}/{test_id}', ['as' => 'answer.getStudentMultipleChoiceAnswer', 'uses' => 'AnswerController@getStudentMultipleChoiceAnswer']);
     $api->get('/answer-grade/{student_id}/{test_id}', ['as' => 'answer.getAnswerGrade', 'uses' => 'AnswerController@getAnswerGrade']);
+    $api->delete('/student/{student_id}/{test_id}', ['as' => 'answer.asprakResetStudentTest', 'uses' => 'AnswerController@asprakResetStudentTest']);
 });
