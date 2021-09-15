@@ -194,7 +194,7 @@ class GradeController extends BaseController
                     $student_answer = StudentMultipleChoiceAnswer::where('question_id', $question->id)
                                                                 ->where('student_id', $student->id)
                                                                 ->get();
-                } else if($test->type == 'essay') {
+                } else if($test->type == 'essay' || $test->type == 'file') {
                     $student_answer = StudentEssayAnswer::where('question_id', $question->id)
                                                                 ->where('student_id', $student->id)
                                                                 ->first();
