@@ -160,17 +160,25 @@ class GradeController extends BaseController
             //     $total_grade = $total_grade + $val['grade'];
             // }
             $data['total_grade'] = 0;
-            $data['test'] = $test = Test::firstWhere('id', $test_id);
+
+            $data['test'] = $test;
+            $data['question'] = $test->questions;
+            foreach($data['question'] as $key=>$q) {
+                $question = $data['question'][$key];
+                $data['question'][$key]['answers'] = $question->answers;
+            }
+            unset($data['question']);
+            
             $data['student'] = $this->user->student;
             foreach($student_grade as $key=>$val) {
                 $data['grade'][$key]['id'] = $val['id'];
                 $data['grade'][$key]['schedule_test_id'] = $val['schedule_test_id'];
+                $data['grade'][$key]['grade'] = $val['grade'];
+                $data['grade'][$key]['asprak'] = Student::find($val['asprak_id']);
                 $question = Question::find($val['question_id']);
                 $data['grade'][$key]['question'] = $question;
                 $data['grade'][$key]['question']['answers'] = $question->answers;
-                $data['grade'][$key]['grade'] = $val['grade'];
                 $total_grade = $total_grade + $val['grade'];
-                $data['grade'][$key]['asprak'] = Student::find($val['asprak_id']);
                 if($test->type == 'multiple_choice') {
                     $student_answer = StudentMultipleChoiceAnswer::where('question_id', $question->id)
                                                                 ->where('student_id', $this->user->student->id)
