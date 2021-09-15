@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Http\Request;
 
 use App\Models\Role;
 use App\Models\Staff;
@@ -13,6 +14,8 @@ use App\Models\Classroom;
 use App\Models\AcademicYear;
 use App\Models\ClassCourse;
 use App\Models\StudentClassCourse;
+
+use App\Http\Controllers\Api\V1\ClassCourse\ClassCourseController;
 
 class BasicSeeder extends Seeder
 {
@@ -197,92 +200,107 @@ class BasicSeeder extends Seeder
         ]);
 
         //Class-Course
+        $controller = new ClassCourseController();
+        $request = new Request();
         //IF-42-01
-        $class_course_1_1 = ClassCourse::create([
+        $request->replace([
             'class_id' => $classroom_1->id,
             'staff_id' => $dosen_2->id,
             'course_id' => $course_1->id,
             'academic_year_id' => $academic_year_1->id,
         ]);
+        $class_course_1_1 = $controller->create_class_course($request);
 
-        $class_course_1_2 = ClassCourse::create([
+        $request->replace([
             'class_id' => $classroom_1->id,
             'staff_id' => $dosen_5->id,
             'course_id' => $course_2->id,
             'academic_year_id' => $academic_year_1->id,
         ]);
+        $class_course_1_2 = $controller->create_class_course($request);
 
-        $class_course_1_3 = ClassCourse::create([
+        $request->replace([
             'class_id' => $classroom_1->id,
             'staff_id' => $dosen_3->id,
             'course_id' => $course_3->id,
             'academic_year_id' => $academic_year_2->id,
         ]);
+        $class_course_1_3 = $controller->create_class_course($request);
 
-        $class_course_1_4 = ClassCourse::create([
+        $request->replace([
             'class_id' => $classroom_1->id,
             'staff_id' => $dosen_1->id,
             'course_id' => $course_4->id,
             'academic_year_id' => $academic_year_2->id,
         ]);
+        $class_course_1_4 = $controller->create_class_course($request);
 
         //IF-42-02
-        $class_course_2_1 = ClassCourse::create([
+        $request->replace([
             'class_id' => $classroom_2->id,
             'staff_id' => $dosen_2->id,
             'course_id' => $course_1->id,
             'academic_year_id' => $academic_year_1->id,
         ]);
+        $class_course_2_1 = $controller->create_class_course($request);
 
-        $class_course_2_2 = ClassCourse::create([
+        $request->replace([
             'class_id' => $classroom_2->id,
             'staff_id' => $dosen_5->id,
             'course_id' => $course_2->id,
             'academic_year_id' => $academic_year_1->id,
         ]);
 
-        $class_course_2_3 = ClassCourse::create([
+        $class_course_2_2 = $controller->create_class_course($request);
+
+        $request->replace([
             'class_id' => $classroom_2->id,
             'staff_id' => $dosen_3->id,
             'course_id' => $course_3->id,
             'academic_year_id' => $academic_year_2->id,
         ]);
+        $class_course_2_3 = $controller->create_class_course($request);
 
-        $class_course_2_4 = ClassCourse::create([
+        $request->replace([
             'class_id' => $classroom_2->id,
             'staff_id' => $dosen_1->id,
             'course_id' => $course_4->id,
             'academic_year_id' => $academic_year_2->id,
         ]);
+        $class_course_2_4 = $controller->create_class_course($request);
 
         //IF-42-03
-        $class_course_3_1 = ClassCourse::create([
+        $request->replace([
             'class_id' => $classroom_3->id,
             'staff_id' => $dosen_2->id,
             'course_id' => $course_1->id,
             'academic_year_id' => $academic_year_1->id,
         ]);
+        $class_course_3_1 = $controller->create_class_course($request);
 
-        $class_course_3_2 = ClassCourse::create([
+        $request->replace([
             'class_id' => $classroom_3->id,
             'staff_id' => $dosen_4->id,
             'course_id' => $course_2->id,
             'academic_year_id' => $academic_year_1->id,
         ]);
+        $class_course_3_2 = $controller->create_class_course($request);
 
-        $class_course_3_3 = ClassCourse::create([
+        $request->replace([
             'class_id' => $classroom_3->id,
             'staff_id' => $dosen_3->id,
             'course_id' => $course_3->id,
             'academic_year_id' => $academic_year_2->id,
         ]);
+        $class_course_3_3 = $controller->create_class_course($request);
 
-        $class_course_3_4 = ClassCourse::create([
+        $request->replace([
             'class_id' => $classroom_3->id,
             'staff_id' => $dosen_4->id,
             'course_id' => $course_4->id,
             'academic_year_id' => $academic_year_2->id,
         ]);
+        $class_course_3_4 = $controller->create_class_course($request);
 
 
         //ClassCourse tapi Kelas Ngulang
@@ -293,21 +311,21 @@ class BasicSeeder extends Seeder
             'name' => 'IF-41-08',
         ]);
 
-        $class_course_asal_1 = ClassCourse::create([
+        $request->replace([
             'class_id' => $classroom_6->id,
             'staff_id' => $dosen_5->id,
             'course_id' => $course_5->id,
             'academic_year_id' => $academic_year_3->id,
         ]);
+        $class_course_asal_1 = $controller->create_class_course($request);
 
-        $class_course_asal_2 = ClassCourse::create([
+        $request->replace([
             'class_id' => $classroom_7->id,
             'staff_id' => $dosen_2->id,
             'course_id' => $course_5->id,
             'academic_year_id' => $academic_year_3->id,
         ]);
-
-
+        $class_course_asal_2 = $controller->create_class_course($request);
 
 
         //Student/mahasiswa/
