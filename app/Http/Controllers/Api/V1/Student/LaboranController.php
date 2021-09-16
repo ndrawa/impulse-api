@@ -45,7 +45,8 @@ class LaboranController extends BaseController
             ->join('courses', 'courses.id', '=', 'class_course.course_id')
             ->join('staffs', 'staffs.id', '=', 'class_course.staff_id')
             ->join('academic_years', 'academic_years.id', '=', 'class_course.academic_year_id')
-            ->select('students.id as student_id', 'students.nim', 'students.name', 'students_class_course.id as students_class_course_id', 'classes.id as class_id', 'classes.name as class_name', 'students.gender',
+            ->select('students.id as student_id', 'students.nim', 'students.name', 'students_class_course.id as students_class_course_id',
+            'classes.id as class_id', 'classes.name as class_name', 'students.gender',
             'students.religion', 'courses.code as course_code', 'courses.name as course_name',
             'staffs.code as staff_code', 'academic_years.year', 'academic_years.semester');
         $per_page = env('PAGINATION_SIZE', 15);
@@ -73,9 +74,8 @@ class LaboranController extends BaseController
                                             ->orWhere('classes.name', 'ILIKE', '%'.$search.'%')
                                             ->orWhere('courses.name', 'ILIKE', '%'.$search.'%')
                                             ->orWhere('courses.code', 'ILIKE', '%'.$search.'%')
-                                            ->orWhere('staffs.code', 'ILIKE', '%'.$search.'%',)
-                                            ->orWhere('academic_years.year', 'ILIKE', '%'.$search.'%')
-                                            ->orWhere('classes.semester', 'ILIKE', '%'.$search.'%');
+                                            ->orWhere('staffs.code', 'ILIKE', '%'.$search.'%')
+                                            ->orWhere('academic_years.year', 'ILIKE', '%'.$search.'%');
                                     });
                                 // ->orWhere('students.gender', 'ILIKE', '%'.$search.'%')
                                 // ->orWhere('students.religion', 'ILIKE', '%'.$search.'%')
@@ -112,7 +112,7 @@ class LaboranController extends BaseController
             ->join('academic_years', 'academic_years.id', '=', 'class_course.academic_year_id')
             ->select('students.id as student_id', 'students.nim', 'students.name', 'classes.id as class_id', 'classes.name as class_name', 'students.gender',
             'students.religion', 'courses.code as course_code', 'courses.name as course_name',
-            'staffs.code as staff_code', 'academic_years.year', 'classes.semester')
+            'staffs.code as staff_code', 'academic_years.year')
             ->where('students.id', '=', $id)
             ->get();
         return $this->response->item($users, new LaboranTransformer);
@@ -526,7 +526,7 @@ class LaboranController extends BaseController
             }
 
             foreach ($request->student as $key => $student) {
-                if (!StudentPresence::where('student_id', $student)->where('schedule_id', $schedule_id)->first()) {    
+                if (!StudentPresence::where('student_id', $student)->where('schedule_id', $schedule_id)->first()) {
                     $student = StudentPresence::create([
                         'student_id' => $student,
                         'schedule_id' => $schedule_id
@@ -597,7 +597,7 @@ class LaboranController extends BaseController
                 $class = Classroom::where('id', $cc['class_id'])->first();
                 $staff = Staff::where('id', $cc['staff_id'])->first();
 
-                
+
                 $arr[$key]['id'] = $s['id'];
                 $arr[$key]['title'] = $s['name'];
                 $arr[$key]['start'] = $s['time_start'];

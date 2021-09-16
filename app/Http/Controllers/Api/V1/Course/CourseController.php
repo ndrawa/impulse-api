@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1\Course;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Api\V1\BaseController;
 use App\Models\Course;
+use App\Models\ClassCourse;
 use App\Models\Classroom;
 use App\Transformers\CourseTransformer;
 use Illuminate\Validation\Rule;
@@ -28,7 +29,7 @@ class CourseController extends BaseController
             $orderBy = $request->get('orderBy');
             $sortedBy = $request->get('sortedBy');
             $courses->orderBy($orderBy, $sortedBy);
-        } 
+        }
         else if($request->has('orderBy')) {
             $orderBy = $request->get('orderBy');
             $courses->orderBy($orderBy);
@@ -90,12 +91,12 @@ class CourseController extends BaseController
 
     public function delete(Request $request, $id)
     {
-        if (Classroom::where('course_id', $id)->first() == null) {
+        if (ClassCourse::where('course_id', $id)->first() == null) {
             $course = Course::findOrFail($id);
             $course->delete();
             return $this->response->noContent();
         } else {
             return $this->response->error('This course is in use.', 500);
         }
-    }   
+    }
 }

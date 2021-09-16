@@ -18,16 +18,17 @@ class CreateSchedules extends Migration
             $table->string('name');
             $table->datetime('time_start')->nullable();
             $table->datetime('time_end')->nullable();
-            $table->char('room_id', 26);
+            $table->char('room_id', 26)->nullable();
             $table->char('class_course_id', 26);
             $table->char('module_id', 26);
             $table->char('academic_year_id', 26)->nullable();
             $table->date('date');
             $table->timestamps();
+
             $table->foreign('room_id')
                 ->references('id')
                 ->on('rooms')
-                ->onDelete('cascade');
+                ->onDelete('set null');
             $table->foreign('class_course_id')
                 ->references('id')
                 ->on('class_course')
@@ -36,6 +37,10 @@ class CreateSchedules extends Migration
                 ->references('id')
                 ->on('academic_years')
                 ->onDelete('set null');
+            $table->foreign('module_id')
+                ->references('id')
+                ->on('modules')
+                ->onDelete('cascade');
         });
     }
 
