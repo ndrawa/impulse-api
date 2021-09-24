@@ -94,9 +94,12 @@ class ClassroomController extends BaseController
 
     public function delete(Request $request, $id)
     {
-        $classroom = Classroom::findOrFail($id);
-        $classroom->delete();
-
-        return $this->response->noContent();
+        if (ClassCourse::where('class_id', $id)->first() == null) {
+            $classroom = Classroom::findOrFail($id);
+            $classroom->delete();
+            return $this->response->noContent();
+        } else {
+            return $this->response->error('This classroom is in use.', 500);
+        }
     }
 }
