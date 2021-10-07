@@ -33,6 +33,7 @@ use App\Imports\StudentImport;
 // use App\Imports\StudentClassImport;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Models\Role;
+use Illuminate\Support\Facades\Hash;
 
 class LaboranController extends BaseController
 {
@@ -668,6 +669,90 @@ class LaboranController extends BaseController
 
                 return $data;
             }
+        }
+    }
+
+    public function manage_account_username(Request $request, $id) 
+    {
+        $user_id = null;
+        $username = null;
+        if (empty(Student::find($id))) {
+            if (empty(Staff::find($id))) {
+                return $this->response->errorNotFound('invalid user id');
+            } else {
+                $this->validate($request, [
+                    'nip' => [
+                        'required',
+                        Rule::unique('staffs')
+                    ],
+                ]);
+                $staff = Staff::find($id);
+
+                $staff->nip = $request->nip;
+                $staff->save();
+                $username = $staff->nip;
+                $user_id = $staff->user_id;
+            }
+        } else {
+            $this->validate($request, [
+                'nim' => [
+                    'required',
+                    Rule::unique('students')
+                ],
+            ]);
+            $student = Student::find($id);
+            $student->nim = $request->nim;
+            $student->save();
+            $username = $student->nim;
+            $user_id = $student->user_id;
+        }
+        $user = User::find($user_id);        
+        $user->username = $username;
+        $user->save();
+    }
+
+    public function manage_account_password(Request $request, $id) 
+    {
+        $this->validate($request, [
+            'new_password' => 'required|min:5',
+            'new_password_confirmation' => 'required|same:new_password'
+        ]);
+
+        $user_id = null;
+        if (empty(Student::find($id))) {
+            if (empty(Staff::find($id))) {
+                return $this->response->errorNotFound('invalid user id');
+            } else {
+                $staff = Staff::find($id);
+                $user_id = $staff->user_id;
+            }
+        } else {
+            $student = Student::find($id);
+            $user_id = $student->user_id;
+        }
+        $user = User::find($user_id);
+        
+        $user->password = Hash::make($request->input('new_password'));
+        $user->save();
+    }
+
+    public function reset_password($id){
+        if (empty(Student::find($id))) {
+            if (empty(Staff::find($id))) {
+                return $this->response->errorNotFound('invalid user id');
+            } else {
+                $staff = Staff::find($id);
+                $user = User::find($staff->user_id);
+                $user->password = Hash::make($staff->nip);
+                $user->save();
+                return $this->response->noContent();
+            }
+        } else {
+            $student = Student::find($id);
+            $user = User::find($student->user_id);
+            $user->password = Hash::make($student->nim);
+            $user->save();
+            return $this->response->noContent();
         }
     }
 }
