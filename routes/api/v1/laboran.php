@@ -25,5 +25,8 @@ $api->version('v1', [
     $api->get('/bap/show/{schedule_id}', ['as' => 'laboran.info_bap', 'uses' => 'LaboranController@show_bap_detail']);
     $api->get('/bap/{schedule_id}', ['as' => 'laboran.info_bap', 'uses' => 'LaboranController@info_bap']);
     $api->post('/bap/{schedule_id}', ['as' => 'laboran.set_bap', 'uses' => 'LaboranController@set_bap']);
+    $api->post('/user/username/{id}', ['as' => 'laboran.manage_account_username', 'uses' => 'LaboranController@manage_account_username']);
+    $api->post('/user/password/{id}', ['as' => 'laboran.manage_account_password', 'uses' => 'LaboranController@manage_account_password']);
+    $api->get('/user/reset/{id}', ['as' => 'laboran.reset_password', 'uses' => 'LaboranController@reset_password']);
 });
 
