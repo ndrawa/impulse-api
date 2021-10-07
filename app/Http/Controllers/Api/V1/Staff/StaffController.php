@@ -122,4 +122,25 @@ class StaffController extends BaseController
         Excel::import(new StaffImport, request()->file('file'));
         return "import success";
     }
+
+    public function edit_nip(Request $request, $id)
+    {
+        if (empty(Staff::find($id))) {
+            return $this->response->errorNotFound('invalid user id');
+        } else {
+            $this->validate($request, [
+                'nip' => [
+                    'required',
+                    Rule::unique('staffs')
+                ],
+            ]);
+            $staff = Staff::find($id);
+            $staff->nip = $request->nip;
+            $staff->save();
+
+            $user = User::find($staff->user_id);        
+            $user->username = $staff->nip;
+            $user->save();
+        }
+    }
 }
