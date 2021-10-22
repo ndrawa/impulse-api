@@ -28,5 +28,6 @@ $api->version('v1', [
     $api->post('/user/username/{id}', ['as' => 'laboran.manage_account_username', 'uses' => 'LaboranController@manage_account_username']);
     $api->post('/user/password/{id}', ['as' => 'laboran.manage_account_password', 'uses' => 'LaboranController@manage_account_password']);
     $api->get('/user/reset/{id}', ['as' => 'laboran.reset_password', 'uses' => 'LaboranController@reset_password']);
+    $api->post('/asprak/import', ['as' => 'laboran.import_asprak', 'uses' => 'LaboranController@import_asprak']);
 });
 
