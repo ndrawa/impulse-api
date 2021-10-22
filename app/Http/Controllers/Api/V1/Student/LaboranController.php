@@ -30,6 +30,7 @@ use App\Transformers\UserTransformer;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
 use App\Imports\StudentImport;
+use App\Imports\AsprakImport;
 // use App\Imports\StudentClassImport;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Models\Role;
@@ -392,6 +393,12 @@ class LaboranController extends BaseController
         } else {
             return $this->response->errorNotFound('NIM/NIP not found.');
         }
+    }
+
+    public function import_asprak(Request $request)
+    {
+        Excel::import(new AsprakImport, request()->file('file'));
+        return "import success";
     }
 
     public function deleteall($table)
