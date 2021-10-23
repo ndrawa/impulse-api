@@ -16,6 +16,7 @@ class CreateAsprakClassCourse extends Migration
         Schema::create('asprak_class_course', function (Blueprint $table) {
             $table->char('id', 26)->primary();
             $table->char('student_id', 26);
+            $table->char('kode_asprak', 3);
             $table->char('class_course_id', 26);
             $table->timestamps();
 
