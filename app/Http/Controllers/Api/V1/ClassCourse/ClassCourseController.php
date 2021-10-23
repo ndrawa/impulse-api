@@ -217,6 +217,7 @@ class ClassCourseController extends BaseController
     public function set_asprak_class_course(Request $request) {
         $this->validate($request, [
             'student_id' => 'required',
+            'asprak_code' => 'required',
             'class_course_id' => 'required'
         ]);
         if (!Asprak::where('student_id', $request->student_id)->where('class_course_id', $request->class_course_id)->first()) {

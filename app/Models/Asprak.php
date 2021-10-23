@@ -16,6 +16,7 @@ class Asprak extends BaseModel
 
     protected $fillable = [
         'student_id',
+        'asprak_code',
         'class_course_id',
     ];
 

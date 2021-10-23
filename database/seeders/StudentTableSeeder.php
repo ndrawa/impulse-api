@@ -154,12 +154,14 @@ class StudentTableSeeder extends Seeder
         $user->assignRole(Role::ROLE_ASPRAK);
         $asp_1 = Asprak::create([
             'student_id' => $asprak_1->id,
+            'asprak_code' => 'AP1',
             'class_course_id' => $class_course_1->id,
         ]);
         $asp_1->save();
 
         $asp_2 = Asprak::create([
             'student_id' => $asprak_1->id,
+            'asprak_code' => 'AP1',
             'class_course_id' => $class_course_2->id,
         ]);
         $asp_2->save();
@@ -175,11 +177,13 @@ class StudentTableSeeder extends Seeder
         $user->assignRole(Role::ROLE_ASPRAK);
         $asp_1 = Asprak::create([
             'student_id' => $asprak_2->id,
+            'asprak_code' => 'AP2',
             'class_course_id' => $class_course_1->id,
         ]);
         $asp_1->save();
         $asp_2 = Asprak::create([
             'student_id' => $asprak_2->id,
+            'asprak_code' => 'AP2',
             'class_course_id' => $class_course_2->id,
         ]);
         $asp_2->save();
@@ -195,6 +199,7 @@ class StudentTableSeeder extends Seeder
         $user->assignRole(Role::ROLE_ASPRAK);
         $asp_3 = Asprak::create([
             'student_id' => $asprak_3->id,
+            'asprak_code' => 'AP3',
             'class_course_id' => $class_course_3->id,
         ]);
         $asp_3->save();
