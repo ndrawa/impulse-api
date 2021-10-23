@@ -12,6 +12,7 @@ class AsprakTransformer extends TransformerAbstract
         return [
             'id' => $acc->id,
             // 'student_id' => $acc->student_id,
+            'asprak_code' => $acc->asprak_code,
             'student' => $acc->student,
             'class_course' => [
                 'classes' => $acc->class_course->classes,

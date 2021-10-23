@@ -762,4 +762,24 @@ class LaboranController extends BaseController
             return $this->response->noContent();
         }
     }
+
+    // function logout belum selesai
+        
+    // public function logout_user($id){
+    //     if (empty(Student::find($id))) {
+    //         if (empty(Staff::find($id))) {
+    //             return $this->response->errorNotFound('invalid user id');
+    //         } else {
+    //             $staff = Staff::find($id);
+    //             $user = User::find($staff->user_id);
+    //             $user->currentAccessToken()->delete();
+    //             return $this->response->noContent();
+    //         }
+    //     } else {
+    //         $student = Student::find($id);
+    //         $user = User::find($student->user_id);
+    //         $user->currentAccessToken()->delete();
+    //         return $this->response->noContent();
+    //     }
+    // }
 }

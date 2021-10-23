@@ -25,9 +25,12 @@ class AsprakImport implements ToCollection
             $course = Course::where('code', $row[2])->first();
             $class_course = ClassCourse::where('course_id', $course->id)->first();
             $user = User::find($student->user_id);
-            if ($student != null && $class_course != null) {
+            if (($student != null && $class_course != null) && 
+            (Asprak::where('student_id', $student->id)
+            ->where('class_course_id', $class_course->id)->first() == null)) {
                 $asprak = Asprak::create([
                     'student_id' => $student->id,
+                    'asprak_code' => $row[0],
                     'class_course_id' => $class_course->id
                 ]);
                 $asprak->save();
