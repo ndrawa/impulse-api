@@ -15,6 +15,7 @@ use App\Models\ClassCourse;
 use App\Models\Staff;
 use App\Models\Schedule;
 use App\Models\Asprak;
+use App\Models\StudentPresence;
 use App\Transformers\AsprakTransformer;
 use App\Transformers\ClassCourseTransformer;
 use App\Models\StudentClassCourse;
@@ -266,5 +267,80 @@ class ClassCourseController extends BaseController
         $asprak = Asprak::findOrFail($id);
         $asprak->delete();
         return $this->response->noContent();
+    }
+
+    public function showRecapPresence($class_course_id) {
+        $class_course = ClassCourse::with(['classes', 'courses', 'schedule', 'student.student', 'schedule.module', 'academic_years', 'schedule.student_presence'])
+                        ->find($class_course_id);
+        if(!$class_course) {
+            return $this->response->errorNotFound('invalid class course id');
+        }
+
+        $result = $this->simplifyRecapPresence($class_course);
+
+        return $result;
+    }
+
+    public function simplifyRecapPresence($class_course) {
+        $request = new Request;
+
+        $data = array(
+            'id' => $class_course->id,
+            'class' => array(
+                'id' => $class_course->classes->id,
+                'name' => $class_course->classes->name,
+            ),
+            'course' => array(
+                'id' => $class_course->courses->id,
+                'code'  => $class_course->courses->code,
+                'name' => $class_course->courses->name,
+            ),
+            'academic_year' => array(
+                'id' => $class_course->academic_years->id,
+                'year' => $class_course->academic_years->year,
+                'semester' => $class_course->academic_years->semester,
+            )
+        );
+        foreach($class_course->student as $key=>$student) {
+            $grade = json_decode(app('App\Http\Controllers\Api\V1\GradeController')
+                    ->getStudentGrades($request, $student->student->id, $class_course->courses->id));
+
+            $data['students'][$key] = array(
+                'id' => $student->student->id,
+                'nim' => $student->student->nim,
+                'name' => $student->student->name,
+                'grade' => $grade->data->result[0]->modules,
+            );
+
+            foreach($grade->data->result[0]->modules as $g) {
+
+                $student_presence_ids = array();
+
+                if(count($class_course->schedule[$g->index-1]['student_presence']) > 0) {
+                    foreach($class_course->schedule[$g->index-1]['student_presence'] as $std) {
+                        array_push($student_presence_ids, $std->student_id);
+                    }
+                }
+
+                if(in_array($student->student->id, $student_presence_ids)) {
+                    $presence = true;
+                } else {
+                    $presence = false;
+                }
+
+               $g->presence = $presence;
+            }
+        }
+        foreach($class_course->schedule as $key=>$schedule) {
+            $data['schedule'][$key] = array(
+                'id' => $schedule->id,
+                'name' => $schedule->name,
+                'module' => array(
+                    'index' => $schedule->module->index,
+                ),
+                'student_presence' => $schedule->student_presence,
+            );
+        }
+        return $data;
     }
 }
