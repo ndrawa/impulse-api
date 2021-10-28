@@ -51,4 +51,14 @@ class Schedule extends BaseModel
     {
         return $this->hasMany(ScheduleTest::class);
     }
+
+    public function student_presence()
+    {
+        return $this->hasMany(StudentPresence::class);
+    }
+
+    public function asprak_presence()
+    {
+        return $this->hasMany(AsprakPresence::class);
+    }
 }
