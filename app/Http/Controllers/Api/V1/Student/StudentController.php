@@ -8,6 +8,7 @@ use App\Models\Student;
 use App\Models\User;
 use App\Models\Grade;
 use App\Transformers\StudentTransformer;
+use App\Transformers\StudentMePresenceTransformer;
 use Illuminate\Validation\Rule;
 
 
@@ -32,7 +33,7 @@ class StudentController extends BaseController
             $orderBy = $request->get('orderBy');
             $sortedBy = $request->get('sortedBy');
             $students->orderBy($orderBy, $sortedBy);
-        } 
+        }
         else if($request->has('orderBy')) {
             $orderBy = $request->get('orderBy');
             $students->orderBy($orderBy);
@@ -108,5 +109,60 @@ class StudentController extends BaseController
         $grade = Grade::Where('user_id', $user_id)->get();
 
         return $grade;
+    }
+
+    public function show_me_presence() {
+        $student = Student::with(['student_class_course',
+                    'student_class_course.class_course',
+                    'student_class_course.class_course.courses',
+                    'student_class_course.class_course.classes',
+                    'student_class_course.class_course.schedule',
+                    'student_class_course.class_course.schedule.student_presence'])
+                    ->find($this->user->student->id);
+
+        return $this->simplify_show_me_presence($student);
+
+        return $this->response->item($student, new StudentMePresenceTransformer);
+    }
+
+    private function simplify_show_me_presence($student) {
+        $data = array(
+            'student' => array(
+                'id' => $student->id,
+                'nim' => $student->nim,
+                'nama' => $student->name,
+            ),
+        );
+        foreach($student->student_class_course as $key=>$d) {
+            // return $d;
+            $data['class_course'][$key] = array(
+                'id' => $d->class_course->id,
+                'course' => array(
+                    'id' => $d->class_course->courses->id,
+                    'code' => $d->class_course->courses->code,
+                    'name' => $d->class_course->courses->name,
+                ),
+                'class' => array(
+                    'id' => $d->class_course->classes->id,
+                    'name' => $d->class_course->classes->name,
+                ),
+            );
+
+            foreach($d->class_course->schedule as $cc_key=>$cc) {
+                $i = $cc_key;
+                $presence = false;
+                if(count($cc->student_presence)) {
+                    $presence = true;
+                }
+                $data['class_course'][$key]['presences'][$cc_key] = array(
+                    'index' => $i+1,
+                    'presence' => $presence,
+                );
+            }
+        }
+
+        // return $student;
+
+        return $data;
     }
 }
