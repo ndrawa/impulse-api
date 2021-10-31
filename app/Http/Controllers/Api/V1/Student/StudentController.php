@@ -120,9 +120,7 @@ class StudentController extends BaseController
                     'student_class_course.class_course.schedule.student_presence'])
                     ->find($this->user->student->id);
 
-        return $this->simplify_show_me_presence($student);
-
-        return $this->response->item($student, new StudentMePresenceTransformer);
+        return $data = array( 'data'=>$this->simplify_show_me_presence($student));
     }
 
     private function simplify_show_me_presence($student) {
@@ -134,7 +132,6 @@ class StudentController extends BaseController
             ),
         );
         foreach($student->student_class_course as $key=>$d) {
-            // return $d;
             $data['class_course'][$key] = array(
                 'id' => $d->class_course->id,
                 'course' => array(
@@ -160,8 +157,6 @@ class StudentController extends BaseController
                 );
             }
         }
-
-        // return $student;
 
         return $data;
     }

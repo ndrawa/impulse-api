@@ -278,7 +278,7 @@ class ClassCourseController extends BaseController
 
         $result = $this->simplifyRecapPresence($class_course);
 
-        return $result;
+        return json_encode($result);
     }
 
     public function simplifyRecapPresence($class_course) {
