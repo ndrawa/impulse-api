@@ -135,6 +135,8 @@ class StudentController extends BaseController
                 'nama' => $student->name,
             ),
         );
+
+
         foreach($student->student_class_course as $key=>$d) {
             $data['class_course'][$key] = array(
                 'id' => $d->class_course->id,

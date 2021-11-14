@@ -126,6 +126,7 @@ class GradeController extends BaseController
                 $module_test[$cc_key][$s_key]['pretest_grade'] =  $pretest_grade;
                 $module_test[$cc_key][$s_key]['journal_grade'] =  $journal_grade;
                 $module_test[$cc_key][$s_key]['posttest_grade'] =  $posttest_grade;
+                $module_test[$cc_key][$s_key]['total_grade'] =  $pretest_grade + $journal_grade + $posttest_grade;
 
             }
         }
@@ -284,6 +285,7 @@ class GradeController extends BaseController
                     'pretest' => $pretest['data']['total_grade'],
                     'journal' => $journal['data']['total_grade'],
                     'posttest' => $posttest['data']['total_grade'],
+                    'total' => $pretest_grade + $journal_grade + $posttest_grade,
                 ],
                 'submitted' => [
                     'pretest' => $pretest['data']['submitted'],
