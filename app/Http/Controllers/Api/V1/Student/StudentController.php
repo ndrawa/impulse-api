@@ -10,6 +10,7 @@ use App\Models\Grade;
 use App\Transformers\StudentTransformer;
 use App\Transformers\StudentMePresenceTransformer;
 use Illuminate\Validation\Rule;
+use App\Http\Controllers\Api\V1\GradeController as GradeController;
 
 
 class StudentController extends BaseController
@@ -111,7 +112,7 @@ class StudentController extends BaseController
         return $grade;
     }
 
-    public function show_me_presence(Request $request) {
+    public function show_me_presence() {
         $student = Student::with(['student_class_course',
                     'student_class_course.class_course',
                     'student_class_course.class_course.courses',
@@ -119,13 +120,14 @@ class StudentController extends BaseController
                     'student_class_course.class_course.schedule',
                     'student_class_course.class_course.schedule.student_presence'])
                     ->find($this->user->student->id);
-        
-        $class_course_id = ($request->has('class_course_id')) ? $request->get('class_course_id') : null;
 
-        return $data = array( 'data'=>$this->simplify_show_me_presence($student, $class_course_id));
+        $grade_controller = new GradeController;
+        $grade = json_decode($grade_controller->getStudentGrades($this->user->student->id), true);
+
+        return $data = array( 'data'=>$this->simplify_show_me_presence($student, $grade['data']['result']));
     }
 
-    private function simplify_show_me_presence($student, $class_course_id) {
+    private function simplify_show_me_presence($student, $grade) {
         $data = array(
             'student' => array(
                 'id' => $student->id,
@@ -134,61 +136,36 @@ class StudentController extends BaseController
             ),
         );
 
-        foreach($student->student_class_course as $key=>$d) {
-            if($class_course_id){
-                if($d->class_course->id == $class_course_id){
-                    $data['class_course'] = array(
-                        'id' => $d->class_course->id,
-                        'course' => array(
-                            'id' => $d->class_course->courses->id,
-                            'code' => $d->class_course->courses->code,
-                            'name' => $d->class_course->courses->name,
-                        ),
-                        'class' => array(
-                            'id' => $d->class_course->classes->id,
-                            'name' => $d->class_course->classes->name,
-                        ),
-                    );
-        
-                    foreach($d->class_course->schedule as $cc_key=>$cc) {
-                        $i = $cc_key;
-                        $presence = false;
-                        if(count($cc->student_presence)) {
-                            $presence = true;
-                        }
-                        $data['class_course']['presences'][$cc_key] = array(
-                            'index' => $i+1,
-                            'presence' => $presence,
-                        );
-                    }
 
-                    break;
+        foreach($student->student_class_course as $key=>$d) {
+            $data['class_course'][$key] = array(
+                'id' => $d->class_course->id,
+                'course' => array(
+                    'id' => $d->class_course->courses->id,
+                    'code' => $d->class_course->courses->code,
+                    'name' => $d->class_course->courses->name,
+                ),
+                'class' => array(
+                    'id' => $d->class_course->classes->id,
+                    'name' => $d->class_course->classes->name,
+                ),
+            );
+
+            foreach($d->class_course->schedule as $cc_key=>$cc) {
+                $i = $cc_key;
+                $presence = false;
+                if(count($cc->student_presence)) {
+                    $presence = true;
                 }
-            } else {
-                $data['class_course'][$key] = array(
-                    'id' => $d->class_course->id,
-                    'course' => array(
-                        'id' => $d->class_course->courses->id,
-                        'code' => $d->class_course->courses->code,
-                        'name' => $d->class_course->courses->name,
-                    ),
-                    'class' => array(
-                        'id' => $d->class_course->classes->id,
-                        'name' => $d->class_course->classes->name,
+                $data['class_course'][$key]['presences'][$cc_key] = array(
+                    'index' => $i+1,
+                    'presence' => $presence,
+                    'grade' => array(
+                        'pretest_grade' => $grade[$key]['modules'][$cc_key]['pretest_grade'],
+                        'journal_grade' => $grade[$key]['modules'][$cc_key]['journal_grade'],
+                        'posttest_grade' => $grade[$key]['modules'][$cc_key]['posttest_grade'],
                     ),
                 );
-    
-                foreach($d->class_course->schedule as $cc_key=>$cc) {
-                    $i = $cc_key;
-                    $presence = false;
-                    if(count($cc->student_presence)) {
-                        $presence = true;
-                    }
-                    $data['class_course'][$key]['presences'][$cc_key] = array(
-                        'index' => $i+1,
-                        'presence' => $presence,
-                    );
-                }
             }
         }
 

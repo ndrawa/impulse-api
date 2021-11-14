@@ -27,7 +27,7 @@ use Illuminate\Support\Arr;
 
 class GradeController extends BaseController
 {
-    public function getStudentGrades(Request $request, $student_id, $course_id = null) {
+    public function getStudentGrades($student_id, $course_id = null) {
         $student = Student::find($student_id);
         if(!$student) {
             return $this->response->errorNotFound('invalid student id');
@@ -89,7 +89,7 @@ class GradeController extends BaseController
                     $pretest_grade = 0;
                     $pretest_submitted = false;
                 } else {
-                    $pretest_grade = $this->getStudentTestGrade($request, $student_id, $pretest[0]['pretest_id'])['data']['total_grade'];
+                    $pretest_grade = $this->getStudentTestGrade($student_id, $pretest[0]['pretest_id'])['data']['total_grade'];
                     $pretest_submitted = true;
                 }
 
@@ -101,7 +101,7 @@ class GradeController extends BaseController
                     $journal_grade = 0;
                     $journal_submitted = false;
                 } else {
-                    $journal_grade = $this->getStudentTestGrade($request, $student_id, $journal[0]['journal_id'])['data']['total_grade'];
+                    $journal_grade = $this->getStudentTestGrade($student_id, $journal[0]['journal_id'])['data']['total_grade'];
                     $journal_submitted = true;
                 }
 
@@ -113,7 +113,7 @@ class GradeController extends BaseController
                     $posttest_grade = 0;
                     $posttest_submitted = false;
                 } else {
-                    $posttest_grade = $this->getStudentTestGrade($request, $student_id, $posttest[0]['posttest_id'])['data']['total_grade'];
+                    $posttest_grade = $this->getStudentTestGrade($student_id, $posttest[0]['posttest_id'])['data']['total_grade'];
                     $posttest_submitted = true;
                 }
 
@@ -142,7 +142,7 @@ class GradeController extends BaseController
         return json_encode($data);
     }
 
-    public function getStudentTestGrade(Request $request, $student_id, $test_id) {
+    public function getStudentTestGrade($student_id, $test_id) {
         $student = Student::find($student_id);
         if(!$student) {
             return $this->response->errorNotFound('invalid student id');
@@ -256,7 +256,7 @@ class GradeController extends BaseController
     //     return json_encode($data);
     // }
 
-    public function getScheduleGrade(Request $request, $schedule_id) {
+    public function getScheduleGrade($schedule_id) {
         $schedule = Schedule::find($schedule_id);
         if(!$schedule) {
             return $this->response->errorNotFound('invalid schedule id');
@@ -268,13 +268,9 @@ class GradeController extends BaseController
         $students = array();
         foreach($class_course_students as $key=>$val) {
             $stud = Student::find($val['student_id']);
-            $pretest = $this->getStudentTestGrade($request, $stud->id, $module['pretest_id']);
-            $journal = $this->getStudentTestGrade($request, $stud->id, $module['journal_id']);
-            $posttest = $this->getStudentTestGrade($request, $stud->id, $module['posttest_id']);
-
-            $pretest_grade = (is_int($pretest['data']['total_grade'])) ? $pretest['data']['total_grade'] : 0;
-            $journal_grade = (is_int($journal['data']['total_grade'])) ? $journal['data']['total_grade'] : 0;
-            $posttest_grade = (is_int($posttest['data']['total_grade'])) ? $posttest['data']['total_grade'] : 0;
+            $pretest = $this->getStudentTestGrade($stud->id, $module['pretest_id']);
+            $journal = $this->getStudentTestGrade($stud->id, $module['journal_id']);
+            $posttest = $this->getStudentTestGrade($stud->id, $module['posttest_id']);
             // return $pretest['data']['submitted'];
             $students[$key] = [
                 'id' => $stud->id,
