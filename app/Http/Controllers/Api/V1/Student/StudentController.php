@@ -10,6 +10,7 @@ use App\Models\Grade;
 use App\Transformers\StudentTransformer;
 use App\Transformers\StudentMePresenceTransformer;
 use Illuminate\Validation\Rule;
+use App\Http\Controllers\Api\V1\GradeController as GradeController;
 
 
 class StudentController extends BaseController
@@ -120,10 +121,13 @@ class StudentController extends BaseController
                     'student_class_course.class_course.schedule.student_presence'])
                     ->find($this->user->student->id);
 
-        return $data = array( 'data'=>$this->simplify_show_me_presence($student));
+        $grade_controller = new GradeController;
+        $grade = json_decode($grade_controller->getStudentGrades($this->user->student->id), true);
+
+        return $data = array( 'data'=>$this->simplify_show_me_presence($student, $grade['data']['result']));
     }
 
-    private function simplify_show_me_presence($student) {
+    private function simplify_show_me_presence($student, $grade) {
         $data = array(
             'student' => array(
                 'id' => $student->id,
@@ -154,6 +158,11 @@ class StudentController extends BaseController
                 $data['class_course'][$key]['presences'][$cc_key] = array(
                     'index' => $i+1,
                     'presence' => $presence,
+                    'grade' => array(
+                        'pretest_grade' => $grade[$key]['modules'][$cc_key]['pretest_grade'],
+                        'journal_grade' => $grade[$key]['modules'][$cc_key]['journal_grade'],
+                        'posttest_grade' => $grade[$key]['modules'][$cc_key]['posttest_grade'],
+                    ),
                 );
             }
         }
