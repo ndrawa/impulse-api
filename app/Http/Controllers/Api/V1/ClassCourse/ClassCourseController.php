@@ -282,8 +282,6 @@ class ClassCourseController extends BaseController
     }
 
     public function simplifyRecapPresence($class_course) {
-        $request = new Request;
-
         $data = array(
             'id' => $class_course->id,
             'class' => array(
@@ -303,7 +301,7 @@ class ClassCourseController extends BaseController
         );
         foreach($class_course->student as $key=>$student) {
             $grade = json_decode(app('App\Http\Controllers\Api\V1\GradeController')
-                    ->getStudentGrades($request, $student->student->id, $class_course->courses->id));
+                    ->getStudentGrades($student->student->id, $class_course->courses->id));
 
             $data['students'][$key] = array(
                 'id' => $student->student->id,
