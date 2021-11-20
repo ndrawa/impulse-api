@@ -136,7 +136,11 @@ class GradeController extends BaseController
             foreach($class_courses[$key]['modules'] as $s_key=>$schedule)  {
                 $class_courses[$key]['modules'] = $module_test[$key];
             }
+            usort($class_courses[$key]['modules'], function ($item1, $item2) {
+                return $item1['index'] <=> $item2['index'];
+            });
         }
+
         $data['data']['student'] = $student;
         $data['data']['result'] = $class_courses;
         return json_encode($data);
