@@ -271,6 +271,10 @@ class GradeController extends BaseController
             $pretest = $this->getStudentTestGrade($stud->id, $module['pretest_id']);
             $journal = $this->getStudentTestGrade($stud->id, $module['journal_id']);
             $posttest = $this->getStudentTestGrade($stud->id, $module['posttest_id']);
+
+            $pretest_grade = (is_int($pretest['data']['total_grade'])) ? $pretest['data']['total_grade'] : 0;
+            $journal_grade = (is_int($journal['data']['total_grade'])) ? $journal['data']['total_grade'] : 0;
+            $posttest_grade = (is_int($posttest['data']['total_grade'])) ? $posttest['data']['total_grade'] : 0;
             // return $pretest['data']['submitted'];
             $students[$key] = [
                 'id' => $stud->id,
