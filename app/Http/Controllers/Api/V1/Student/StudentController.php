@@ -141,49 +141,55 @@ class StudentController extends BaseController
             ),
         );
 
-        foreach($student->student_class_course as $key=>$d) {
-            if($class_course_id != null){
+        if($class_course_id != null){
+            $class_course = null;
+            foreach($student->student_class_course as $key=>$d){
                 if($d->class_course->id == $class_course_id){
-                    $data['class_course'][$key] = array(
-                        'id' => $d->class_course->id,
-                        'course' => array(
-                            'id' => $d->class_course->courses->id,
-                            'code' => $d->class_course->courses->code,
-                            'name' => $d->class_course->courses->name,
-                        ),
-                        'class' => array(
-                            'id' => $d->class_course->classes->id,
-                            'name' => $d->class_course->classes->name,
-                        ),
-                    );
-        
-                    foreach($d->class_course->schedule as $cc_key=>$cc) {
-                        $i = $cc_key;
-                        $presence = false;
-                        if(count($cc->student_presence)) {
-                            $presence = true;
-                        }
-
-                        $pretest_grade = (is_int($grade[$key]['modules'][$cc_key]['pretest_grade'])) ? $grade[$key]['modules'][$cc_key]['pretest_grade'] : 0;
-                        $journal_grade = (is_int($grade[$key]['modules'][$cc_key]['journal_grade'])) ? $grade[$key]['modules'][$cc_key]['journal_grade'] : 0;
-                        $posttest_grade = (is_int($grade[$key]['modules'][$cc_key]['posttest_grade'])) ? $grade[$key]['modules'][$cc_key]['posttest_grade'] : 0;
-
-                        $data['class_course'][$key]['presences'][$cc_key] = array(
-                            'index' => $i+1,
-                            'presence' => $presence,
-                            'grade' => array(
-                                'pretest_grade' => $grade[$key]['modules'][$cc_key]['pretest_grade'],
-                                'journal_grade' => $grade[$key]['modules'][$cc_key]['journal_grade'],
-                                'posttest_grade' => $grade[$key]['modules'][$cc_key]['posttest_grade'],
-                                'total_grade' => $pretest_grade + $journal_grade + $posttest_grade,
-                            ),
-                        );
-                    }
-
+                    $class_course = $d;
                     break;
                 }
             }
-            else{
+
+            if($class_course != null){
+                $data['class_course'] = array(
+                    'id' => $class_course->class_course->id,
+                    'course' => array(
+                        'id' => $class_course->class_course->courses->id,
+                        'code' => $class_course->class_course->courses->code,
+                        'name' => $class_course->class_course->courses->name,
+                    ),
+                    'class' => array(
+                        'id' => $class_course->class_course->classes->id,
+                        'name' => $class_course->class_course->classes->name,
+                    ),
+                );
+    
+                foreach($class_course->class_course->schedule as $cc_key=>$cc) {
+                    $i = $cc_key;
+                    $presence = false;
+                    if(count($cc->student_presence)) {
+                        $presence = true;
+                    }
+    
+                    $pretest_grade = (is_int($grade[$key]['modules'][$cc_key]['pretest_grade'])) ? $grade[$key]['modules'][$cc_key]['pretest_grade'] : 0;
+                    $journal_grade = (is_int($grade[$key]['modules'][$cc_key]['journal_grade'])) ? $grade[$key]['modules'][$cc_key]['journal_grade'] : 0;
+                    $posttest_grade = (is_int($grade[$key]['modules'][$cc_key]['posttest_grade'])) ? $grade[$key]['modules'][$cc_key]['posttest_grade'] : 0;
+    
+                    $data['class_course']['presences'][$cc_key] = array(
+                        'index' => $i+1,
+                        'presence' => $presence,
+                        'grade' => array(
+                            'pretest_grade' => $grade[$key]['modules'][$cc_key]['pretest_grade'],
+                            'journal_grade' => $grade[$key]['modules'][$cc_key]['journal_grade'],
+                            'posttest_grade' => $grade[$key]['modules'][$cc_key]['posttest_grade'],
+                            'total_grade' => $pretest_grade + $journal_grade + $posttest_grade,
+                        ),
+                    );
+                }
+            }
+        }
+        else{
+            foreach($student->student_class_course as $key=>$d) {
                 $data['class_course'][$key] = array(
                     'id' => $d->class_course->id,
                     'course' => array(
@@ -203,11 +209,11 @@ class StudentController extends BaseController
                     if(count($cc->student_presence)) {
                         $presence = true;
                     }
-
+    
                     $pretest_grade = (is_int($grade[$key]['modules'][$cc_key]['pretest_grade'])) ? $grade[$key]['modules'][$cc_key]['pretest_grade'] : 0;
                     $journal_grade = (is_int($grade[$key]['modules'][$cc_key]['journal_grade'])) ? $grade[$key]['modules'][$cc_key]['journal_grade'] : 0;
                     $posttest_grade = (is_int($grade[$key]['modules'][$cc_key]['posttest_grade'])) ? $grade[$key]['modules'][$cc_key]['posttest_grade'] : 0;
-
+    
                     $data['class_course'][$key]['presences'][$cc_key] = array(
                         'index' => $i+1,
                         'presence' => $presence,
