@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1\ClassCourse;
 
+use App\Exports\RecapMultiSheetExport;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Api\V1\BaseController;
 use Illuminate\Support\Facades\DB;
@@ -19,6 +20,7 @@ use App\Models\StudentPresence;
 use App\Transformers\AsprakTransformer;
 use App\Transformers\ClassCourseTransformer;
 use App\Models\StudentClassCourse;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ClassCourseController extends BaseController
 {
@@ -270,7 +272,7 @@ class ClassCourseController extends BaseController
     }
 
     public function showRecapPresence($class_course_id) {
-        $class_course = ClassCourse::with(['classes', 'courses', 'schedule', 'student.student', 'schedule.module', 'academic_years', 'schedule.student_presence'])
+        $class_course = ClassCourse::with(['classes', 'courses', 'schedule', 'student.student', 'schedule.module', 'academic_years', 'schedule.student_presence', 'schedule.bap'])
                         ->find($class_course_id);
         if(!$class_course) {
             return $this->response->errorNotFound('invalid class course id');
@@ -338,7 +340,144 @@ class ClassCourseController extends BaseController
                 ),
                 'student_presence' => $schedule->student_presence,
             );
+            if(is_null($schedule->bap)) {
+                $data['schedule'][$key]['materi'] = null;
+                $data['schedule'][$key]['evaluasi'] = null;
+            } else {
+                $data['schedule'][$key]['materi'] = $schedule->bap->materi;
+                $data['schedule'][$key]['evaluasi'] = $schedule->bap->evaluasi;
+            }
         }
+        usort($data['schedule'], function ($item1, $item2) {
+            return $item1['module'] <=> $item2['module'];
+        });
+
         return $data;
+    }
+
+    public function export_recap(Request $request, $course_id) {
+        $class_courses = ClassCourse::select('class_course.id as class_course_id', 'courses.name as course', 'classes.name as class', 'staffs.code as staff', 'academic_years.year as year', 'academic_years.semester as semester')
+                                    ->where('class_course.course_id', $course_id)
+                                    ->join('courses','courses.id', '=', 'class_course.course_id')
+                                    ->join('classes','classes.id', '=', 'class_course.class_id')
+                                    ->join('staffs','staffs.id', '=', 'class_course.staff_id')
+                                    ->join('academic_years','academic_years.id', '=', 'class_course.academic_year_id')
+                                    ->get()
+                                    ->toArray();
+
+        if(empty($class_courses)){
+            $data['data']['message'] = "course_id not found";
+            $data['data']['data'] = false;
+            return $data;
+        }
+        else{
+            $headers[0] = ['', '', ''];
+            $headers[1] = ['No.', 'NIM', 'Nama'];
+
+            for ($index = 1; $index <= 14; $index++) {
+                for ($x = 0; $x <= 7; $x++) {
+                    switch ($x) {
+                        case 0:
+                            array_push($headers[0], $index);
+                            array_push($headers[1], "KEHADIRAN");
+                            break;
+                        case 1:
+                            array_push($headers[0], $index);
+                            array_push($headers[1], "ASPRAK");
+                            break;
+                        case 2:
+                            array_push($headers[0], $index);
+                            array_push($headers[1], "EVALUASI");
+                            break;
+                        case 3:
+                            array_push($headers[0], $index);
+                            array_push($headers[1], "MATERI");
+                            break;
+                        case 4:
+                            array_push($headers[0], $index);
+                            array_push($headers[1], "T. AWAL");
+                            break;
+                        case 5:
+                            array_push($headers[0], $index);
+                            array_push($headers[1], "JURNAL");
+                            break;
+                        case 6:
+                            array_push($headers[0], $index);
+                            array_push($headers[1], "T. AKHIR");
+                            break;
+                        case 7:
+                            array_push($headers[0], $index);
+                            array_push($headers[1], "TOTAL");
+                            break;
+                    }
+                }
+            }
+
+            $classes = [];
+            $data = [];
+            $file_name = "recap".".xlsx";
+
+            foreach($class_courses as $key=>$class_course){
+                array_push($classes, $class_course['class']);
+
+                $recap = json_decode($this->showRecapPresence($class_course['class_course_id']));
+                $file_name = $recap->course->name.".xlsx";
+
+                if(!empty($recap->students)){
+                    foreach($recap->students as $s_key=>$student){
+                        for ($temp = 0; $temp <= 3; $temp++){
+                            switch ($temp) {
+                                case 0:
+                                    $data[$key][$s_key] = [$s_key+1];
+                                    break;
+                                case 1:
+                                    array_push($data[$key][$s_key], $student->nim);
+                                    break;
+                                case 2:
+                                    array_push($data[$key][$s_key], $student->name);
+                                    break;
+                                case 3:
+                                    foreach($student->grade as $g_key=>$grade) {
+                                        for ($x = 0; $x <= 7; $x++) {
+                                            switch ($x) {
+                                                case 0:
+                                                    $grade->presence ? array_push($data[$key][$s_key], "Hadir") : array_push($data[$key][$s_key], "Tidak Hadir");
+                                                    break;
+                                                case 1:
+                                                    array_push($data[$key][$s_key], "");
+                                                    break;
+                                                case 2:
+                                                    $s_key == 0 ? array_push($data[$key][$s_key], $recap->schedule[$g_key]->evaluasi) : array_push($data[$key][$s_key], "");
+                                                    break;
+                                                case 3:
+                                                    $s_key == 0 ? array_push($data[$key][$s_key], $recap->schedule[$g_key]->materi) : array_push($data[$key][$s_key], "");
+                                                    break;
+                                                case 4:
+                                                    array_push($data[$key][$s_key], $grade->pretest_grade);
+                                                    break;
+                                                case 5:
+                                                    array_push($data[$key][$s_key], $grade->journal_grade);
+                                                    break;
+                                                case 6:
+                                                    array_push($data[$key][$s_key], $grade->posttest_grade);
+                                                    break;
+                                                case 7:
+                                                    array_push($data[$key][$s_key], $grade->total_grade);
+                                                    break;
+                                            }
+                                        }
+                                    }
+                                    break;
+                            }
+                        }
+                    }
+                }
+                else{
+                    $data[$key] = [];
+                }
+                $data[$key] = array_merge($headers, $data[$key]);
+            }
+            return (new RecapMultiSheetExport($data, $classes))->download($file_name);
+        }
     }
 }

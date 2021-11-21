@@ -61,4 +61,8 @@ class Schedule extends BaseModel
     {
         return $this->hasMany(AsprakPresence::class);
     }
+
+    public function bap() {
+        return $this->hasOne(Bap::class);
+    }
 }
