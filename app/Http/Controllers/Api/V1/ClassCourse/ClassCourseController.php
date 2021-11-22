@@ -366,9 +366,10 @@ class ClassCourseController extends BaseController
                                     ->toArray();
 
         if(empty($class_courses)){
-            $data['data']['message'] = "course_id not found";
-            $data['data']['data'] = false;
-            return $data;
+            $data= [[["kelas mk masih kosong!"]]];
+            $classes = ['Sheet1'];
+            $file_name = "recap".".xlsx";
+            return (new RecapMultiSheetExport($data, $classes))->download($file_name);
         }
         else{
             $headers[0] = ['', '', ''];
