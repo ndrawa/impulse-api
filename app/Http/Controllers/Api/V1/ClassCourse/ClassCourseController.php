@@ -278,9 +278,52 @@ class ClassCourseController extends BaseController
             return $this->response->errorNotFound('invalid class course id');
         }
 
+        // $result = $this->simplifyRecapPresence($class_course);
         $result = $this->simplifyRecapPresence($class_course);
-
         return json_encode($result);
+    }
+
+
+    public function simpTest($class_course) {
+        // return $class_course;
+        $result = array(
+            'id' => $class_course->id,
+            'class' => array(
+                'id' => $class_course->classes->id,
+                'name' => $class_course->classes->name,
+            ),
+            'course' => array(
+                'id' => $class_course->courses->id,
+                'code'  => $class_course->courses->code,
+                'name' => $class_course->courses->name,
+            ),
+            'academic_year' => array(
+                'id' => $class_course->academic_years->id,
+                'year' => $class_course->academic_years->year,
+                'semester' => $class_course->academic_years->semester,
+            )
+        );
+
+        $schedule = $this->sort_module($class_course->schedule); #array($class_course->schedule);
+
+        $result = $schedule;
+        return $schedule;
+    }
+
+    public function sort_module($schedule) {
+        $size = count($schedule);
+        $temp;
+        for($i=0; $i<$size; $i++) {
+            for($j=0; $j<$size-$i-1; $j++) {
+                if($schedule[$j]['module']['index'] > $schedule[$j+1]['module']['index']) {
+                    $temp = $schedule[$j];
+                    $schedule[$j] = $schedule[$j+1];
+                    $schedule[$j+1] = $temp;
+                }
+            }
+        }
+
+        return $schedule;
     }
 
     public function simplifyRecapPresence($class_course) {
@@ -305,6 +348,8 @@ class ClassCourseController extends BaseController
             $grade = json_decode(app('App\Http\Controllers\Api\V1\GradeController')
                     ->getStudentGrades($student->student->id, $class_course->courses->id));
 
+            $schd = $this->sort_module($class_course->schedule); #array($class_course->schedule);
+
             $data['students'][$key] = array(
                 'id' => $student->student->id,
                 'nim' => $student->student->nim,
@@ -313,7 +358,6 @@ class ClassCourseController extends BaseController
             );
 
             foreach($grade->data->result[0]->modules as $g) {
-
                 $student_presence_ids = array();
 
                 if(count($class_course->schedule[$g->index-1]['student_presence']) > 0) {
@@ -331,7 +375,8 @@ class ClassCourseController extends BaseController
                $g->presence = $presence;
             }
         }
-        foreach($class_course->schedule as $key=>$schedule) {
+
+        foreach($schd as $key=>$schedule) {
             $data['schedule'][$key] = array(
                 'id' => $schedule->id,
                 'name' => $schedule->name,
