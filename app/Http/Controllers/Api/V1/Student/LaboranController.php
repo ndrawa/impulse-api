@@ -34,6 +34,7 @@ use App\Imports\AsprakImport;
 // use App\Imports\StudentClassImport;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Models\Role;
+use Auth;
 use Illuminate\Support\Facades\Hash;
 
 class LaboranController extends BaseController
@@ -765,21 +766,23 @@ class LaboranController extends BaseController
 
     // function logout belum selesai
         
-    // public function logout_user($id){
-    //     if (empty(Student::find($id))) {
-    //         if (empty(Staff::find($id))) {
-    //             return $this->response->errorNotFound('invalid user id');
-    //         } else {
-    //             $staff = Staff::find($id);
-    //             $user = User::find($staff->user_id);
-    //             $user->currentAccessToken()->delete();
-    //             return $this->response->noContent();
-    //         }
-    //     } else {
-    //         $student = Student::find($id);
-    //         $user = User::find($student->user_id);
-    //         $user->currentAccessToken()->delete();
-    //         return $this->response->noContent();
-    //     }
-    // }
+    public function logout_user($id){
+        if (empty(Student::find($id))) {
+            if (empty(Staff::find($id))) {
+                return $this->response->errorNotFound('invalid user id');
+            } else {
+                $staff = Staff::find($id);
+                $user = User::find($staff->user_id);
+                Auth::setUser($user);
+                Auth::logout();
+                return $this->response->noContent();
+            }
+        } else {
+            $student = Student::find($id);
+            $user = User::find($student->user_id);
+            Auth::setUser($user);
+            Auth::logout();
+            return $this->response->noContent();
+        }
+    }
 }
