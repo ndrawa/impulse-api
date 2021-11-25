@@ -109,24 +109,44 @@ class ScheduleController extends BaseController
                 $module = Module::where('id', $s['module_id'])->first();
                 $room = Room::where('id', $s['room_id'])->first();
 
-                $arr[$key]['id'] = $s['id'];
-                $arr[$key]['title'] = $s['name'];
-                $arr[$key]['start'] = $s['time_start'];
-                $arr[$key]['end'] = $s['time_end'];
-                $arr[$key]['room'] = $room;
-                $arr[$key]['class_course']['id'] = $class_course['id'];
-                $arr[$key]['class_course']['class']['id'] = $class['id'];
-                $arr[$key]['class_course']['class']['name'] = $class['name'];
-                $arr[$key]['class_course']['class']['academic_year'] = $class['academic_year'];
-                $arr[$key]['class_course']['course']['id'] = $course['id'];
-                $arr[$key]['class_course']['course']['name'] = $course['name'];
-                $arr[$key]['class_course']['course']['code'] = $course['code'];
-                $arr[$key]['class_course']['staff']['id'] = $staff['id'];
-                $arr[$key]['class_course']['staff']['name'] = $staff['name'];
-                $arr[$key]['class_course']['staff']['code'] = $staff['code'];
-                $arr[$key]['module'] = $module;
-                $arr[$key]['academic_year'] = $academic_year;
-                $arr[$key]['date'] = $s['date'];
+                $insert = true;
+                if($request->has('module_index')){
+                    if(!empty($request->module_index)) {
+                        if($request->module_index == $module->index){
+                            $insert = true;
+                        }
+                        else{
+                            $insert = false;
+                        }
+                    }
+                    else{
+                        $insert = true;
+                    }
+                }
+                else{
+                    $insert = true;
+                }
+
+                if($insert){
+                    $arr[$key]['id'] = $s['id'];
+                    $arr[$key]['title'] = $s['name'];
+                    $arr[$key]['start'] = $s['time_start'];
+                    $arr[$key]['end'] = $s['time_end'];
+                    $arr[$key]['room'] = $room;
+                    $arr[$key]['class_course']['id'] = $class_course['id'];
+                    $arr[$key]['class_course']['class']['id'] = $class['id'];
+                    $arr[$key]['class_course']['class']['name'] = $class['name'];
+                    $arr[$key]['class_course']['class']['academic_year'] = $class['academic_year'];
+                    $arr[$key]['class_course']['course']['id'] = $course['id'];
+                    $arr[$key]['class_course']['course']['name'] = $course['name'];
+                    $arr[$key]['class_course']['course']['code'] = $course['code'];
+                    $arr[$key]['class_course']['staff']['id'] = $staff['id'];
+                    $arr[$key]['class_course']['staff']['name'] = $staff['name'];
+                    $arr[$key]['class_course']['staff']['code'] = $staff['code'];
+                    $arr[$key]['module'] = $module;
+                    $arr[$key]['academic_year'] = $academic_year;
+                    $arr[$key]['date'] = $s['date'];
+                }
             }
 
             foreach($arr as $key=>$a){
