@@ -794,9 +794,6 @@ class LaboranController extends BaseController
             $per_page = $size;
         });
 
-        $nim = Student::where('nim', 'ILIKE', '%'.$search.'%')->first();
-        $nip = Staff::where('nip', 'ILIKE', '%'.$search.'%')->first();
-
         $request->whenHas('search', function($search) use (&$user) {
             $user = $user->where('username', 'ILIKE', '%'.$search.'%');
                             // ->orWhere('name', 'ILIKE', '%'.$search.'%')
