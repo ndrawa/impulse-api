@@ -8,6 +8,7 @@ $api->version('v1', [
     'prefix' => 'v1/laboran'
 ], function($api) {
     $api->get('/student', ['as' => 'laboran.index', 'uses' => 'LaboranController@index']);
+    $api->get('/user', ['as' => 'laboran.index_user', 'uses' => 'LaboranController@index_user']);
     $api->get('/student/{id}', ['as' => 'laboran.show', 'uses' => 'LaboranController@show']);
     $api->get('/classes', ['as' => 'laboran.get_student_classes', 'uses' => 'LaboranController@get_student_classes']);
     $api->get('/role/{no_induk}', ['as' => 'laboran.get_role', 'uses' => 'LaboranController@get_role']);
