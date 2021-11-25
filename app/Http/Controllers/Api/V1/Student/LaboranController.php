@@ -785,4 +785,33 @@ class LaboranController extends BaseController
             return $this->response->noContent();
         }
     }
+
+    public function index_user(Request $request)
+    {
+        $user = User::query();
+        $per_page = env('PAGINATION_SIZE', 15);
+        $request->whenHas('per_page', function($size) use (&$per_page) {
+            $per_page = $size;
+        });
+
+        $request->whenHas('search', function($search) use (&$user) {
+            $user = $user->where('username', 'ILIKE', '%'.$search.'%');
+                            // ->orWhere('name', 'ILIKE', '%'.$search.'%')
+                            // ->orWhere('nim', 'ILIKE', '%'.$search.'%');
+        });
+
+        if($request->has('orderBy') && $request->has('sortedBy')) {
+            $orderBy = $request->get('orderBy');
+            $sortedBy = $request->get('sortedBy');
+            $user->orderBy($orderBy, $sortedBy);
+        }
+        else if($request->has('orderBy')) {
+            $orderBy = $request->get('orderBy');
+            $user->orderBy($orderBy);
+        }
+
+        $user = $user->paginate($per_page);
+
+        return $this->response->paginator($user, new UserTransformer);
+    }
 }
