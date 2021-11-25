@@ -34,7 +34,7 @@ use App\Imports\AsprakImport;
 // use App\Imports\StudentClassImport;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Models\Role;
-use Auth;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class LaboranController extends BaseController
@@ -775,6 +775,7 @@ class LaboranController extends BaseController
                 $user = User::find($staff->user_id);
                 Auth::setUser($user);
                 Auth::logout();
+                // return redirect('/');
                 return $this->response->noContent();
             }
         } else {
@@ -782,7 +783,6 @@ class LaboranController extends BaseController
             $user = User::find($student->user_id);
             Auth::setUser($user);
             Auth::logout();
-            return $this->response->noContent();
         }
     }
 
@@ -793,6 +793,9 @@ class LaboranController extends BaseController
         $request->whenHas('per_page', function($size) use (&$per_page) {
             $per_page = $size;
         });
+
+        $nim = Student::where('nim', 'ILIKE', '%'.$search.'%')->first();
+        $nip = Staff::where('nip', 'ILIKE', '%'.$search.'%')->first();
 
         $request->whenHas('search', function($search) use (&$user) {
             $user = $user->where('username', 'ILIKE', '%'.$search.'%');
