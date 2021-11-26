@@ -13,7 +13,8 @@ class AuthController extends BaseController
     {
         $this->validate($request, [
             'username' => 'required|string',
-            'password' => 'required|string|min:5'
+            'password' => 'required|string|min:5',
+            'user_agent' => 'required'
         ]);
 
         $credentials = $request->only('username', 'password');
@@ -29,7 +30,7 @@ class AuthController extends BaseController
         $session = Session::create([
             'user_id' => $user->id,
             'token' => $token,
-            'user_agent' => null,
+            'user_agent' => $request->user_agent,
             'login_at' => date("Y-m-d H:i:s")
         ]);
 
