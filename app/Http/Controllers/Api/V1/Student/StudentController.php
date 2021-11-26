@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\V1\BaseController;
 use App\Models\Student;
 use App\Models\User;
 use App\Models\Grade;
+use App\Models\ClassCourse;
 use App\Transformers\StudentTransformer;
 use App\Transformers\StudentMePresenceTransformer;
 use Illuminate\Validation\Rule;
@@ -112,7 +113,7 @@ class StudentController extends BaseController
         return $grade;
     }
 
-    public function show_me_presence(Request $request) {
+    public function show_me_presence($class_course_id = null) {
         $student = Student::with(['student_class_course',
                     'student_class_course.class_course',
                     'student_class_course.class_course.courses',
@@ -124,12 +125,11 @@ class StudentController extends BaseController
         $grade_controller = new GradeController;
         $grade = json_decode($grade_controller->getStudentGrades($this->user->student->id), true);
 
-        $class_course_id = null;
-        if($request->has('class_course_id')){
-            $class_course_id = $request->get('class_course_id');
-        }
 
-        return $data = array( 'data'=>$this->simplify_show_me_presence($student, $grade['data']['result'], $class_course_id));
+        return $this->simplify_show_me_presence($student, $grade['data']['result'], $class_course_id);
+
+        return array('data' =>
+                        $this->simplify_show_me_presence($student, $grade['data']['result'], $class_course_id));
     }
 
     private function simplify_show_me_presence($student, $grade, $class_course_id = null) {
@@ -142,7 +142,7 @@ class StudentController extends BaseController
         );
 
         if($class_course_id != null){
-            $class_course = null;
+            $class_course = ClassCourse::findOrFail($class_course_id);
             foreach($student->student_class_course as $key=>$d){
                 if($d->class_course->id == $class_course_id){
                     $class_course = $d;
@@ -163,27 +163,22 @@ class StudentController extends BaseController
                         'name' => $class_course->class_course->classes->name,
                     ),
                 );
-    
-                foreach($class_course->class_course->schedule as $cc_key=>$cc) {
-                    $i = $cc_key;
+
+                $schd = $this->sort_module($class_course->class_course->schedule);
+
+                foreach($schd as $sched_key=>$sched) {
                     $presence = false;
-                    if(count($cc->student_presence)) {
-                        $presence = true;
+
+                    if(count($sched->student_presence)) {
+                        $presence = $this->checkMePresence($this->user->student->id, $sched->student_presence);
                     }
-    
-                    $pretest_grade = (is_int($grade[$key]['modules'][$cc_key]['pretest_grade'])) ? $grade[$key]['modules'][$cc_key]['pretest_grade'] : 0;
-                    $journal_grade = (is_int($grade[$key]['modules'][$cc_key]['journal_grade'])) ? $grade[$key]['modules'][$cc_key]['journal_grade'] : 0;
-                    $posttest_grade = (is_int($grade[$key]['modules'][$cc_key]['posttest_grade'])) ? $grade[$key]['modules'][$cc_key]['posttest_grade'] : 0;
-    
-                    $data['class_course']['presences'][$cc_key] = array(
-                        'index' => $i+1,
+
+                    $grade = json_decode(app('App\Http\Controllers\Api\V1\GradeController')
+                                        ->getStudentGrades($this->user->student->id, $class_course->class_course->courses->id));
+
+                    $data['class_course']['modules'][$sched_key] = array(
                         'presence' => $presence,
-                        'grade' => array(
-                            'pretest_grade' => $grade[$key]['modules'][$cc_key]['pretest_grade'],
-                            'journal_grade' => $grade[$key]['modules'][$cc_key]['journal_grade'],
-                            'posttest_grade' => $grade[$key]['modules'][$cc_key]['posttest_grade'],
-                            'total_grade' => $pretest_grade + $journal_grade + $posttest_grade,
-                        ),
+                        'grade' => $grade->data->result[0]->modules[$sched_key],
                     );
                 }
             }
@@ -202,32 +197,53 @@ class StudentController extends BaseController
                         'name' => $d->class_course->classes->name,
                     ),
                 );
-    
-                foreach($d->class_course->schedule as $cc_key=>$cc) {
-                    $i = $cc_key;
+
+                $schd = $this->sort_module($d->class_course->schedule);
+
+                foreach($schd as $sched_key=>$sched) {
                     $presence = false;
-                    if(count($cc->student_presence)) {
-                        $presence = true;
+                    if(count($sched->student_presence)) {
+                        $presence = $this->checkMePresence($this->user->student->id, $sched->student_presence);
                     }
-    
-                    $pretest_grade = (is_int($grade[$key]['modules'][$cc_key]['pretest_grade'])) ? $grade[$key]['modules'][$cc_key]['pretest_grade'] : 0;
-                    $journal_grade = (is_int($grade[$key]['modules'][$cc_key]['journal_grade'])) ? $grade[$key]['modules'][$cc_key]['journal_grade'] : 0;
-                    $posttest_grade = (is_int($grade[$key]['modules'][$cc_key]['posttest_grade'])) ? $grade[$key]['modules'][$cc_key]['posttest_grade'] : 0;
-    
-                    $data['class_course'][$key]['presences'][$cc_key] = array(
-                        'index' => $i+1,
+
+                    $grade = json_decode(app('App\Http\Controllers\Api\V1\GradeController')
+                            ->getStudentGrades($this->user->student->id, $d->class_course->courses->id));
+
+                    $data['class_course'][$key]['presences'][$sched_key] = array(
                         'presence' => $presence,
-                        'grade' => array(
-                            'pretest_grade' => $grade[$key]['modules'][$cc_key]['pretest_grade'],
-                            'journal_grade' => $grade[$key]['modules'][$cc_key]['journal_grade'],
-                            'posttest_grade' => $grade[$key]['modules'][$cc_key]['posttest_grade'],
-                            'total_grade' => $pretest_grade + $journal_grade + $posttest_grade,
-                        ),
+                        'grade' => $grade->data->result[0]->modules[$sched_key],
                     );
                 }
             }
         }
 
         return $data;
+    }
+
+    public function sort_module($schedule) {
+        $size = count($schedule);
+        $temp;
+        for($i=0; $i<$size; $i++) {
+            for($j=0; $j<$size-$i-1; $j++) {
+                if($schedule[$j]['module']['index'] > $schedule[$j+1]['module']['index']) {
+                    $temp = $schedule[$j];
+                    $schedule[$j] = $schedule[$j+1];
+                    $schedule[$j+1] = $temp;
+                }
+            }
+        }
+
+        return $schedule;
+    }
+
+    public function checkMePresence($student_id, $obj_student_presence) {
+        $arr_student_presence = array($obj_student_presence);
+        foreach($arr_student_presence[0] as $student_presence) {
+            if(!strcmp($student_presence['student_id'], $student_id)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
