@@ -344,6 +344,8 @@ class ClassCourseController extends BaseController
                 'semester' => $class_course->academic_years->semester,
             )
         );
+
+        $schd = [];
         foreach($class_course->student as $key=>$student) {
             $grade = json_decode(app('App\Http\Controllers\Api\V1\GradeController')
                     ->getStudentGrades($student->student->id, $class_course->courses->id));
@@ -376,26 +378,30 @@ class ClassCourseController extends BaseController
             }
         }
 
-        foreach($schd as $key=>$schedule) {
-            $data['schedule'][$key] = array(
-                'id' => $schedule->id,
-                'name' => $schedule->name,
-                'module' => array(
-                    'index' => $schedule->module->index,
-                ),
-                'student_presence' => $schedule->student_presence,
-            );
-            if(is_null($schedule->bap)) {
-                $data['schedule'][$key]['materi'] = null;
-                $data['schedule'][$key]['evaluasi'] = null;
-            } else {
-                $data['schedule'][$key]['materi'] = $schedule->bap->materi;
-                $data['schedule'][$key]['evaluasi'] = $schedule->bap->evaluasi;
+        if(!empty($schd)){
+            foreach($schd as $key=>$schedule) {
+                $data['schedule'][$key] = array(
+                    'id' => $schedule->id,
+                    'name' => $schedule->name,
+                    'module' => array(
+                        'index' => $schedule->module->index,
+                    ),
+                    'student_presence' => $schedule->student_presence,
+                );
+                if(is_null($schedule->bap)) {
+                    $data['schedule'][$key]['materi'] = null;
+                    $data['schedule'][$key]['evaluasi'] = null;
+                } else {
+                    $data['schedule'][$key]['materi'] = $schedule->bap->materi;
+                    $data['schedule'][$key]['evaluasi'] = $schedule->bap->evaluasi;
+                }
             }
         }
-        usort($data['schedule'], function ($item1, $item2) {
-            return $item1['module'] <=> $item2['module'];
-        });
+        if(!empty($data['schedule'])){
+            usort($data['schedule'], function ($item1, $item2) {
+                return $item1['module'] <=> $item2['module'];
+            });
+        }
 
         return $data;
     }
