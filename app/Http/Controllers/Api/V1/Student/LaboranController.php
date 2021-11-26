@@ -793,7 +793,10 @@ class LaboranController extends BaseController
         $session = null;
         if (empty(Student::find($id))) {
             if (empty(Staff::find($id))) {
-                return $this->response->errorNotFound('invalid user id');
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Invalid User ID'
+                ], Response::HTTP_INTERNAL_SERVER_ERROR);
             } else {
                 $staff = Staff::find($id);
                 $session = Session::where('user_id', $staff->user_id)->first();
