@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use Illuminate\Http\Request;
 use App\Models\Authorization;
+use App\Models\Session;
 use App\Transformers\AuthorizationTransformer;
 
 class AuthController extends BaseController
@@ -24,6 +25,13 @@ class AuthController extends BaseController
         $authorization = new Authorization($token);
 
         $user = $authorization->user();
+        
+        $session = Session::create([
+            'user_id' => $user->id,
+            'token' => $token,
+            'user_agent' => null,
+            'login_at' => date("Y-m-d H:i:s")
+        ]);
 
         return $this->response->item($authorization, new AuthorizationTransformer);
     }

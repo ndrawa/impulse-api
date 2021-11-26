@@ -16,11 +16,11 @@ class CreateSessionTable extends Migration
         Schema::create('session', function (Blueprint $table) {
             $table->char('id', 26)->primary();
             $table->char('user_id', 26);
-            $table->string('token');
-            $table->string('user_agent');
+            $table->longtext('token');
+            $table->longtext('user_agent')->nullable();
             $table->dateTime('login_at');
             $table->timestamps();
-            
+
             $table->foreign('user_id')
             ->references('id')
             ->on('users')
