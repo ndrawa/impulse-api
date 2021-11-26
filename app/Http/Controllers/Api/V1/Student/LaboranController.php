@@ -36,6 +36,8 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Models\Role;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Validator;
 
 class LaboranController extends BaseController
 {
@@ -786,23 +788,40 @@ class LaboranController extends BaseController
     // function logout belum selesai
         
     public function logout_user($id){
+        $token = null;
         if (empty(Student::find($id))) {
             if (empty(Staff::find($id))) {
                 return $this->response->errorNotFound('invalid user id');
             } else {
                 $staff = Staff::find($id);
-                $user = User::find($staff->user_id);
-                Auth::setUser($user);
-                Auth::logout();
-                // return redirect('/');
-                return $this->response->noContent();
+                $user = User::find($student->user_id);
             }
         } else {
             $student = Student::find($id);
             $user = User::find($student->user_id);
-            Auth::setUser($user);
-            Auth::logout();
         }
+        // $token = auth()->login($user);
+        $token = auth()->getToken();
+        // if ($token != null) {
+            try {
+                JWTAuth::setToken($token)->invalidate();
+                return response()->json([
+                    'success' => true,
+                    'message' => 'User has been logged out',
+                    'user' => $user,
+                    'token' => $token
+                ]);
+            } catch (JWTException $exception) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Sorry, user cannot be logged out',
+                    'user' => $user,
+                    'token' => $token
+                ], Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
+        // } else {
+        //     return $this->response->errorNotFound('invalid token');
+        // }
     }
 
     public function index_user(Request $request)
