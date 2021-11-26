@@ -16,6 +16,7 @@ use App\Models\Student;
 use App\Models\StudentClassCourse;
 use App\Models\Staff;
 use App\Models\User;
+use App\Models\Session;
 use App\Models\StudentPresence;
 use App\Models\AsprakPresence;
 use App\Models\Bap;
@@ -36,8 +37,9 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Models\Role;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Tymon\JWTAuth\Facades\JWTAuth;
+use Tymon\JWTAuth\Exceptions\JWTException;
 use Symfony\Component\HttpFoundation\Response;
-use Illuminate\Support\Facades\Validator;
 
 class LaboranController extends BaseController
 {
@@ -788,40 +790,35 @@ class LaboranController extends BaseController
     // function logout belum selesai
         
     public function logout_user($id){
-        $token = null;
+        $session = null;
         if (empty(Student::find($id))) {
             if (empty(Staff::find($id))) {
                 return $this->response->errorNotFound('invalid user id');
             } else {
                 $staff = Staff::find($id);
-                $user = User::find($student->user_id);
+                $session = Session::where('user_id', $staff->user_id)->first();
             }
         } else {
             $student = Student::find($id);
-            $user = User::find($student->user_id);
+            $session = Session::where('user_id', $student->user_id)->first();
         }
-        // $token = auth()->login($user);
-        $token = auth()->getToken();
-        // if ($token != null) {
+        if ($session != null) {
             try {
-                JWTAuth::setToken($token)->invalidate();
+                JWTAuth::setToken($session->token)->invalidate();
+                Session::findOrFail($session->id)->delete();
                 return response()->json([
                     'success' => true,
-                    'message' => 'User has been logged out',
-                    'user' => $user,
-                    'token' => $token
+                    'message' => 'User has been logged out'
                 ]);
             } catch (JWTException $exception) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Sorry, user cannot be logged out',
-                    'user' => $user,
-                    'token' => $token
+                    'message' => 'Sorry, user cannot be logged out'
                 ], Response::HTTP_INTERNAL_SERVER_ERROR);
             }
-        // } else {
-        //     return $this->response->errorNotFound('invalid token');
-        // }
+        } else {
+            return $this->response->errorNotFound('invalid token');
+        }
     }
 
     public function index_user(Request $request)
