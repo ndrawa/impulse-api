@@ -209,7 +209,7 @@ class StudentController extends BaseController
                     $grade = json_decode(app('App\Http\Controllers\Api\V1\GradeController')
                             ->getStudentGrades($this->user->student->id, $d->class_course->courses->id));
 
-                    $data['class_course'][$key]['presences'][$sched_key] = array(
+                    $data['class_course'][$key]['modules'][$sched_key] = array(
                         'presence' => $presence,
                         'grade' => $grade->data->result[0]->modules[$sched_key],
                     );
