@@ -606,22 +606,41 @@ class LaboranController extends BaseController
                 $class = Classroom::where('id', $cc['class_id'])->first();
                 $staff = Staff::where('id', $cc['staff_id'])->first();
 
-
-                $arr[$key]['id'] = $s['id'];
-                $arr[$key]['title'] = $s['name'];
-                $arr[$key]['start'] = $s['time_start'];
-                $arr[$key]['end'] = $s['time_end'];
-                $arr[$key]['class_course']['course']['name'] = $course['name'];
-                $arr[$key]['module'] = $module;
-                $arr[$key]['class_course']['class']['name'] = $class['name'];
-                $arr[$key]['class_course']['staff']['code'] = $staff['code'];
-                $arr[$key]['date'] = $s['date'];
-                $arr[$key]['academic_year'] = $academic_year;
-                if (Bap::where('schedule_id', $s['id'])->first()) {
-                    $arr[$key]['is_present'] = true;
+                $insert = true;
+                if($request->has('module_index')){
+                    if(!empty($request->module_index)) {
+                        if($request->module_index == $module->index){
+                            $insert = true;
+                        }
+                        else{
+                            $insert = false;
+                        }
+                    }
+                    else{
+                        $insert = true;
+                    }
                 }
                 else{
-                    $arr[$key]['is_present'] = false;
+                    $insert = true;
+                }
+
+                if($insert){
+                    $arr[$key]['id'] = $s['id'];
+                    $arr[$key]['title'] = $s['name'];
+                    $arr[$key]['start'] = $s['time_start'];
+                    $arr[$key]['end'] = $s['time_end'];
+                    $arr[$key]['class_course']['course']['name'] = $course['name'];
+                    $arr[$key]['module'] = $module;
+                    $arr[$key]['class_course']['class']['name'] = $class['name'];
+                    $arr[$key]['class_course']['staff']['code'] = $staff['code'];
+                    $arr[$key]['date'] = $s['date'];
+                    $arr[$key]['academic_year'] = $academic_year;
+                    if (Bap::where('schedule_id', $s['id'])->first()) {
+                        $arr[$key]['is_present'] = true;
+                    }
+                    else{
+                        $arr[$key]['is_present'] = false;
+                    }
                 }
 
             }
