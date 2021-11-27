@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Session extends BaseModel
 {
-    protected $table = "session";
+    protected $table = "sessions";
 
     /**
      * The attributes that are mass assignable.
