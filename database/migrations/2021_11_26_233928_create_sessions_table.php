@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSessionTable extends Migration
+class CreateSessionsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateSessionTable extends Migration
      */
     public function up()
     {
-        Schema::create('session', function (Blueprint $table) {
+        Schema::create('sessions', function (Blueprint $table) {
             $table->char('id', 26)->primary();
             $table->char('user_id', 26);
             $table->longtext('token');
@@ -35,6 +35,6 @@ class CreateSessionTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('session');
+        Schema::dropIfExists('sessions');
     }
 }
