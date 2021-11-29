@@ -12,6 +12,10 @@ $api->version('v1', [
 
     $api->group(['prefix' => 'auth'], function($api) {
         $api->post('login', ['as' => 'auth.login', 'uses' => 'AuthController@login']);
+
+        $api->group(['middleware' => 'auth:api'], function($api) {
+            $api->post('/logout/{user_id}', ['as' => 'profile.logout', 'uses' => 'AuthController@logout']);
+        });
     });
 
     $api->group(['middleware' => 'auth:api'], function($api) {
