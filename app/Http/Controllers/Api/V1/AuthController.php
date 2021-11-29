@@ -45,14 +45,14 @@ class AuthController extends BaseController
     public function authenticated($user) {
         $login = Session::where('user_id', $user->id)->count();
         if($login > 0) {
-            $this->logout($user);
+            $this->logout($user->id);
             return FALSE;
         }
         return TRUE;
     }
 
-    public function logout($user) {
-        $user_session = Session::where('user_id', $user->id)->first();
+    public function logout($user_id) {
+        $user_session = Session::where('user_id', $user_id)->first();
         $user_session->delete();
     }
 }
