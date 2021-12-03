@@ -27,7 +27,7 @@ class AuthController extends BaseController
 
         $user = $authorization->user();
 
-        if(!$this->authenticated($user)) {
+        if($this->authenticated($user)) {
             return $this->response->errorUnauthorized("User ini telah login di perangkat lain. Coba login kembali.");
         }
 
@@ -45,15 +45,20 @@ class AuthController extends BaseController
     }
 
     public function authenticated($user) {
-        $login = Session::where('user_id', $user->id)->count();
-        if($login > 0) {
-            $this->logout($user->id);
+        $login = Session::where('user_id', $user->id)->first();
+
+        if($login) {
+            if(strtotime($login->expired_at) < strtotime(date('Y-m-d H:i:s'))) {
+                $this->logout($user->id);
+                return TRUE;
+            }
+            return TRUE;
+        } else {
             return FALSE;
         }
-        return TRUE;
     }
 
     public function logout($user_id) {
-        $user_session = Session::where('user_id', $user_id)->delete();
+        $user_session = Session::where('user_id', $user_id)->first()->delete();
     }
 }
