@@ -28,7 +28,7 @@ class AuthController extends BaseController
         $user = $authorization->user();
 
         if(!$this->authenticated($user)) {
-            return $this->response->errorUnauthorized("This user has logged in somewhere else");
+            return $this->response->errorUnauthorized("User ini telah login di perangkat lain. Coba login kembali.");
         }
 
         $expired_time = $authorization->toArray()['expired_at'];
