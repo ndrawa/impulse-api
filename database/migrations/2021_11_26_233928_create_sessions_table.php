@@ -19,6 +19,7 @@ class CreateSessionsTable extends Migration
             $table->longtext('token');
             $table->longtext('user_agent')->nullable();
             $table->dateTime('login_at');
+            $table->dateTime('expired_at');
             $table->timestamps();
 
             $table->foreign('user_id')

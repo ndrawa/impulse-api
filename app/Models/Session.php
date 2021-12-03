@@ -17,7 +17,8 @@ class Session extends BaseModel
         'user_id',
         'token',
         'user_agent',
-        'login_at'
+        'login_at',
+        'expired_at',
     ];
 
     public function user()
