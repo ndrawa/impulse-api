@@ -15,7 +15,6 @@ class AuthController extends BaseController
         $this->validate($request, [
             'username' => 'required|string',
             'password' => 'required|string|min:5',
-            // 'user_agent' => 'required'
         ]);
 
         $credentials = $request->only('username', 'password');
@@ -32,11 +31,14 @@ class AuthController extends BaseController
             return $this->response->errorUnauthorized("This user has logged in somewhere else");
         }
 
+        $expired_time = $authorization->toArray()['expired_at'];
+
         $session = Session::create([
             'user_id' => $user->id,
             'token' => $token,
             'user_agent' => $_SERVER['HTTP_USER_AGENT'],
-            'login_at' => date("Y-m-d H:i:s")
+            'login_at' => date("Y-m-d H:i:s"),
+            'expired_at' => $expired_time,
         ]);
 
         return $this->response->item($authorization, new AuthorizationTransformer);
@@ -52,7 +54,6 @@ class AuthController extends BaseController
     }
 
     public function logout($user_id) {
-        $user_session = Session::where('user_id', $user_id)->first();
-        $user_session->delete();
+        $user_session = Session::where('user_id', $user_id)->delete();
     }
 }
