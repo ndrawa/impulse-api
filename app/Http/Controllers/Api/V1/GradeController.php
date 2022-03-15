@@ -86,11 +86,13 @@ class GradeController extends BaseController
                                 ->get()
                                 ->toArray();
                 if($pretest[0]['pretest_id'] == null) {
-                    $pretest_grade = 0;
-                    $pretest_submitted = false;
+                    $pretest_grade['total_grade'] = 0;
+                    $pretest_grade['is_late'] = false;
+                    $pretest_grade['submitted_time'] = null;
+                    // $pretest_submitted = false;
                 } else {
-                    $pretest_grade = $this->getStudentTestGrade($student_id, $pretest[0]['pretest_id'])['data']['total_grade'];
-                    $pretest_submitted = true;
+                    $pretest_grade = $this->getStudentTestGrade($student_id, $pretest[0]['pretest_id'])['data'];
+                    // $pretest_submitted = true;
                 }
 
                 $journal = Module::select('journal_id')
@@ -98,11 +100,13 @@ class GradeController extends BaseController
                                 ->get()
                                 ->toArray();
                 if($journal[0]['journal_id'] == null) {
-                    $journal_grade = 0;
-                    $journal_submitted = false;
+                    $journal_grade['total_grade'] = 0;
+                    $journal_grade['is_late'] = false;
+                    $journal_grade['submitted_time'] = null;
+                    // $journal_submitted = false;
                 } else {
-                    $journal_grade = $this->getStudentTestGrade($student_id, $journal[0]['journal_id'])['data']['total_grade'];
-                    $journal_submitted = true;
+                    $journal_grade = $this->getStudentTestGrade($student_id, $journal[0]['journal_id'])['data'];
+                    // $journal_submitted = true;
                 }
 
                 $posttest = Module::select('posttest_id')
@@ -110,11 +114,13 @@ class GradeController extends BaseController
                                 ->get()
                                 ->toArray();
                 if($posttest[0]['posttest_id'] == null) {
-                    $posttest_grade = 0;
-                    $posttest_submitted = false;
+                    $posttest_grade['total_grade'] = 0;
+                    $posttest_grade['is_late'] = false;
+                    $posttest_grade['submitted_time'] = null;
+                    // $posttest_submitted = false;
                 } else {
-                    $posttest_grade = $this->getStudentTestGrade($student_id, $posttest[0]['posttest_id'])['data']['total_grade'];
-                    $posttest_submitted = true;
+                    $posttest_grade = $this->getStudentTestGrade($student_id, $posttest[0]['posttest_id'])['data'];
+                    // $posttest_submitted = true;
                 }
 
                 $index = Module::select('index')
@@ -123,10 +129,20 @@ class GradeController extends BaseController
                             ->toArray();
 
                 $module_test[$cc_key][$s_key]['index'] =  $index[0]['index'];
-                $module_test[$cc_key][$s_key]['pretest_grade'] =  $pretest_grade;
-                $module_test[$cc_key][$s_key]['journal_grade'] =  $journal_grade;
-                $module_test[$cc_key][$s_key]['posttest_grade'] =  $posttest_grade;
-                $module_test[$cc_key][$s_key]['total_grade'] =  $pretest_grade + $journal_grade + $posttest_grade;
+                $module_test[$cc_key][$s_key]['pretest']['grade'] =  $pretest_grade['total_grade'];
+                $module_test[$cc_key][$s_key]['pretest']['is_late'] =  $pretest_grade['is_late'];
+                $module_test[$cc_key][$s_key]['pretest']['submitted_time'] =  $pretest_grade['submitted_time'];
+
+
+                $module_test[$cc_key][$s_key]['journal']['grade'] =  $journal_grade['total_grade'];
+                $module_test[$cc_key][$s_key]['journal']['is_late'] =  $journal_grade['is_late'];
+                $module_test[$cc_key][$s_key]['journal']['submitted_time'] =  $journal_grade['submitted_time'];
+
+                $module_test[$cc_key][$s_key]['posttest']['grade'] =  $posttest_grade['total_grade'];
+                $module_test[$cc_key][$s_key]['posttest']['is_late'] =  $posttest_grade['is_late'];
+                $module_test[$cc_key][$s_key]['posttest']['submitted_time'] =  $posttest_grade['submitted_time'];
+
+                $module_test[$cc_key][$s_key]['total_grade'] =  $pretest_grade['total_grade'] + $journal_grade['total_grade'] + $posttest_grade['total_grade'];
 
             }
         }
@@ -176,6 +192,7 @@ class GradeController extends BaseController
             //     $total_grade = $total_grade + $val['grade'];
             // }
             $data['total_grade'] = 0;
+            $submitted_at = null;
 
             $data['test'] = $test;
             $data['question'] = $test->questions;
@@ -205,18 +222,49 @@ class GradeController extends BaseController
                                                                 ->first();
                 }
                 $data['grade'][$key]['student_answer'] = $student_answer;
+                $submitted_at = $val['created_at'];
             }
 
             $data['total_grade'] = $total_grade;
 
+            //get submit time
+            $data['is_late'] = false;
+            $data['submitted_time'] = null;
+            if($submitted_at){
+                $st = ScheduleTest::where('test_id', $test_id)->first();
+                $st_date = $st['time_end'];
+                if($submitted_at > $st_date){
+                    $data['is_late'] = true;
+                }
+                $st_time = new \DateTime($st_date);
+                $st_time_formatted = strtotime($st_time->format('H:i:s'));
+                $time = strtotime($submitted_at->format('H:i:s'));
+                $data['submitted_time'] = $this->secondsToTime(abs($st_time_formatted - $time));
+            }
+
         } else {
-            $data['total_grade'] = 'null test';
+            $data['total_grade'] = '-';
             $data['submitted'] = false;
+            $data['is_late'] = false;
+            $data['submitted_time'] = null;
         }
 
         $arr_return['data'] = $data;
         return $arr_return;
     }
+
+    function secondsToTime($seconds_time)
+    {
+        if ($seconds_time < 24 * 60 * 60) {
+            return gmdate('H:i:s', $seconds_time);
+        } else {
+            $hours = floor($seconds_time / 3600);
+            $minutes = floor(($seconds_time - $hours * 3600) / 60);
+            $seconds = floor($seconds_time - ($hours * 3600) - ($minutes * 60));
+            return "$hours:$minutes:$seconds";
+        }
+    }
+
 
     // public function getClassCourseGrade(Request $request, $class_course_id, $module_index) {
     //     $class_course = ClassCourse::find($class_course_id);
@@ -299,6 +347,16 @@ class GradeController extends BaseController
                     'pretest' => $pretest['data']['submitted'],
                     'journal' => $journal['data']['submitted'],
                     'posttest' => $posttest['data']['submitted'],
+                ],
+                'is_late' => [
+                    'pretest' => $pretest['data']['is_late'],
+                    'journal' => $journal['data']['is_late'],
+                    'posttest' => $posttest['data']['is_late'],
+                ],
+                'submitted_time' => [
+                    'pretest' => $pretest['data']['submitted_time'],
+                    'journal' => $journal['data']['submitted_time'],
+                    'posttest' => $posttest['data']['submitted_time'],
                 ]
             ];
         }

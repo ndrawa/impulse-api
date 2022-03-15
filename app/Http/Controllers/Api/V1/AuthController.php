@@ -28,7 +28,17 @@ class AuthController extends BaseController
         $user = $authorization->user();
 
         if($this->authenticated($user)) {
-            return $this->response->errorUnauthorized("User ini telah login di perangkat lain. Coba login kembali.");
+            $user_id = $user->id;
+            $user_session = Session::where('user_id', $user_id)->first();
+            if($user_session){
+                $now = \Carbon\Carbon::now()->toDateTimeString();
+                if($user_session['expired_at'] < $now){
+                    $user_session->delete();
+                }
+                else{
+                    return $this->response->errorUnauthorized("User ini telah login di perangkat lain. Coba login kembali.");
+                }
+            }
         }
 
         $expired_time = $authorization->toArray()['expired_at'];
