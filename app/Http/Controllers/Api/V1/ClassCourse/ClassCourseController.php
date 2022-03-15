@@ -505,13 +505,13 @@ class ClassCourseController extends BaseController
                                                     $s_key == 0 ? array_push($data[$key][$s_key], $recap->schedule[$g_key]->materi) : array_push($data[$key][$s_key], "");
                                                     break;
                                                 case 4:
-                                                    array_push($data[$key][$s_key], $grade->pretest_grade);
+                                                    array_push($data[$key][$s_key], $grade->pretest->grade);
                                                     break;
                                                 case 5:
-                                                    array_push($data[$key][$s_key], $grade->journal_grade);
+                                                    array_push($data[$key][$s_key], $grade->journal->grade);
                                                     break;
                                                 case 6:
-                                                    array_push($data[$key][$s_key], $grade->posttest_grade);
+                                                    array_push($data[$key][$s_key], $grade->posttest->grade);
                                                     break;
                                                 case 7:
                                                     array_push($data[$key][$s_key], $grade->total_grade);
