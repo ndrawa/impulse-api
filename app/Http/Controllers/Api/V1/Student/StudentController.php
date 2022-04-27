@@ -311,7 +311,7 @@ class StudentController extends BaseController
     {
         $ticket = Ticket::findOrFail($id);
         $this->validate($request, [
-            'note_confirmation' => 'note_confirmation'
+            'note_confirmation' => 'required'
         ]);
         $ticket->fill($request->all());
         $ticket->save();
