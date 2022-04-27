@@ -8,8 +8,10 @@ use App\Models\Student;
 use App\Models\User;
 use App\Models\Grade;
 use App\Models\ClassCourse;
+use App\Models\Ticket;
 use App\Transformers\StudentTransformer;
 use App\Transformers\StudentMePresenceTransformer;
+use App\Transformers\TicketTransformer;
 use Illuminate\Validation\Rule;
 use App\Http\Controllers\Api\V1\GradeController as GradeController;
 
@@ -245,5 +247,84 @@ class StudentController extends BaseController
         }
 
         return false;
+    }
+
+    public function index_ticket(Request $request)
+    {
+        $tickets = Ticket::query();
+        $per_page = env('PAGINATION_SIZE', 15);
+        $request->whenHas('per_page', function($size) use (&$per_page) {
+            $per_page = $size;
+        });
+
+        $request->whenHas('search', function($search) use (&$tickets) {
+            $tickets = $tickets->where('name', 'ILIKE', '%'.$search.'%')
+                            ->orWhere('nim', 'ILIKE', '%'.$search.'%')
+                            ->orWhere('course_name', 'ILIKE', '%'.$search.'%')
+                            ->orWhere('class_name', 'ILIKE', '%'.$search.'%')
+                            ->orWhere('practicum_day', 'ILIKE', '%'.$search.'%')
+                            ->orWhere('practice_session', 'ILIKE', '%'.$search.'%')
+                            ->orWhere('username_sso', 'ILIKE', '%'.$search.'%')
+                            ->orWhere('password_sso', 'ILIKE', '%'.$search.'%');
+        });
+
+        if($request->has('orderBy') && $request->has('sortedBy')) {
+            $orderBy = $request->get('orderBy');
+            $sortedBy = $request->get('sortedBy');
+            $tickets->orderBy($orderBy, $sortedBy);
+        }
+        else if($request->has('orderBy')) {
+            $orderBy = $request->get('orderBy');
+            $tickets->orderBy($orderBy);
+        }
+
+        $tickets = $tickets->paginate($per_page);
+
+        return $this->response->paginator($tickets, new TicketTransformer);
+    }
+
+    public function show_ticket(Request $request, $nim)
+    {
+        //$student = Student::findOrFail($id);
+        $ticket = Ticket::where('nim', $nim)->first();
+        return $this->response->item($ticket, new TicketTransformer);
+    }
+
+    public function create_ticket(Request $request)
+    {
+        $this->validate($request, [
+            'nim' => 'required',
+            'name' => 'required',
+            'course_name' => 'required',
+            'class_name' => 'required',
+            'practicum_day' => 'required',
+            'practice_session' => 'required',
+            'username_sso' => 'required',
+            'password_sso' => 'required',
+            'note_student' => 'required',
+        ]);
+        $ticket = Ticket::create($request->all());
+
+        return $this->response->item($student, new TicketTransformer);
+    }
+
+    public function update_ticket(Request $request, $id)
+    {
+        $ticket = Ticket::findOrFail($id);
+        $this->validate($request, [
+            'note_confirmation' => 'note_confirmation'
+        ]);
+        $ticket->fill($request->all());
+        $ticket->save();
+
+        return $this->response->item($ticket, new TicketTransformer);
+    }
+
+    public function delete_ticket(Request $request, $id)
+    {
+        $ticket = Ticket::findOrFail($id);
+        $ticket->delete();
+
+        return $this->response->noContent();
     }
 }
