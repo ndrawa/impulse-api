@@ -169,6 +169,7 @@ class ClassCourseController extends BaseController
         $staff = Staff::select('name','code')->where('id', $cc['staff_id'])->first();
         $course = Course::select('name','code')->where('id', $cc['course_id'])->first();
         $academic_year = AcademicYear::where('id', $cc['academic_year_id'])->first();
+        $asprakcc = Asprak::select('student_id','asprak_code')->where('class_course_id', $class_course_id)->get();
 
         $arr['id'] = $cc['id'];
         $arr['class']['id'] = $cc['class_id'];
@@ -182,6 +183,7 @@ class ClassCourseController extends BaseController
         $arr['academic_year']['id'] = $cc['academic_year_id'];
         $arr['academic_year']['name'] = $academic_year->year;
         $arr['academic_year']['semester'] = $academic_year->semester;
+        $arr['asprak_class_course'] = $asprakcc;
 
         $data['data'] = $arr;
 
