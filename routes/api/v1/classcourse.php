@@ -19,4 +19,8 @@ $api->version('v1', [
     $api->get('/{class_course_id}', ['as' => 'laboran.get_class_course_by_id', 'uses' => 'ClassCourseController@get_class_course_by_id']);
     $api->delete('/{class_course_id}', ['as' => 'laboran.delete_class_course_by_id', 'uses' => 'ClassCourseController@delete_class_course_by_id']);
 
+    $api->post('/asprak/praktikan', ['as' => 'classcourse.select_asprak', 'uses' => 'ClassCourseController@select_asprak']);
+    $api->post('/asprak/plotting', ['as' => 'classcourse.get_plotting_asprak', 'uses' => 'ClassCourseController@get_plotting_asprak']);
+    $api->post('/asprak/plotting/{id}', ['as' => 'classcourse.edit_plotting_asprak', 'uses' => 'ClassCourseController@edit_plotting_asprak']);
+
 });
