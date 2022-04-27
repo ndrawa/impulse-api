@@ -17,6 +17,7 @@ use App\Models\Staff;
 use App\Models\Schedule;
 use App\Models\Asprak;
 use App\Models\StudentPresence;
+use App\Models\Praktikan;
 use App\Transformers\AsprakTransformer;
 use App\Transformers\ClassCourseTransformer;
 use App\Models\StudentClassCourse;
@@ -531,5 +532,30 @@ class ClassCourseController extends BaseController
             }
             return (new RecapMultiSheetExport($data, $classes))->download($file_name);
         }
+    }
+
+    public function select_asprak(Request $request) {
+        $this->validate($request, [
+            'asprak_class_course_id' => 'required',
+            'student_id' => 'required',
+        ]);
+        $praktikan = Praktikan::firstOrNew($request->all());
+        return $praktikan;
+    }
+
+    public function get_plotting_asprak() {
+        $praktikan = Praktikan::get();
+        return $praktikan;
+    }
+
+    public function edit_plotting_asprak(Request $request, $id) {
+        $this->validate($request, [
+            'asprak_class_course_id' => 'required',
+            'student_id' => 'required',
+        ]);
+        $praktikan = Praktikan::findOrFail($id);
+        $praktikan->fill($request->all());
+        $praktikan->save();
+        return $praktikan;
     }
 }
