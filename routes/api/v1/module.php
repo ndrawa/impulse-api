@@ -4,7 +4,7 @@ $api = app('Dingo\Api\Routing\Router');
 
 $api->version('v1', [
     'namespace' => 'App\Http\Controllers\Api\V1\Module',
-    'middleware' => ['auth:api', 'role:staff|student|laboran|asprak'],
+    'middleware' => ['auth:api', 'role:admin|laboran|asprak|student|aslab'],
     'prefix' => 'v1/module'
 ], function($api) {
     $api->get('/{course_id}/{academic_year_id}', ['as' => 'module.percourse', 'uses' => 'ModuleController@getCourseModule']);

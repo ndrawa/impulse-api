@@ -11,7 +11,7 @@ class StaffPolicy extends BasePolicy
     public function update(User $user, Staff $staff)
     {
         // admin can update all staff
-        if($user->isLaboran()) {
+        if($user->isLaboran() || $user->isAslab()) {
             return $this->allow();
         } else if($user->id == $staff->user->id) {
             // only the logged user can update himself
@@ -24,7 +24,7 @@ class StaffPolicy extends BasePolicy
     public function create(User $user)
     {
         // only admin can create staff
-        return $this->authorize($user->isLaboran());
+        return $this->authorize($user->isLaboran() || $user->isAslab());
     }
 
     public function delete(User $user, Staff $staff)

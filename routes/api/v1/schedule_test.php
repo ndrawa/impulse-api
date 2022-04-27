@@ -4,7 +4,7 @@ $api = app('Dingo\Api\Routing\Router');
 
 $api->version('v1', [
     'namespace' => 'App\Http\Controllers\Api\V1\Schedule',
-    'middleware' => ['auth:api', 'role:staff|student|laboran'],
+    'middleware' => ['auth:api', 'role:admin|laboran|asprak|student|aslab'],
     'prefix' => 'v1/schedule_test'
 ], function($api) {
     $api->post('/', ['as' => 'schedule_test.create', 'uses' => 'ScheduleTestController@create']);

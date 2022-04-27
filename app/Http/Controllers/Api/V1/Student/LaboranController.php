@@ -474,7 +474,7 @@ class LaboranController extends BaseController
                     $data['student'][$i++] = $user->student;
                 }
             } elseif ($role == 'laboran') {
-                if($user->isLaboran()) {
+                if($user->isLaboran() || $user->isAslab()) {
                     $data['laboran'][$i++] = $user->staff;
                 }
             }

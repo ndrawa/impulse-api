@@ -4,7 +4,7 @@ $api = app('Dingo\Api\Routing\Router');
 
 $api->version('v1', [
     'namespace' => 'App\Http\Controllers\Api\V1\Student',
-    'middleware' => ['auth:api', 'role:staff|student|admin'],
+    'middleware' => ['auth:api', 'role:admin|laboran|asprak|student|aslab'],
     'prefix' => 'v1/student'
 ], function($api) {
     $api->get('/show_student_grade/{user_id}', ['as' => 'student.show', 'uses' => 'StudentController@show_student_grade']);

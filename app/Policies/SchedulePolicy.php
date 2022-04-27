@@ -10,7 +10,7 @@ class SchedulePolicy extends BasePolicy
     public function update(User $user)
     {
         // Laboran can update all schedules
-        if($user->isLaboran()) {
+        if($user->isLaboran() || $user->isAslab()) {
             return $this->allow();
         } else {
             return $this->deny();
@@ -20,13 +20,13 @@ class SchedulePolicy extends BasePolicy
     public function create(User $user)
     {
         // only laboran can create schedules
-        return $this->authorize($user->isLaboran());
+        return $this->authorize($user->isLaboran() || $user->isAslab());
     }
 
     public function delete(User $user)
     {
         // only labran can delete schedule
-        if($user->isLaboran()) {
+        if($user->isLaboran() || $user->isAslab()) {
             return $this->allow();
         } else {
             return $this->deny();

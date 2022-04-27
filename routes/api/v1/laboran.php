@@ -4,7 +4,7 @@ $api = app('Dingo\Api\Routing\Router');
 
 $api->version('v1', [
     'namespace' => 'App\Http\Controllers\Api\V1\Student',
-    'middleware' => ['auth:api', 'role:admin|laboran|asprak|student'],
+    'middleware' => ['auth:api', 'role:admin|laboran|asprak|student|aslab'],
     'prefix' => 'v1/laboran'
 ], function($api) {
     $api->get('/student', ['as' => 'laboran.index', 'uses' => 'LaboranController@index']);
