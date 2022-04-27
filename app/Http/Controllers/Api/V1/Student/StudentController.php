@@ -305,7 +305,7 @@ class StudentController extends BaseController
         ]);
         $ticket = Ticket::create($request->all());
 
-        return $this->response->item($student, new TicketTransformer);
+        return $this->response->item($ticket, new TicketTransformer);
     }
 
     public function update_ticket(Request $request, $id)
