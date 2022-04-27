@@ -285,7 +285,6 @@ class StudentController extends BaseController
 
     public function show_ticket(Request $request, $nim)
     {
-        //$student = Student::findOrFail($id);
         $ticket = Ticket::where('nim', $nim)->first();
         return $this->response->item($ticket, new TicketTransformer);
     }
