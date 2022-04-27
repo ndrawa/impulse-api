@@ -14,7 +14,8 @@ class Ticket extends Model
      * @var array
      */
     protected $fillable = [
-        'student_id',
+        'nim',
+        'name',
         'course_name',
         'class_name',
         'practicum_day',
