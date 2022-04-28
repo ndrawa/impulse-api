@@ -13,6 +13,7 @@ use App\Transformers\StudentTransformer;
 use App\Transformers\StudentMePresenceTransformer;
 use App\Transformers\TicketTransformer;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\Api\V1\GradeController as GradeController;
 
 
@@ -302,8 +303,12 @@ class StudentController extends BaseController
             'password_sso' => 'required',
             'note_student' => 'required',
         ]);
+        $file = $request->file('note_student');
+        $filename = time().str_replace(" ", "",$file->getClientOriginalName());
         $ticket = Ticket::create($request->all());
-
+        $ticket->note_student = $filename;
+        $ticket->save();
+        $file->storeAs('Ticket', $filename);
         return $this->response->item($ticket, new TicketTransformer);
     }
 
@@ -325,5 +330,15 @@ class StudentController extends BaseController
         $ticket->delete();
 
         return $this->response->noContent();
+    }
+
+    public function download($ticket_id)
+    {
+        $ticket = Ticket::where('id',$ticket_id)->first();
+        if (empty(!$ticket)) {
+            return Storage::download('Ticket/'.$ticket->note_student);
+        } else {
+            return 'Ticket not Found';
+        }
     }
 }
