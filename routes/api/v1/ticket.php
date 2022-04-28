@@ -13,4 +13,5 @@ $api->version('v1', [
     $api->put('/{id}', ['as' => 'student.ticket.update', 'uses' => 'StudentController@update_ticket']);
     $api->post('/', ['as' => 'student.ticket.create', 'uses' => 'StudentController@create_ticket']);
     $api->delete('/{id}', ['as' => 'student.ticket.delete', 'uses' => 'StudentController@delete_ticket']);
+    $api->post('/download/{ticket_id}', ['as' => 'student.ticket.download', 'uses' => 'StudentController@download']);
 });
