@@ -14,7 +14,7 @@ class CreateTicketsTable extends Migration
     public function up()
     {
         Schema::create('tickets', function (Blueprint $table) {
-            $table->char('id', 26)->nullable();
+            $table->char('id', 26);
             $table->string('nim');
             $table->string('name');
             $table->string('course_name');
@@ -29,11 +29,11 @@ class CreateTicketsTable extends Migration
                 'saturday'
             ]);
             $table->enum('practice_session', [
-                '06.30 - 09.30', 
-                '07.30 - 10.30', 
-                '08.30 - 11.30', 
-                '09.30 - 12.30', 
-                '10.30 - 13.30', 
+                '06.30 - 09.30',
+                '07.30 - 10.30',
+                '08.30 - 11.30',
+                '09.30 - 12.30',
+                '10.30 - 13.30',
                 '11.30 - 14.30',
                 '12.30 - 15.30',
                 '13.30 - 16.30',
