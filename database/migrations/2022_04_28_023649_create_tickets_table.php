@@ -48,6 +48,10 @@ class CreateTicketsTable extends Migration
             $table->string('note_student');
             $table->string('note_confirmation')->nullable();
             $table->timestamps();
+            $table->foreign('nim')
+                ->references('nim')
+                ->on('students')
+                ->onDelete('cascade');
         });
     }
 
