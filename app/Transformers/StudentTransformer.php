@@ -14,7 +14,8 @@ class StudentTransformer extends TransformerAbstract
             'name' => $student->name,
             'nim' => $student->nim,
             'gender' => $student->gender,
-            'religion' => $student->religion
+            'religion' => $student->religion,
+            'as_asprak' => $student->asprak,
         ];
     }
 }

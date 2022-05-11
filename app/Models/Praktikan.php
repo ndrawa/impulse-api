@@ -18,7 +18,7 @@ class Praktikan extends BaseModel
         'student_id',
     ];
     
-    public function asprak_class_cource()
+    public function asprak_class_course()
     {
         return $this->hasMany(Asprak::class);
     }

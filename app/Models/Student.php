@@ -77,4 +77,8 @@ class Student extends BaseModel implements IUser
     public function student_class_course() {
         return $this->hasMany(StudentClassCourse::class);
     }
+
+    public function asprak() {
+        return $this->hasMany(Asprak::class);
+    }
 }

@@ -46,7 +46,7 @@ class ClassCourseController extends BaseController
                                             ->exists();
 
             if(!$class_course_check) {
-                $class_course = ClassCourse::firstOrNew($request->all());
+                $class_course = ClassCourse::firstOrCreate($request->all());
                 $class_course->save();
 
                 //Generate Module 1-14
