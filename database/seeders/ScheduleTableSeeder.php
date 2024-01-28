@@ -21,33 +21,33 @@ class ScheduleTableSeeder extends Seeder
     public function run()
     {
         $staff_id = DB::table('staffs')
-                    ->select('id')
-                    ->where('code', 'AJS')
-                    ->first();
+            ->select('id')
+            ->where('code', 'AJS')
+            ->first();
         $class_id = DB::table('classes')
-                    ->select('id')
-                    ->where('name', 'IF-43-01')
-                    ->first();
+            ->select('id')
+            ->where('name', 'IF-43-01')
+            ->first();
         $academic_year_id = DB::table('academic_years')
-                            ->select('id')
-                            ->where('semester', 'odd')
-                            ->first();
+            ->select('id')
+            ->where('semester', 'odd')
+            ->first();
         $course_id =    DB::table('courses')
-                        ->select('id')
-                        ->where('code', 'CSG2H3')
-                        ->first();
+            ->select('id')
+            ->where('code', 'CSG2H3')
+            ->first();
         $class_course_id =  DB::table('class_course')
-                            ->select('id')
-                            ->where('class_id', $class_id->id)
-                            ->where('academic_year_id', $academic_year_id->id)
-                            ->where('course_id', $course_id->id)
-                            ->where('staff_id', $staff_id->id)
-                            ->first();
+            ->select('id')
+            ->where('class_id', $class_id->id)
+            ->where('academic_year_id', $academic_year_id->id)
+            ->where('course_id', $course_id->id)
+            ->where('staff_id', $staff_id->id)
+            ->first();
 
         $room_id =  DB::table('rooms')
-                    ->select('id')
-                    ->where('msteam_code', 'PRPSL6')
-                    ->first();
+            ->select('id')
+            ->where('msteam_code', 'PRPSL6')
+            ->first();
 
         //Create test for pretest modul 1
         $pretest_1 = Test::create([
@@ -91,22 +91,22 @@ class ScheduleTableSeeder extends Seeder
         $answer = Answer::create([
             'question_id' => $question->id,
             'answer' => 'Bantal',
-            'is_answer' => 'false',
+            'is_answer' => false,
         ]);
         $answer = Answer::create([
             'question_id' => $question->id,
             'answer' => 'Bansos',
-            'is_answer' => 'true',
+            'is_answer' => true,
         ]);
         $answer = Answer::create([
             'question_id' => $question->id,
             'answer' => 'Banser',
-            'is_answer' => 'false',
+            'is_answer' => false,
         ]);
         $answer = Answer::create([
             'question_id' => $question->id,
             'answer' => 'Banjir',
-            'is_answer' => 'false',
+            'is_answer' => false,
         ]);
         //Create 2nd question for posttest modul 1
         $question = Question::create([
@@ -117,22 +117,22 @@ class ScheduleTableSeeder extends Seeder
         $answer = Answer::create([
             'question_id' => $question->id,
             'answer' => 'Sangat kurang (1)',
-            'is_answer' => 'true',
+            'is_answer' => true,
         ]);
         $answer = Answer::create([
             'question_id' => $question->id,
             'answer' => 'Kurang (2)',
-            'is_answer' => 'false',
+            'is_answer' => false,
         ]);
         $answer = Answer::create([
             'question_id' => $question->id,
             'answer' => 'Cukup (3)',
-            'is_answer' => 'false',
+            'is_answer' => false,
         ]);
         $answer = Answer::create([
             'question_id' => $question->id,
             'answer' => 'Sangat cukup (4)',
-            'is_answer' => 'false',
+            'is_answer' => false,
         ]);
 
         $module = Module::create([
@@ -253,7 +253,7 @@ class ScheduleTableSeeder extends Seeder
             'test_id' => $pretest_1->id,
             'time_start' => '2021-08-12 07:30:00',
             'time_end' => '2021-08-12 07:45:00',
-            'is_active' => 'false',
+            'is_active' => false,
             'auth' => '123456'
         ]);
 
@@ -263,7 +263,7 @@ class ScheduleTableSeeder extends Seeder
             'test_id' => $posttest_1->id,
             'time_start' => '2021-08-12 10:00:00',
             'time_end' => '2021-08-12 10:30:00',
-            'is_active' => 'false',
+            'is_active' => false,
             'auth' => '123456'
         ]);
     }
